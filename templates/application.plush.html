@@ -35,7 +35,14 @@
           </div>
           <div class="auth-controls navbar-nav align-items-center">
             <%= if (current_user) { %>
-              <a class="nav-link" href="/profile"><%= current_user.Email %></a>
+              <a class="nav-link profile-link" href="/profile">
+                <i class="fa fa-user-circle"></i>
+                <%= if (current_user.Name != "") { %>
+                  <%= current_user.Name %>
+                <% } else { %>
+                  Profile
+                <% } %>
+              </a>
               <form method="POST" action="<%= signoutPath() %>" class="form-inline">
                 <input type="hidden" name="_method" value="DELETE" />
                 <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
