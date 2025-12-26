@@ -6,11 +6,13 @@
       </a>
       <h1><%= project.Name %></h1>
     </div>
-    <div>
-      <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/edit" class="btn btn-secondary">
-        <i class="fas fa-edit"></i> Edit
-      </a>
-    </div>
+    <%= if (isProjectOwner) { %>
+      <div>
+        <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/edit" class="btn btn-secondary">
+          <i class="fas fa-edit"></i> Edit
+        </a>
+      </div>
+    <% } %>
   </div>
 
   <div class="card">

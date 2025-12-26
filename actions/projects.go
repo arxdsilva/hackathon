@@ -53,8 +53,15 @@ func ProjectsShow(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	// Check if current user is the project owner
+	isOwner := false
+	if cu, ok := c.Value("current_user").(models.User); ok && project.UserID != nil {
+		isOwner = *project.UserID == cu.ID
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", project)
+	c.Set("isProjectOwner", isOwner)
 	return c.Render(http.StatusOK, r.HTML("projects/show.plush.html"))
 }
 
@@ -111,6 +118,13 @@ func ProjectsEdit(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	// Only the project owner can edit
+	currentUser := c.Value("current_user").(models.User)
+	if project.UserID == nil || *project.UserID != currentUser.ID {
+		c.Flash().Add("danger", "You can only edit your own projects.")
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	}
+
 	hackathon := &models.Hackathon{}
 	if err := tx.Find(hackathon, project.HackathonID); err != nil {
 		return c.Error(http.StatusNotFound, err)
@@ -128,6 +142,13 @@ func ProjectsUpdate(c buffalo.Context) error {
 
 	if err := tx.Find(project, c.Param("project_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Only the project owner can update
+	currentUser := c.Value("current_user").(models.User)
+	if project.UserID == nil || *project.UserID != currentUser.ID {
+		c.Flash().Add("danger", "You can only edit your own projects.")
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
 	}
 
 	if err := c.Bind(project); err != nil {
