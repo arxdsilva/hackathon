@@ -2,6 +2,7 @@ package actions
 
 import (
 	"net/http"
+	"strconv"
 
 	"hackathon/models"
 
@@ -34,7 +35,23 @@ func HackathonsShow(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	// Paginated projects for this hackathon (default 20 per page)
+	page := 1
+	if p := c.Param("page"); p != "" {
+		if i, err := strconv.Atoi(p); err == nil && i > 0 {
+			page = i
+		}
+	}
+
+	projects := &models.Projects{}
+	q := tx.Where("hackathon_id = ?", hackathon.ID).Order("created_at desc").Paginate(page, 20)
+	if err := q.All(projects); err != nil {
+		return err
+	}
+
 	c.Set("hackathon", hackathon)
+	c.Set("projects", projects)
+	c.Set("pagination", q.Paginator)
 	return c.Render(http.StatusOK, r.HTML("hackathons/show.plush.html"))
 }
 
