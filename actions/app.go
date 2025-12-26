@@ -65,7 +65,17 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
+		// Load the current user into context and protect routes.
+		app.Use(SetCurrentUser)
+		app.Use(Authorize)
+
 		app.GET("/", HomeHandler)
+		app.GET("/users/new", UsersNew)
+		app.POST("/users", UsersCreate)
+		app.GET("/signin", AuthNew)
+		app.POST("/signin", AuthCreate)
+		app.DELETE("/signout", AuthDestroy)
+		app.Middleware.Skip(Authorize, HomeHandler, UsersNew, UsersCreate, AuthNew, AuthCreate)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

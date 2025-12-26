@@ -1,0 +1,12 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>Create Account</h1>
+
+    <%= form_for(user, {action: usersPath(), method: "POST"}) { %>
+      <%= f.InputTag("Email") %>
+      <%= f.InputTag("Password", {type: "password"}) %>
+      <%= f.InputTag("PasswordConfirmation", {type: "password", label: "Password Confirmation"}) %>
+      <button class="btn btn-primary">Create Account</button>
+    <% } %>
+  </div>
+</div>
