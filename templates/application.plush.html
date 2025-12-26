@@ -30,8 +30,9 @@
               <%= if (current_user) { %>
                 <li class="nav-item"><span class="nav-link"><%= current_user.Email %></span></li>
                 <li class="nav-item">
-                  <form method="POST" action="/signout" style="display:inline;">
+                  <form method="POST" action="<%= signoutPath() %>" style="display:inline;">
                     <input type="hidden" name="_method" value="DELETE" />
+                    <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
                     <button class="btn btn-sm btn-outline-light" type="submit">Sign Out</button>
                   </form>
                 </li>
