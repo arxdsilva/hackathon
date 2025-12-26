@@ -7,7 +7,6 @@ A Go-based web microservice built with [Buffalo](https://gobuffalo.io/) for sche
 - **Event Management**: Create, update, and delete hackathon events
 - **Participant Registration**: Manage participant sign-ups and team formations
 - **Schedule Management**: Create and manage event schedules and timelines
-- **Leaderboard Tracking**: Track participant progress and scores
 - **Team Management**: Organize participants into teams
 - **RESTful API**: Clean, RESTful API endpoints for all operations
 
