@@ -35,23 +35,13 @@
           <textarea class="form-control" id="description" name="Description" rows="5" required><%= project.Description %></textarea>
         </div>
         
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="team_members" class="form-label">Team Members</label>
-              <input type="number" class="form-control" id="team_members" name="TeamMembers" value="<%= if (project.TeamMembers > 0) { %><%= project.TeamMembers %><% } %>" min="0" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="status" class="form-label">Status</label>
-              <select class="form-select" id="status" name="Status">
-                <option value="in_progress" <%= if (project.Status == "in_progress" || project.Status == "") { %>selected<% } %>>In Progress</option>
-                <option value="completed" <%= if (project.Status == "completed") { %>selected<% } %>>Completed</option>
-                <option value="suspended" <%= if (project.Status == "suspended") { %>selected<% } %>>Suspended</option>
-              </select>
-            </div>
-          </div>
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <select class="form-select" id="status" name="Status">
+            <option value="in_progress" <%= if (project.Status == "in_progress" || project.Status == "") { %>selected<% } %>>In Progress</option>
+            <option value="completed" <%= if (project.Status == "completed") { %>selected<% } %>>Completed</option>
+            <option value="suspended" <%= if (project.Status == "suspended") { %>selected<% } %>>Suspended</option>
+          </select>
         </div>
         
         <div class="mb-3">

@@ -105,6 +105,15 @@ func ProjectsCreate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("projects/new.plush.html"))
 	}
 
+	// Add the founder to project_memberships
+	membership := &models.ProjectMembership{
+		ProjectID: project.ID,
+		UserID:    currentUser.ID,
+	}
+	if err := tx.Create(membership); err != nil {
+		return err
+	}
+
 	c.Flash().Add("success", "Project created successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
 }

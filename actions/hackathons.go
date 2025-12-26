@@ -49,6 +49,15 @@ func HackathonsShow(c buffalo.Context) error {
 		return err
 	}
 
+	// Count memberships for each project
+	memberCounts := make(map[int]int)
+	for _, project := range *projects {
+		count, err := tx.Where("project_id = ?", project.ID).Count(&models.ProjectMembership{})
+		if err == nil {
+			memberCounts[project.ID] = count
+		}
+	}
+
 	// Determine if current user can create a project (max 1 per hackathon)
 	canCreate := true
 	if cu, ok := c.Value("current_user").(models.User); ok {
@@ -62,6 +71,7 @@ func HackathonsShow(c buffalo.Context) error {
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
 	c.Set("pagination", q.Paginator)
+	c.Set("memberCounts", memberCounts)
 	c.Set("canCreateProject", canCreate)
 	return c.Render(http.StatusOK, r.HTML("hackathons/show.plush.html"))
 }
