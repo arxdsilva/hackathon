@@ -1,0 +1,1 @@
+add_index("projects", ["hackathon_id", "user_id"], {"unique": true})

@@ -52,7 +52,21 @@ func (p *Project) Validate(tx *pop.Connection) (*validate.Errors, error) {
 
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 func (p *Project) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
+	verrs := validate.NewErrors()
+	// Ensure a user is set on creation
+	if p.UserID == nil {
+		verrs.Add("UserID", "must be present")
+		return verrs, nil
+	}
+	// Enforce one project per user per hackathon
+	existing := &Projects{}
+	if err := tx.Where("hackathon_id = ? AND user_id = ?", p.HackathonID, p.UserID).Limit(1).All(existing); err != nil {
+		return verrs, err
+	}
+	if len(*existing) > 0 {
+		verrs.Add("UserID", "already has a project in this hackathon")
+	}
+	return verrs, nil
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.

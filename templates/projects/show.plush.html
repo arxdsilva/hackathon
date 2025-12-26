@@ -10,13 +10,6 @@
       <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/edit" class="btn btn-secondary">
         <i class="fas fa-edit"></i> Edit
       </a>
-      <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" method="POST" class="d-inline">
-        <input type="hidden" name="_method" value="DELETE" />
-        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this project?')">
-          <i class="fas fa-trash"></i> Delete
-        </button>
-      </form>
     </div>
   </div>
 

@@ -84,7 +84,6 @@ func App() *buffalo.App {
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsShow)
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/edit", ProjectsEdit)
 		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsUpdate)
-		app.DELETE("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsDestroy)
 		app.GET("/schedule", ScheduleIndex)
 		app.GET("/routes", RoutesHandler)
 		app.GET("/profile", ProfileShow)

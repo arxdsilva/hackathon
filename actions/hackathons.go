@@ -49,9 +49,20 @@ func HackathonsShow(c buffalo.Context) error {
 		return err
 	}
 
+	// Determine if current user can create a project (max 1 per hackathon)
+	canCreate := true
+	if cu, ok := c.Value("current_user").(models.User); ok {
+		count, err := tx.Where("hackathon_id = ? AND user_id = ?", hackathon.ID, cu.ID).
+			Count(&models.Project{})
+		if err == nil {
+			canCreate = count == 0
+		}
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
 	c.Set("pagination", q.Paginator)
+	c.Set("canCreateProject", canCreate)
 	return c.Render(http.StatusOK, r.HTML("hackathons/show.plush.html"))
 }
 

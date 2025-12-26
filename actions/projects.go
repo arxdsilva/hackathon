@@ -26,6 +26,16 @@ func ProjectsIndex(c buffalo.Context) error {
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
 
+	// Compute create permission: user can create only if they have no project in this hackathon
+	canCreate := true
+	if cu, ok := c.Value("current_user").(models.User); ok {
+		count, err := tx.Where("hackathon_id = ? AND user_id = ?", hackathon.ID, cu.ID).Count(&models.Project{})
+		if err == nil {
+			canCreate = count == 0
+		}
+	}
+	c.Set("canCreateProject", canCreate)
+
 	return c.Render(http.StatusOK, r.HTML("projects/index.plush.html"))
 }
 
@@ -143,18 +153,4 @@ func ProjectsUpdate(c buffalo.Context) error {
 }
 
 // ProjectsDestroy deletes a project from the DB
-func ProjectsDestroy(c buffalo.Context) error {
-	tx := c.Value("tx").(*pop.Connection)
-	project := &models.Project{}
-
-	if err := tx.Find(project, c.Param("project_id")); err != nil {
-		return c.Error(http.StatusNotFound, err)
-	}
-
-	if err := tx.Destroy(project); err != nil {
-		return err
-	}
-
-	c.Flash().Add("success", "Project deleted successfully!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects", project.HackathonID)
-}
+// ProjectsDestroy is disabled: projects are retained and cannot be deleted.
