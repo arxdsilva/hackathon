@@ -2,3 +2,88 @@
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 
 @import "buffalo";
+
+/* Global Techy Theme */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+body {
+	background: radial-gradient(circle at 15% 20%, #1b2735 0, #0f1724 30%, #0b1220 60%, #080f1c 100%);
+	color: #e8edf5;
+	font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+}
+
+.btn-primary {
+	background: linear-gradient(135deg, #00d4ff, #0072ff);
+	border: none;
+	box-shadow: 0 10px 30px rgba(0, 114, 255, 0.35);
+}
+
+.btn-outline-light {
+	border-color: rgba(255, 255, 255, 0.4);
+	color: #e8edf5;
+}
+
+/* Reusable components */
+.hero {
+	margin-top: 48px;
+	padding: 48px 40px;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 16px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.hero h1 {
+	font-weight: 600;
+	letter-spacing: -0.5px;
+	margin-bottom: 12px;
+}
+
+.hero p.lead {
+	font-size: 18px;
+	color: #c3cede;
+	margin-bottom: 24px;
+}
+
+.cta-group a {
+	margin-right: 12px;
+	margin-bottom: 10px;
+}
+
+.metric {
+	display: inline-block;
+	padding: 10px 14px;
+	margin-right: 10px;
+	margin-top: 10px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	font-size: 14px;
+	color: #c3cede;
+}
+
+.grid { margin-top: 36px; }
+
+.panel {
+	height: 100%;
+	padding: 22px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.panel h3 {
+	margin-top: 0;
+	margin-bottom: 10px;
+	font-weight: 600;
+}
+
+.panel p { color: #c3cede; margin-bottom: 0; }
+
+a.btn-link { color: #8bd1ff; }
+
+@media (max-width: 768px) {
+	.hero { padding: 32px 24px; }
+	.hero h1 { font-size: 28px; }
+}
