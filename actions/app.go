@@ -70,6 +70,7 @@ func App() *buffalo.App {
 		app.Use(Authorize)
 
 		app.GET("/", HomeHandler)
+		app.GET("/about", AboutHandler)
 		app.GET("/hackathons", HackathonsIndex)
 		app.GET("/teams", TeamsIndex)
 		app.GET("/leaderboard", LeaderboardIndex)
@@ -80,7 +81,8 @@ func App() *buffalo.App {
 		app.GET("/signin", AuthNew)
 		app.POST("/signin", AuthCreate)
 		app.DELETE("/signout", AuthDestroy)
-		app.Middleware.Skip(Authorize, HomeHandler, RoutesHandler, LeaderboardIndex, ScheduleIndex, UsersNew, UsersCreate, AuthNew, AuthCreate)
+		// Allow unauthenticated access to Home, About, and Auth endpoints
+		app.Middleware.Skip(Authorize, HomeHandler, AboutHandler, UsersNew, UsersCreate, AuthNew, AuthCreate)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
