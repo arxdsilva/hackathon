@@ -7,20 +7,23 @@ import (
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
+	"github.com/gofrs/uuid"
 )
 
 // Project represents a hackathon project submission
 type Project struct {
-	ID            int       `json:"id" db:"id"`
-	CreatedAt     time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at" db:"updated_at"`
-	HackathonID   int       `json:"hackathon_id" db:"hackathon_id"`
-	Name          string    `json:"name" db:"name"`
-	Description   string    `json:"description" db:"description"`
-	RepositoryURL string    `json:"repository_url" db:"repository_url"`
-	DemoURL       string    `json:"demo_url" db:"demo_url"`
-	Status        string    `json:"status" db:"status"`
-	TeamMembers   int       `json:"team_members" db:"team_members"`
+	ID            int        `json:"id" db:"id"`
+	CreatedAt     time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at" db:"updated_at"`
+	HackathonID   int        `json:"hackathon_id" db:"hackathon_id"`
+	UserID        *uuid.UUID `json:"user_id" db:"user_id"`
+	User          *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
+	Name          string     `json:"name" db:"name"`
+	Description   string     `json:"description" db:"description"`
+	RepositoryURL string     `json:"repository_url" db:"repository_url"`
+	DemoURL       string     `json:"demo_url" db:"demo_url"`
+	Status        string     `json:"status" db:"status"`
+	TeamMembers   int        `json:"team_members" db:"team_members"`
 }
 
 // String is not required by pop and may be deleted

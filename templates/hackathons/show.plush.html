@@ -74,15 +74,26 @@
     <%= for (project) in projects { %>
       <div class="card mb-3">
         <div class="card-body">
-          <h4 class="card-title">
-            <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
-          </h4>
-          <p class="card-text"><%= project.Description %></p>
-          <small class="text-muted">
-            <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
-              <%= project.Status %>
-            </span>
-          </small>
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <h4 class="card-title">
+                <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
+              </h4>
+              <p class="card-text"><%= project.Description %></p>
+              <small class="text-muted">
+                <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                  <%= project.Status %>
+                </span>
+              </small>
+            </div>
+            <%= if (project.UserID != nil && project.UserID.String() == current_user.ID.String()) { %>
+              <div class="text-end ms-3">
+                <small class="text-muted">
+                  <i class="fas fa-user"></i> <%= if (current_user.Name != "") { %><%= current_user.Name %><% } else { %><%= current_user.Email %><% } %>
+                </small>
+              </div>
+            <% } %>
+          </div>
         </div>
       </div>
     <% } %>

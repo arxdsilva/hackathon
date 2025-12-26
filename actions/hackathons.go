@@ -45,7 +45,7 @@ func HackathonsShow(c buffalo.Context) error {
 
 	projects := &models.Projects{}
 	q := tx.Where("hackathon_id = ?", hackathon.ID).Order("created_at desc").Paginate(page, 20)
-	if err := q.All(projects); err != nil {
+	if err := q.Eager("User").All(projects); err != nil {
 		return err
 	}
 

@@ -1,0 +1,3 @@
+add_column("projects", "user_id", "uuid", {"null": true})
+add_foreign_key("projects", "user_id", {"users": ["id"]}, {"on_delete": "SET NULL"})
+add_index("projects", "user_id", {})

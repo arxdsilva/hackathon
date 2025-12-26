@@ -69,6 +69,10 @@ func ProjectsCreate(c buffalo.Context) error {
 		return err
 	}
 
+	// Set the user_id to current user
+	currentUser := c.Value("current_user").(models.User)
+	project.UserID = &currentUser.ID
+
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(project)
 	if err != nil {
