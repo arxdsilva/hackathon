@@ -19,9 +19,13 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
+              <li class="nav-item"><a class="nav-link" href="/hackathons">Hackathons</a></li>
+              <li class="nav-item"><a class="nav-link" href="/teams">Teams</a></li>
+              <li class="nav-item"><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
+              <li class="nav-item"><a class="nav-link" href="/schedule">Schedule</a></li>
               <li class="nav-item"><a class="nav-link" href="/routes">Routes</a></li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto align-items-center">
               <%= if (current_user) { %>
                 <li class="nav-item"><span class="nav-link"><%= current_user.Email %></span></li>
                 <li class="nav-item">

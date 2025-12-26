@@ -70,13 +70,17 @@ func App() *buffalo.App {
 		app.Use(Authorize)
 
 		app.GET("/", HomeHandler)
+		app.GET("/hackathons", HackathonsIndex)
+		app.GET("/teams", TeamsIndex)
+		app.GET("/leaderboard", LeaderboardIndex)
+		app.GET("/schedule", ScheduleIndex)
 		app.GET("/routes", RoutesHandler)
 		app.GET("/users/new", UsersNew)
 		app.POST("/users", UsersCreate)
 		app.GET("/signin", AuthNew)
 		app.POST("/signin", AuthCreate)
 		app.DELETE("/signout", AuthDestroy)
-		app.Middleware.Skip(Authorize, HomeHandler, RoutesHandler, UsersNew, UsersCreate, AuthNew, AuthCreate)
+		app.Middleware.Skip(Authorize, HomeHandler, RoutesHandler, LeaderboardIndex, ScheduleIndex, UsersNew, UsersCreate, AuthNew, AuthCreate)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
