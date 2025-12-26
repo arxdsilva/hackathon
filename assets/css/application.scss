@@ -10,7 +10,17 @@ body {
 	background: radial-gradient(circle at 15% 20%, #1b2735 0, #0f1724 30%, #0b1220 60%, #080f1c 100%);
 	color: #e8edf5;
 	font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+	/* Sticky footer layout */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
+
+/* Main content grows to push footer down */
+.site-main { flex: 1 0 auto; }
+
+/* Ensure footer sits at the bottom when content is short */
+.site-footer { margin-top: auto; }
 
 .btn-primary {
 	background: linear-gradient(135deg, #00d4ff, #0072ff);
