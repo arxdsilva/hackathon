@@ -125,3 +125,15 @@ a.btn-link { color: #8bd1ff; }
 }
 
 .site-header .auth-controls .form-inline { display: inline-flex; align-items: center; }
+
+/* Site footer */
+.site-footer {
+	margin-top: 40px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(10, 15, 28, 0.6);
+	backdrop-filter: blur(6px);
+}
+
+.site-footer .nav-link { color: #c3cede; padding: 4px 8px; }
+.site-footer .nav-link:hover { color: #ffffff; }
+.site-footer .text-muted { color: #9fb0c6 !important; }
