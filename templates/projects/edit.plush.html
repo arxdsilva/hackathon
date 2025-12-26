@@ -1,0 +1,75 @@
+<div class="container mt-4">
+  <div>
+    <a href="/hackathons/<%= hackathon.ID %>/projects" class="text-decoration-none text-muted">
+      <i class="fas fa-arrow-left"></i> Projects
+    </a>
+    <h1>Edit Project</h1>
+  </div>
+  
+  <div class="card">
+    <div class="card-body">
+      <%= if (errors) { %>
+        <div class="alert alert-danger">
+          <h5>There were errors with your submission:</h5>
+          <ul>
+            <%= for (key, messages) in errors { %>
+              <%= for (message) in messages { %>
+                <li><%= key %>: <%= message %></li>
+              <% } %>
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+
+      <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <input type="hidden" name="HackathonID" value="<%= hackathon.ID %>" />
+        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+        
+        <div class="mb-3">
+          <label for="name" class="form-label">Project Name *</label>
+          <input type="text" class="form-control" id="name" name="Name" value="<%= project.Name %>" required />
+        </div>
+        
+        <div class="mb-3">
+          <label for="description" class="form-label">Description *</label>
+          <textarea class="form-control" id="description" name="Description" rows="5" required><%= project.Description %></textarea>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="team_members" class="form-label">Team Members</label>
+              <input type="number" class="form-control" id="team_members" name="TeamMembers" value="<%= if (project.TeamMembers > 0) { %><%= project.TeamMembers %><% } %>" min="0" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" id="status" name="Status">
+                <option value="in_progress" <%= if (project.Status == "in_progress") { %>selected<% } %>>In Progress</option>
+                <option value="completed" <%= if (project.Status == "completed") { %>selected<% } %>>Completed</option>
+                <option value="suspended" <%= if (project.Status == "suspended") { %>selected<% } %>>Suspended</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="repository_url" class="form-label">Repository URL</label>
+          <input type="url" class="form-control" id="repository_url" name="RepositoryURL" value="<%= project.RepositoryURL %>" placeholder="https://github.com/..." />
+        </div>
+        
+        <div class="mb-3">
+          <label for="demo_url" class="form-label">Demo URL</label>
+          <input type="url" class="form-control" id="demo_url" name="DemoURL" value="<%= project.DemoURL %>" placeholder="https://..." />
+        </div>
+        
+        <div class="d-flex justify-content-between">
+          <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" class="btn btn-outline-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Update Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a href="/hackathons/<%= hackathon.ID %>/projects" class="text-decoration-none text-muted">
+        <i class="fas fa-arrow-left"></i> Projects
+      </a>
+      <h1><%= project.Name %></h1>
+    </div>
+    <div>
+      <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/edit" class="btn btn-secondary">
+        <i class="fas fa-edit"></i> Edit
+      </a>
+      <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" method="POST" class="d-inline">
+        <input type="hidden" name="_method" value="DELETE" />
+        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this project?')">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Description</h5>
+      <p class="card-text"><%= project.Description %></p>
+      
+      <hr />
+      
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Team Members</h6>
+          <p><i class="fas fa-users"></i> <%= project.TeamMembers %></p>
+        </div>
+        <div class="col-md-6">
+          <h6>Status</h6>
+          <p>
+            <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+              <%= project.Status %>
+            </span>
+          </p>
+        </div>
+      </div>
+      
+      <hr />
+      
+      <div class="row">
+        <%= if (len(project.RepositoryURL) > 0) { %>
+          <div class="col-md-6">
+            <h6>Repository</h6>
+            <a href="<%= project.RepositoryURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
+              <i class="fab fa-github"></i> View Repository
+            </a>
+          </div>
+        <% } %>
+        <%= if (len(project.DemoURL) > 0) { %>
+          <div class="col-md-6">
+            <h6>Demo</h6>
+            <a href="<%= project.DemoURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-globe"></i> View Demo
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="/hackathons/<%= hackathon.ID %>/projects" class="btn btn-outline-secondary">
+      <i class="fas fa-arrow-left"></i> Back to Projects
+    </a>
+  </div>
+</div>

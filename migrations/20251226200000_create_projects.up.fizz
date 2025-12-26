@@ -1,0 +1,14 @@
+create_table("projects") {
+  t.Column("id", "integer", {"primary": true})
+  t.Column("hackathon_id", "integer", {})
+  t.Column("name", "string", {"size": 255})
+  t.Column("description", "text", {})
+  t.Column("repository_url", "string", {"size": 255, "null": true})
+  t.Column("demo_url", "string", {"size": 255, "null": true})
+  t.Column("status", "string", {"default": "in_progress", "size": 50})
+  t.Column("team_members", "integer", {"default": 0})
+  t.Timestamps()
+  t.ForeignKey("hackathon_id", {"hackathons": ["id"]}, {"on_delete": "CASCADE"})
+}
+
+add_index("projects", "hackathon_id", {})
