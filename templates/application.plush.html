@@ -10,6 +10,35 @@
     <link rel="icon" href="<%= assetPath("images/favicon.ico") %>">
   </head>
   <body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark">
+        <div class="container">
+          <a class="navbar-brand" href="<%= rootPath() %>">Hackathon</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item"><a class="nav-link" href="/routes">Routes</a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <%= if (current_user) { %>
+                <li class="nav-item"><span class="nav-link"><%= current_user.Email %></span></li>
+                <li class="nav-item">
+                  <form method="POST" action="/signout" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button class="btn btn-sm btn-outline-light" type="submit">Sign Out</button>
+                  </form>
+                </li>
+              <% } else { %>
+                <li class="nav-item"><a class="nav-link" href="/signin">Sign In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/users/new">Create Account</a></li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
 
     <div class="container">
       <%= partial("flash.html") %>

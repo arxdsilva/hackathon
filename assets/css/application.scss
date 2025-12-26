@@ -87,3 +87,32 @@ a.btn-link { color: #8bd1ff; }
 	.hero { padding: 32px 24px; }
 	.hero h1 { font-size: 28px; }
 }
+
+/* Centered auth form */
+.auth-wrapper {
+	min-height: calc(100vh - 80px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.auth-wrapper .sign-form {
+	max-width: 420px;
+	width: 100%;
+	padding: 0 20px;
+}
+
+/* Site header */
+.site-header {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(10, 15, 28, 0.6);
+	backdrop-filter: blur(6px);
+}
+
+.site-header .navbar-brand {
+	font-weight: 600;
+	letter-spacing: -0.2px;
+}
+
+.site-header .nav-link { color: #c3cede; }
+.site-header .nav-link:hover { color: #ffffff; }
