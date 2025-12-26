@@ -49,12 +49,21 @@ func HackathonsShow(c buffalo.Context) error {
 		return err
 	}
 
-	// Count memberships for each project
+	// Count memberships for each project and check if current user is a member
 	memberCounts := make(map[int]int)
+	userMemberships := make(map[int]bool)
+	currentUser := c.Value("current_user").(models.User)
+
 	for _, project := range *projects {
 		count, err := tx.Where("project_id = ?", project.ID).Count(&models.ProjectMembership{})
 		if err == nil {
 			memberCounts[project.ID] = count
+		}
+
+		// Check if current user is a member of this project
+		memberCount, err := tx.Where("project_id = ? AND user_id = ?", project.ID, currentUser.ID).Count(&models.ProjectMembership{})
+		if err == nil {
+			userMemberships[project.ID] = memberCount > 0
 		}
 	}
 
@@ -72,6 +81,7 @@ func HackathonsShow(c buffalo.Context) error {
 	c.Set("projects", projects)
 	c.Set("pagination", q.Paginator)
 	c.Set("memberCounts", memberCounts)
+	c.Set("userMemberships", userMemberships)
 	c.Set("canCreateProject", canCreate)
 	return c.Render(http.StatusOK, r.HTML("hackathons/show.plush.html"))
 }
