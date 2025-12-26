@@ -144,3 +144,45 @@ a.btn-link { color: #8bd1ff; }
 .site-footer .nav-link { color: #c3cede; padding: 4px 8px; }
 .site-footer .nav-link:hover { color: #ffffff; }
 .site-footer .text-muted { color: #9fb0c6 !important; }
+
+/* Hackathon Cards */
+.card {
+	background: rgba(30, 41, 59, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: #e8edf5;
+}
+
+.card-body {
+	background: rgba(30, 41, 59, 0.6);
+}
+
+.card-title {
+	color: #ffffff;
+}
+
+.card-text {
+	color: #c3cede;
+}
+
+.form-control, .form-select {
+	background: rgba(15, 23, 36, 0.8);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: #e8edf5;
+}
+
+.form-control:focus, .form-select:focus {
+	background: rgba(15, 23, 36, 0.8);
+	border-color: #0072ff;
+	color: #e8edf5;
+	box-shadow: 0 0 0 0.2rem rgba(0, 114, 255, 0.25);
+}
+
+.form-control::placeholder {
+	color: #6b7f9d;
+}
+
+.form-label {
+	color: #c3cede;
+	font-weight: 500;
+}
+

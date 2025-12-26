@@ -1,0 +1,13 @@
+create_table("hackathons") {
+  t.Column("id", "integer", {"primary": true})
+  t.Column("title", "string", {"size": 255})
+  t.Column("description", "text", {})
+  t.Column("start_date", "timestamp", {})
+  t.Column("end_date", "timestamp", {})
+  t.Column("status", "string", {"default": "upcoming", "size": 50})
+  t.Column("owner_id", "uuid", {})
+  t.Timestamps()
+  t.ForeignKey("owner_id", {"users": ["id"]}, {"on_delete": "CASCADE"})
+}
+
+add_index("hackathons", "owner_id", {})

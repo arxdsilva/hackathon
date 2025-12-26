@@ -1,0 +1,65 @@
+<div class="container mt-4">
+  <h1>Create New Hackathon</h1>
+  
+  <div class="card">
+    <div class="card-body">
+      <%= if (errors) { %>
+        <div class="alert alert-danger">
+          <h5>There were errors with your submission:</h5>
+          <ul>
+            <%= for (key, messages) in errors { %>
+              <%= for (message) in messages { %>
+                <li><%= key %>: <%= message %></li>
+              <% } %>
+            <% } %>
+          </ul>
+        </div>
+      <% } %>
+
+      <form action="/hackathons" method="POST">
+        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+        
+        <div class="mb-3">
+          <label for="title" class="form-label">Title *</label>
+          <input type="text" class="form-control" id="title" name="Title" value="<%= hackathon.Title %>" required />
+        </div>
+        
+        <div class="mb-3">
+          <label for="description" class="form-label">Description *</label>
+          <textarea class="form-control" id="description" name="Description" rows="5" required><%= hackathon.Description %></textarea>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="start_date" class="form-label">Start Date *</label>
+              <input type="datetime-local" class="form-control" id="start_date" name="StartDate" 
+                     value="<%= if (hackathon.StartDate.Year() > 1) { %><%= hackathon.StartDate.Format("2006-01-02T15:04") %><% } %>" required />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="end_date" class="form-label">End Date *</label>
+              <input type="datetime-local" class="form-control" id="end_date" name="EndDate"
+                     value="<%= if (hackathon.EndDate.Year() > 1) { %><%= hackathon.EndDate.Format("2006-01-02T15:04") %><% } %>" required />
+            </div>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <select class="form-select" id="status" name="Status">
+            <option value="upcoming" <%= if (hackathon.Status == "upcoming" || hackathon.Status == "") { %>selected<% } %>>Upcoming</option>
+            <option value="active" <%= if (hackathon.Status == "active") { %>selected<% } %>>Active</option>
+            <option value="completed" <%= if (hackathon.Status == "completed") { %>selected<% } %>>Completed</option>
+          </select>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+          <a href="/hackathons" class="btn btn-outline-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Create Hackathon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

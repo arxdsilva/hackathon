@@ -1,11 +1,56 @@
-<div class="hero">
-  <h1>Hackathons</h1>
-  <p class="lead">Create and manage your events. (Protected)</p>
-</div>
-<div class="grid row">
-  <div class="col-md-12">
-    <div class="panel">
-      <p>Stub page — implement listing, creation, and management.</p>
-    </div>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Hackathons</h1>
+    <%= if (current_user.IsOwner()) { %>
+      <a href="/hackathons/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Create Hackathon
+      </a>
+    <% } %>
   </div>
+
+  <%= for (hackathon) in hackathons { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="card-title">
+          <a href="/hackathons/<%= hackathon.ID %>"><%= hackathon.Title %></a>
+        </h3>
+        <p class="card-text"><%= hackathon.Description %></p>
+        <div class="row">
+          <div class="col-md-6">
+            <small class="text-muted">
+              <i class="fas fa-calendar-start"></i> Start: <%= hackathon.StartDate.Format("Jan 2, 2006 3:04 PM") %>
+            </small>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">
+              <i class="fas fa-calendar-check"></i> End: <%= hackathon.EndDate.Format("Jan 2, 2006 3:04 PM") %>
+            </small>
+          </div>
+        </div>
+        <div class="mt-2">
+          <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>secondary<% } else { %>info<% } %>">
+            <%= hackathon.Status %>
+          </span>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <%= if (len(hackathons) == 0) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i> No hackathons yet.
+      <%= if (current_user.IsOwner()) { %>
+        <a href="/hackathons/new">Create the first one!</a>
+      <% } %>
+    </div>
+  <% } %>
+
+  <%= if (pagination.TotalPages > 1) { %>
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <%= paginator(pagination) %>
+      </ul>
+    </nav>
+  <% } %>
 </div>
+
