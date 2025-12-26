@@ -116,3 +116,12 @@ a.btn-link { color: #8bd1ff; }
 
 .site-header .nav-link { color: #c3cede; }
 .site-header .nav-link:hover { color: #ffffff; }
+
+.site-header .auth-controls {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.site-header .auth-controls .form-inline { display: inline-flex; align-items: center; }
