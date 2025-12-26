@@ -1,0 +1,16 @@
+<div class="hero">
+  <h1>My Profile</h1>
+  <p class="lead"><%= user.Email %></p>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel">
+      <h3>Account Information</h3>
+      <p><strong>Email:</strong> <%= user.Email %></p>
+      <p><strong>Name:</strong> <%= if (user.Name != "") { %><%= user.Name %><% } else { %><em>Not set</em><% } %></p>
+      <p><strong>Member Since:</strong> <%= user.CreatedAt.Format("Jan 2, 2006") %></p>
+      <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+    </div>
+  </div>
+</div>

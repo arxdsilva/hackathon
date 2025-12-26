@@ -1,0 +1,26 @@
+<div class="hero">
+  <h1>Edit Profile</h1>
+  <p class="lead">Update your account information</p>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel">
+      <%= form_for(user, {action: profilePath(), method: "PUT"}) { %>
+        <%= if (errors) { %>
+          <div class="alert alert-danger">
+            <%= for (error) in errors.All() { %>
+              <p><%= error %></p>
+            <% } %>
+          </div>
+        <% } %>
+
+        <%= f.InputTag("Email", {disabled: true}) %>
+        <%= f.InputTag("Name") %>
+
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+        <a href="/profile" class="btn btn-secondary">Cancel</a>
+      <% } %>
+    </div>
+  </div>
+</div>
