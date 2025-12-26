@@ -13,19 +13,19 @@ import (
 func ProjectsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
-	
+
 	if err := tx.Find(hackathon, c.Param("hackathon_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	projects := &models.Projects{}
 	if err := tx.Where("hackathon_id = ?", hackathon.ID).All(projects); err != nil {
 		return err
 	}
-	
+
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
-	
+
 	return c.Render(http.StatusOK, r.HTML("projects/index.plush.html"))
 }
 
@@ -33,16 +33,16 @@ func ProjectsIndex(c buffalo.Context) error {
 func ProjectsShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
-	
+
 	if err := tx.Find(project, c.Param("project_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	hackathon := &models.Hackathon{}
 	if err := tx.Find(hackathon, project.HackathonID); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", project)
 	return c.Render(http.StatusOK, r.HTML("projects/show.plush.html"))
@@ -52,11 +52,11 @@ func ProjectsShow(c buffalo.Context) error {
 func ProjectsNew(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
-	
+
 	if err := tx.Find(hackathon, c.Param("hackathon_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", &models.Project{})
 	return c.Render(http.StatusOK, r.HTML("projects/new.plush.html"))
@@ -68,13 +68,13 @@ func ProjectsCreate(c buffalo.Context) error {
 	if err := c.Bind(project); err != nil {
 		return err
 	}
-	
+
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(project)
 	if err != nil {
 		return err
 	}
-	
+
 	if verrs.HasAny() {
 		hackathon := &models.Hackathon{}
 		tx.Find(hackathon, project.HackathonID)
@@ -83,7 +83,7 @@ func ProjectsCreate(c buffalo.Context) error {
 		c.Set("errors", verrs)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("projects/new.plush.html"))
 	}
-	
+
 	c.Flash().Add("success", "Project created successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
 }
@@ -92,16 +92,16 @@ func ProjectsCreate(c buffalo.Context) error {
 func ProjectsEdit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
-	
+
 	if err := tx.Find(project, c.Param("project_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	hackathon := &models.Hackathon{}
 	if err := tx.Find(hackathon, project.HackathonID); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", project)
 	return c.Render(http.StatusOK, r.HTML("projects/edit.plush.html"))
@@ -111,20 +111,20 @@ func ProjectsEdit(c buffalo.Context) error {
 func ProjectsUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
-	
+
 	if err := tx.Find(project, c.Param("project_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	if err := c.Bind(project); err != nil {
 		return err
 	}
-	
+
 	verrs, err := tx.ValidateAndUpdate(project)
 	if err != nil {
 		return err
 	}
-	
+
 	if verrs.HasAny() {
 		hackathon := &models.Hackathon{}
 		tx.Find(hackathon, project.HackathonID)
@@ -133,7 +133,7 @@ func ProjectsUpdate(c buffalo.Context) error {
 		c.Set("errors", verrs)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("projects/edit.plush.html"))
 	}
-	
+
 	c.Flash().Add("success", "Project updated successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
 }
@@ -142,15 +142,15 @@ func ProjectsUpdate(c buffalo.Context) error {
 func ProjectsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
-	
+
 	if err := tx.Find(project, c.Param("project_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	
+
 	if err := tx.Destroy(project); err != nil {
 		return err
 	}
-	
+
 	c.Flash().Add("success", "Project deleted successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects", project.HackathonID)
 }

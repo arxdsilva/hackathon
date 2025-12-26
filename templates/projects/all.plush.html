@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1>All Projects</h1>
+      <p class="text-muted">Visible to all signed-in users</p>
+    </div>
+  </div>
+
+  <%= for (project) in projects { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="card-title">
+          <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>"><%= project.Name %></a>
+        </h3>
+        <p class="card-text"><%= project.Description %></p>
+        <div class="row">
+          <div class="col-md-6">
+            <small class="text-muted">
+              <i class="fas fa-flag"></i>
+              Hackathon: <%= if (hackathonsByID[project.HackathonID]) { %><%= hackathonsByID[project.HackathonID].Title %><% } else { %>#<%= project.HackathonID %><% } %>
+            </small>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">
+              <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                <%= project.Status %>
+              </span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <%= if (len(projects) == 0) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i> No projects created yet.
+    </div>
+  <% } %>
+</div>
