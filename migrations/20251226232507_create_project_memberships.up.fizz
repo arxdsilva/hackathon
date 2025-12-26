@@ -1,0 +1,11 @@
+create_table("project_memberships") {
+	t.Column("id", "integer", {"primary": true})
+	t.Column("project_id", "integer", {"null": false})
+	t.Column("user_id", "uuid", {"null": false})
+	t.Timestamps()
+
+	t.ForeignKey("project_id", {"projects": ["id"]}, {"on_delete": "CASCADE"})
+	t.ForeignKey("user_id", {"users": ["id"]}, {"on_delete": "CASCADE"})
+}
+
+add_index("project_memberships", ["project_id", "user_id"], {"unique": true})
