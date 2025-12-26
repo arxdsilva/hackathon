@@ -55,6 +55,14 @@
           </select>
         </div>
         
+        <div class="mb-3">
+          <label for="schedule" class="form-label">Schedule</label>
+          <textarea class="form-control" id="schedule" name="Schedule" rows="10" placeholder="Enter the schedule for this hackathon. You can use HTML for formatting."><%= hackathon.Schedule %></textarea>
+          <small class="form-text text-muted">
+            Add the schedule details for your hackathon. You can use HTML tags for formatting (e.g., &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;strong&gt;).
+          </small>
+        </div>
+        
         <div class="d-flex justify-content-between">
           <a href="/hackathons" class="btn btn-outline-secondary">Cancel</a>
           <button type="submit" class="btn btn-primary">Create Hackathon</button>

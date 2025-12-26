@@ -21,6 +21,7 @@ type Hackathon struct {
 	EndDate     time.Time `json:"end_date" db:"end_date"`
 	Status      string    `json:"status" db:"status"`
 	OwnerID     uuid.UUID `json:"owner_id" db:"owner_id"`
+	Schedule    string    `json:"schedule" db:"schedule"`
 }
 
 // String is not required by pop and may be deleted
