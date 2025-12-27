@@ -18,7 +18,7 @@ type File struct {
 	Filename    string     `json:"filename" db:"filename"`
 	Data        []byte     `json:"data" db:"data"`
 	ContentType string     `json:"content_type" db:"content_type"`
-	Size        int      `json:"size" db:"size"`
+	Size        int        `json:"size" db:"size"`
 	UserID      uuid.UUID  `json:"user_id" db:"user_id"`
 	User        *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
 	HackathonID *int       `json:"hackathon_id" db:"hackathon_id"`
