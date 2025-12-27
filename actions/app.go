@@ -71,7 +71,7 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 		app.GET("/about", AboutHandler)
-		app.GET("/hackathons", HackathonsIndex)
+		app.GET("/hackathons", RequireLogin(HackathonsIndex))
 		app.GET("/hackathons/new", RequireOwner(HackathonsNew))
 		app.POST("/hackathons", RequireOwner(HackathonsCreate))
 		app.GET("/hackathons/{hackathon_id}", HackathonsShow)

@@ -65,7 +65,7 @@ The server will start on `http://localhost:3000` by default.
 - `POST /hackathons` - Create a new hackathon
 - `GET /hackathons/{id}` - Get hackathon details
 - `PUT /hackathons/{id}` - Update a hackathon
-- `DELETE /hackathons/{id}` - Delete a hackathon
+- `DELETE /hackathons/{id}` - Delete a hackathon (owner only)
 
 ### Participants
 - `GET /hackathons/{id}/participants` - List participants
