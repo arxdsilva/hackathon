@@ -49,6 +49,14 @@ body {
 	margin-bottom: 12px;
 }
 
+/* Page content spacing */
+.container {
+	margin-top: 3rem;
+}
+
+.page-header + .container {
+	margin-top: 2rem;
+}
 .hero p.lead {
 	font-size: 18px;
 	color: #c3cede;
