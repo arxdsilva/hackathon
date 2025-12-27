@@ -23,7 +23,6 @@ type Project struct {
 	RepositoryURL string     `json:"repository_url" db:"repository_url"`
 	DemoURL       string     `json:"demo_url" db:"demo_url"`
 	Status        string     `json:"status" db:"status"`
-	TeamMembers   int        `json:"team_members" db:"team_members"`
 }
 
 // String is not required by pop and may be deleted

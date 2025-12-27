@@ -1,0 +1,1 @@
+add_column("projects", "team_members", "integer", {"default": 0})

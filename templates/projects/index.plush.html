@@ -24,19 +24,12 @@
           <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
         </h3>
         <p class="card-text"><%= project.Description %></p>
-        <div class="row">
-          <div class="col-md-6">
-            <small class="text-muted">
-              <i class="fas fa-users"></i> Team Members: <%= project.TeamMembers %>
-            </small>
-          </div>
-          <div class="col-md-6">
-            <small class="text-muted">
-              <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
-                <%= project.Status %>
-              </span>
-            </small>
-          </div>
+        <div class="text-end">
+          <small class="text-muted">
+            <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+              <%= project.Status %>
+            </span>
+          </small>
         </div>
       </div>
     </div>
