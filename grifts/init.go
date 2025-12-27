@@ -1,7 +1,7 @@
 package grifts
 
 import (
-	"hackathon/actions"
+	"github.com/arxdsilva/hackathon/actions"
 
 	"github.com/gobuffalo/buffalo"
 )

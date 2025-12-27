@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"hackathon/actions"
+	"github.com/arxdsilva/hackathon/actions"
 )
 
 // main is the starting point for your Buffalo application.
