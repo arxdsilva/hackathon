@@ -86,7 +86,6 @@ func App() *buffalo.App {
 		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsUpdate)
 		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/join", ProjectMembershipsCreate)
 		app.DELETE("/hackathons/{hackathon_id}/projects/{project_id}/leave", ProjectMembershipsDestroy)
-		app.GET("/schedule", ScheduleIndex)
 		app.GET("/routes", RoutesHandler)
 		app.GET("/profile", ProfileShow)
 		app.GET("/profile/edit", ProfileEdit)
