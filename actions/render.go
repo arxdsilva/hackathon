@@ -1,8 +1,8 @@
 package actions
 
 import (
-	"hackathon/public"
-	"hackathon/templates"
+	"github.com/arxdsilva/hackathon/public"
+	"github.com/arxdsilva/hackathon/templates"
 
 	"github.com/gobuffalo/buffalo/render"
 )

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"hackathon/models"
+	"github.com/arxdsilva/hackathon/models"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"

@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"sync"
 
-	"hackathon/locales"
-	"hackathon/models"
-	"hackathon/public"
+	"github.com/arxdsilva/hackathon/locales"
+	"github.com/arxdsilva/hackathon/models"
+	"github.com/arxdsilva/hackathon/public"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
