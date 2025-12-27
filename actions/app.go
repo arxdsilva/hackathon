@@ -78,7 +78,6 @@ func App() *buffalo.App {
 		app.GET("/hackathons/{hackathon_id}/edit", RequireOwner(HackathonsEdit))
 		app.PUT("/hackathons/{hackathon_id}", RequireOwner(HackathonsUpdate))
 		app.DELETE("/hackathons/{hackathon_id}", RequireOwner(HackathonsDestroy))
-		app.GET("/hackathons/{hackathon_id}/projects", ProjectsIndex)
 		app.GET("/hackathons/{hackathon_id}/projects/new", ProjectsNew)
 		app.POST("/hackathons/{hackathon_id}/projects", ProjectsCreate)
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsShow)

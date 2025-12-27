@@ -9,36 +9,6 @@ import (
 	"github.com/gobuffalo/pop/v6"
 )
 
-// ProjectsIndex lists all projects for a hackathon
-func ProjectsIndex(c buffalo.Context) error {
-	tx := c.Value("tx").(*pop.Connection)
-	hackathon := &models.Hackathon{}
-
-	if err := tx.Find(hackathon, c.Param("hackathon_id")); err != nil {
-		return c.Error(http.StatusNotFound, err)
-	}
-
-	projects := &models.Projects{}
-	if err := tx.Where("hackathon_id = ?", hackathon.ID).All(projects); err != nil {
-		return err
-	}
-
-	c.Set("hackathon", hackathon)
-	c.Set("projects", projects)
-
-	// Compute create permission: user can create only if they have no project in this hackathon
-	canCreate := true
-	if cu, ok := c.Value("current_user").(models.User); ok {
-		count, err := tx.Where("hackathon_id = ? AND user_id = ?", hackathon.ID, cu.ID).Count(&models.Project{})
-		if err == nil {
-			canCreate = count == 0
-		}
-	}
-	c.Set("canCreateProject", canCreate)
-
-	return c.Render(http.StatusOK, r.HTML("projects/index.plush.html"))
-}
-
 // ProjectsShow displays a single project
 func ProjectsShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
