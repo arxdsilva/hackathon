@@ -6,8 +6,8 @@
       <div class="form-group">
         <label for="role">Role</label>
         <select name="role" id="role" class="form-control">
-          <option value="hacker" <%= if user.Role == "hacker" { %>selected<% } %>>Hacker</option>
-          <option value="owner" <%= if user.Role == "owner" { %>selected<% } %>>Owner</option>
+          <option value="hacker" <%= if (user.Role == "hacker") { %>selected<% } %>>Hacker</option>
+          <option value="owner" <%= if (user.Role == "owner") { %>selected<% } %>>Owner</option>
         </select>
       </div>
       <button class="btn btn-primary">Update User</button>
