@@ -15,48 +15,85 @@
     <% } %>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <%= if (len(project.ImageData) > 0) { %>
-        <div class="text-center mb-3">
-          <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-fluid rounded" style="max-height: 300px;" />
-        </div>
-      <% } %>
-      <h5 class="card-title">Description</h5>
-      <p class="card-text"><%= project.Description %></p>
-      
-      <hr />
-      
-      <div class="row">
-        <div class="col-md-12">
-          <h6>Status</h6>
-          <p>
-            <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
-              <%= project.Status %>
-            </span>
-          </p>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Description</h5>
+          <p class="card-text"><%= project.Description %></p>
+          
+          <hr />
+          
+          <div class="row">
+            <div class="col-md-12">
+              <h6>Status</h6>
+              <p>
+                <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                  <%= project.Status %>
+                </span>
+              </p>
+            </div>
+          </div>
+          
+          <hr />
+          
+          <div class="row">
+            <%= if (len(project.RepositoryURL) > 0) { %>
+              <div class="col-md-6">
+                <h6>Repository</h6>
+                <a href="<%= project.RepositoryURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                  <i class="fab fa-github"></i> View Repository
+                </a>
+              </div>
+            <% } %>
+            <%= if (len(project.DemoURL) > 0) { %>
+              <div class="col-md-6">
+                <h6>Demo</h6>
+                <a href="<%= project.DemoURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-globe"></i> View Demo
+                </a>
+              </div>
+            <% } %>
+          </div>
         </div>
       </div>
-      
-      <hr />
-      
-      <div class="row">
-        <%= if (len(project.RepositoryURL) > 0) { %>
-          <div class="col-md-6">
-            <h6>Repository</h6>
-            <a href="<%= project.RepositoryURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
-              <i class="fab fa-github"></i> View Repository
-            </a>
-          </div>
-        <% } %>
-        <%= if (len(project.DemoURL) > 0) { %>
-          <div class="col-md-6">
-            <h6>Demo</h6>
-            <a href="<%= project.DemoURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
-              <i class="fas fa-globe"></i> View Demo
-            </a>
-          </div>
-        <% } %>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Project Profile</h5>
+        </div>
+        <div class="card-body text-center">
+          <%= if (len(project.ImageData) > 0) { %>
+            <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-fluid rounded mb-3" style="max-height: 200px;" />
+          <% } else { %>
+            <div class="mb-3 text-center">
+              <div class="border border-danger rounded p-3" style="cursor: pointer;" onclick="document.getElementById('image-upload').click();">
+                <i class="fas fa-image fa-3x text-muted"></i>
+                <p class="text-muted mb-2">No profile image</p>
+                <%= if (isProjectOwner) { %>
+                  <small class="text-primary">Click to upload</small>
+                <% } %>
+              </div>
+            </div>
+          <% } %>
+          
+          <%= if (isProjectOwner) { %>
+            <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" method="POST" enctype="multipart/form-data" class="mb-0">
+              <input type="hidden" name="_method" value="PUT" />
+              <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+              
+              <div class="mb-2">
+                <input type="file" class="d-none" id="image-upload" name="image" accept="image/*" onchange="this.form.submit();" />
+              </div>
+              
+              <button type="submit" class="btn btn-sm btn-primary">
+                <%= if (len(project.ImageData) > 0) { %>Update<% } else { %>Upload<% } %> Image
+              </button>
+            </form>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
@@ -107,6 +144,29 @@
       </div>
     </div>
   <% } %>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h5>Upload File</h5>
+    </div>
+    <div class="card-body">
+      <form action="/files" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="hackathon_id" value="<%= hackathon.ID %>" />
+        <input type="hidden" name="project_id" value="<%= project.ID %>" />
+        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+        
+        <div class="mb-3">
+          <label for="file" class="form-label">Select File</label>
+          <input type="file" class="form-control" id="file" name="file" required />
+          <small class="form-text text-muted">Max file size: 10MB</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-upload"></i> Upload File
+        </button>
+      </form>
+    </div>
+  </div>
 
   <div class="mt-3">
     <a href="/hackathons/<%= hackathon.ID %>" class="btn btn-outline-secondary">

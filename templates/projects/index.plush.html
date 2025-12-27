@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a href="/hackathons/<%= hackathon.ID %>" class="text-decoration-none text-muted">
+        <i class="fas fa-arrow-left"></i> <%= hackathon.Title %>
+      </a>
+      <h1>Projects</h1>
+    </div>
+    <%= if (current_user.ID.String() != "") { %>
+      <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Create Project
+      </a>
+    <% } %>
+  </div>
+
+  <%= if (len(projects) == 0) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i> No projects yet.
+      <a href="/hackathons/<%= hackathon.ID %>/projects/new">Create the first one!</a>
+    </div>
+  <% } else { %>
+    <div class="row">
+      <%= for (project) in projects { %>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <%= if (len(project.ImageData) > 0) { %>
+                <div class="text-center mb-3">
+                  <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-fluid rounded" style="max-height: 150px;" />
+                </div>
+              <% } %>
+              <h5 class="card-title">
+                <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
+              </h5>
+              <p class="card-text"><%= project.Description %></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                  <%= project.Status %>
+                </span>
+                <small class="text-muted">
+                  <%= memberCounts[project.ID] %> members
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>

@@ -30,6 +30,96 @@ func ProjectsImage(c buffalo.Context) error {
 	return nil
 }
 
+// ProjectsUpdateImage updates only the project image
+func ProjectsUpdateImage(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	project := &models.Project{}
+
+	if err := tx.Find(project, c.Param("project_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Only the project owner can update
+	currentUser := c.Value("current_user").(models.User)
+	if project.UserID == nil || *project.UserID != currentUser.ID {
+		c.Flash().Add("danger", "You can only edit your own projects.")
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	}
+
+	// Handle image upload
+	if uploadedImage, imageHeader, err := c.Request().FormFile("image"); err == nil {
+		defer uploadedImage.Close()
+
+		// Validate file size (max 5MB)
+		if imageHeader.Size > 5*1024*1024 {
+			c.Flash().Add("danger", "Image too large (max 5MB)")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		}
+
+		// Validate content type
+		contentType := imageHeader.Header.Get("Content-Type")
+		if contentType == "" || !strings.HasPrefix(contentType, "image/") {
+			c.Flash().Add("danger", "Invalid image file")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		}
+
+		// Read image data
+		imageData, err := io.ReadAll(uploadedImage)
+		if err != nil {
+			c.Flash().Add("danger", "Failed to read image")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		}
+
+		project.ImageData = imageData
+		project.ImageContentType = &contentType
+
+		verrs, err := tx.ValidateAndUpdate(project)
+		if err != nil {
+			return err
+		}
+
+		if verrs.HasAny() {
+			c.Flash().Add("danger", "Failed to update image")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		}
+
+		c.Flash().Add("success", "Project image updated successfully!")
+	} else {
+		c.Flash().Add("danger", "No image selected")
+	}
+
+	return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+}
+
+// ProjectsIndex lists all projects for a hackathon
+func ProjectsIndex(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	hackathon := &models.Hackathon{}
+
+	if err := tx.Find(hackathon, c.Param("hackathon_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	projects := &models.Projects{}
+	if err := tx.Where("hackathon_id = ?", hackathon.ID).Eager("User").All(projects); err != nil {
+		return err
+	}
+
+	// Count memberships for each project
+	memberCounts := make(map[int]int)
+	for _, project := range *projects {
+		count, err := tx.Where("project_id = ?", project.ID).Count(&models.ProjectMembership{})
+		if err == nil {
+			memberCounts[project.ID] = count
+		}
+	}
+
+	c.Set("hackathon", hackathon)
+	c.Set("projects", projects)
+	c.Set("memberCounts", memberCounts)
+	return c.Render(http.StatusOK, r.HTML("projects/index.plush.html"))
+}
+
 // ProjectsShow displays a single project
 func ProjectsShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
