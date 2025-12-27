@@ -37,7 +37,7 @@ services:
       - .:/app
       - /app/bin
     working_dir: /app
-    command: /bin/app
+    command: sh -c "/bin/app migrate && /bin/app"
 
 volumes:
   postgres_data:
