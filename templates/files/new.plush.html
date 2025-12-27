@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h1>Upload File</h1>
+
+      <%= form_for(file, {action: filesPath(), method: "POST", enctype: "multipart/form-data"}) { %>
+        <div class="card">
+          <div class="card-header">
+            <h5>File Information</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="file" class="form-label">Select File</label>
+              <input type="file" name="file" id="file" class="form-control" required>
+              <div class="form-text">Maximum file size: 10MB</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="hackathon_id" class="form-label">Associate with Hackathon (optional)</label>
+              <select name="hackathon_id" id="hackathon_id" class="form-control">
+                <option value="">None</option>
+                <%= for (hackathon) in hackathons { %>
+                  <option value="<%= hackathon.ID %>"><%= hackathon.Title %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="project_id" class="form-label">Associate with Project (optional)</label>
+              <select name="project_id" id="project_id" class="form-control">
+                <option value="">None</option>
+                <%= for (project) in projects { %>
+                  <option value="<%= project.ID %>"><%= project.Name %></option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-upload"></i> Upload File
+            </button>
+            <a href="/files" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>

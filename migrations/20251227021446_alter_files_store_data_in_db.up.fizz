@@ -1,0 +1,2 @@
+sql("ALTER TABLE files DROP COLUMN filepath;")
+sql("ALTER TABLE files ADD COLUMN data bytea;")

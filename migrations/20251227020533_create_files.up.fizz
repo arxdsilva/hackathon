@@ -1,0 +1,18 @@
+create_table("files") {
+  t.Column("id", "integer", {"primary": true})
+  t.Column("filename", "string", {"size": 255})
+  t.Column("filepath", "string", {"size": 500})
+  t.Column("content_type", "string", {"size": 100})
+  t.Column("size", "bigint", {})
+  t.Column("user_id", "uuid", {})
+  t.Column("hackathon_id", "integer", {"null": true})
+  t.Column("project_id", "integer", {"null": true})
+  t.Timestamps()
+  t.ForeignKey("user_id", {"users": ["id"]}, {"on_delete": "CASCADE"})
+  t.ForeignKey("hackathon_id", {"hackathons": ["id"]}, {"on_delete": "CASCADE", "null": true})
+  t.ForeignKey("project_id", {"projects": ["id"]}, {"on_delete": "CASCADE", "null": true})
+}
+
+add_index("files", "user_id", {})
+add_index("files", "hackathon_id", {})
+add_index("files", "project_id", {})
