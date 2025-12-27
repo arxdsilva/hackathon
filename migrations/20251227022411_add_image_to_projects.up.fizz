@@ -1,0 +1,2 @@
+add_column("projects", "image_data", "bytea", {"null": true})
+add_column("projects", "image_content_type", "string", {"null": true})

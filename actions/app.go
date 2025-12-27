@@ -82,6 +82,7 @@ func App() *buffalo.App {
 		app.GET("/hackathons/{hackathon_id}/projects/new", ProjectsNew)
 		app.POST("/hackathons/{hackathon_id}/projects", ProjectsCreate)
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsShow)
+		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/image", ProjectsImage)
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/edit", ProjectsEdit)
 		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsUpdate)
 		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/join", ProjectMembershipsCreate)

@@ -21,7 +21,7 @@
         </div>
       <% } %>
 
-      <form action="/hackathons/<%= hackathon.ID %>/projects" method="POST">
+      <form action="/hackathons/<%= hackathon.ID %>/projects" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="HackathonID" value="<%= hackathon.ID %>" />
         <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
         
@@ -52,6 +52,12 @@
         <div class="mb-3">
           <label for="demo_url" class="form-label">Demo URL</label>
           <input type="url" class="form-control" id="demo_url" name="DemoURL" value="<%= project.DemoURL %>" placeholder="https://..." />
+        </div>
+        
+        <div class="mb-3">
+          <label for="image" class="form-label">Project Image</label>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+          <small class="form-text text-muted">Upload a main image for your project (optional, max 5MB)</small>
         </div>
         
         <div class="d-flex justify-content-between">

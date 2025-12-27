@@ -1,13 +1,34 @@
 package actions
 
 import (
+	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"hackathon/models"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
 )
+
+// ProjectsImage serves the project image
+func ProjectsImage(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	project := &models.Project{}
+
+	if err := tx.Find(project, c.Param("project_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	if len(project.ImageData) == 0 || project.ImageContentType == nil {
+		return c.Error(http.StatusNotFound, fmt.Errorf("no image"))
+	}
+
+	c.Response().Header().Set("Content-Type", *project.ImageContentType)
+	c.Response().Write(project.ImageData)
+	return nil
+}
 
 // ProjectsShow displays a single project
 func ProjectsShow(c buffalo.Context) error {
@@ -29,9 +50,16 @@ func ProjectsShow(c buffalo.Context) error {
 		isOwner = *project.UserID == cu.ID
 	}
 
+	// Load files for this project
+	files := &models.Files{}
+	if err := tx.Where("project_id = ?", project.ID).All(files); err != nil {
+		return err
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", project)
 	c.Set("isProjectOwner", isOwner)
+	c.Set("files", files)
 	return c.Render(http.StatusOK, r.HTML("projects/show.plush.html"))
 }
 
@@ -59,6 +87,34 @@ func ProjectsCreate(c buffalo.Context) error {
 	// Set the user_id to current user
 	currentUser := c.Value("current_user").(models.User)
 	project.UserID = &currentUser.ID
+
+	// Handle image upload
+	if uploadedImage, imageHeader, err := c.Request().FormFile("image"); err == nil {
+		defer uploadedImage.Close()
+
+		// Validate file size (max 5MB)
+		if imageHeader.Size > 5*1024*1024 {
+			c.Flash().Add("danger", "Image too large (max 5MB)")
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/new", c.Param("hackathon_id"))
+		}
+
+		// Validate content type
+		contentType := imageHeader.Header.Get("Content-Type")
+		if contentType == "" || !strings.HasPrefix(contentType, "image/") {
+			c.Flash().Add("danger", "Invalid image file")
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/new", c.Param("hackathon_id"))
+		}
+
+		// Read image data
+		imageData, err := io.ReadAll(uploadedImage)
+		if err != nil {
+			c.Flash().Add("danger", "Failed to read image")
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/new", c.Param("hackathon_id"))
+		}
+
+		project.ImageData = imageData
+		project.ImageContentType = &contentType
+	}
 
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(project)
@@ -128,6 +184,34 @@ func ProjectsUpdate(c buffalo.Context) error {
 	if project.UserID == nil || *project.UserID != currentUser.ID {
 		c.Flash().Add("danger", "You can only edit your own projects.")
 		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	}
+
+	// Handle image upload
+	if uploadedImage, imageHeader, err := c.Request().FormFile("image"); err == nil {
+		defer uploadedImage.Close()
+
+		// Validate file size (max 5MB)
+		if imageHeader.Size > 5*1024*1024 {
+			c.Flash().Add("danger", "Image too large (max 5MB)")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d/edit", project.HackathonID, project.ID)
+		}
+
+		// Validate content type
+		contentType := imageHeader.Header.Get("Content-Type")
+		if contentType == "" || !strings.HasPrefix(contentType, "image/") {
+			c.Flash().Add("danger", "Invalid image file")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d/edit", project.HackathonID, project.ID)
+		}
+
+		// Read image data
+		imageData, err := io.ReadAll(uploadedImage)
+		if err != nil {
+			c.Flash().Add("danger", "Failed to read image")
+			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d/edit", project.HackathonID, project.ID)
+		}
+
+		project.ImageData = imageData
+		project.ImageContentType = &contentType
 	}
 
 	if err := c.Bind(project); err != nil {

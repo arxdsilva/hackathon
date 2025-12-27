@@ -21,7 +21,7 @@
         </div>
       <% } %>
 
-      <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" method="POST">
+      <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="PUT" />
         <input type="hidden" name="HackathonID" value="<%= hackathon.ID %>" />
         <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
@@ -53,6 +53,17 @@
         <div class="mb-3">
           <label for="demo_url" class="form-label">Demo URL</label>
           <input type="url" class="form-control" id="demo_url" name="DemoURL" value="<%= project.DemoURL %>" placeholder="https://..." />
+        </div>
+        
+        <div class="mb-3">
+          <label for="image" class="form-label">Project Image</label>
+          <%= if (len(project.ImageData) > 0) { %>
+            <div class="mb-2">
+              <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="Current project image" style="max-width: 200px; max-height: 200px;" class="img-thumbnail" />
+            </div>
+          <% } %>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+          <small class="form-text text-muted">Upload a new main image for your project (optional, max 5MB). Leave empty to keep current image.</small>
         </div>
         
         <div class="d-flex justify-content-between">

@@ -1,0 +1,2 @@
+drop_column("projects", "image_data")
+drop_column("projects", "image_content_type")
