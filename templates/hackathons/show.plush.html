@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><%= hackathon.Title %></h1>
-    <%= if (current_user.ID == hackathon.OwnerID) { %>
+    <%= if (current_user.ID.String() == hackathon.OwnerID.String()) { %>
       <div>
         <a href="/hackathons/<%= hackathon.ID %>/edit" class="btn btn-secondary">
           <i class="fas fa-edit"></i> Edit

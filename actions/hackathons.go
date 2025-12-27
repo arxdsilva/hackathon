@@ -3,6 +3,7 @@ package actions
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"hackathon/models"
 
@@ -95,8 +96,23 @@ func HackathonsNew(c buffalo.Context) error {
 // HackathonsCreate adds a new hackathon to the DB (owner-only)
 func HackathonsCreate(c buffalo.Context) error {
 	hackathon := &models.Hackathon{}
-	if err := c.Bind(hackathon); err != nil {
-		return err
+
+	// Manually parse form fields to avoid binding ID
+	hackathon.Title = c.Params().Get("Title")
+	hackathon.Description = c.Params().Get("Description")
+	hackathon.Status = c.Params().Get("Status")
+	hackathon.Schedule = c.Params().Get("Schedule")
+
+	// Parse dates
+	if startStr := c.Params().Get("StartDate"); startStr != "" {
+		if start, err := time.Parse("2006-01-02T15:04", startStr); err == nil {
+			hackathon.StartDate = start
+		}
+	}
+	if endStr := c.Params().Get("EndDate"); endStr != "" {
+		if end, err := time.Parse("2006-01-02T15:04", endStr); err == nil {
+			hackathon.EndDate = end
+		}
 	}
 
 	// Set the owner to current user
@@ -141,8 +157,22 @@ func HackathonsUpdate(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	if err := c.Bind(hackathon); err != nil {
-		return err
+	// Manually parse form fields
+	hackathon.Title = c.Params().Get("Title")
+	hackathon.Description = c.Params().Get("Description")
+	hackathon.Status = c.Params().Get("Status")
+	hackathon.Schedule = c.Params().Get("Schedule")
+
+	// Parse dates
+	if startStr := c.Params().Get("StartDate"); startStr != "" {
+		if start, err := time.Parse("2006-01-02T15:04", startStr); err == nil {
+			hackathon.StartDate = start
+		}
+	}
+	if endStr := c.Params().Get("EndDate"); endStr != "" {
+		if end, err := time.Parse("2006-01-02T15:04", endStr); err == nil {
+			hackathon.EndDate = end
+		}
 	}
 
 	verrs, err := tx.ValidateAndUpdate(hackathon)
