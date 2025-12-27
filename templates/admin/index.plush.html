@@ -58,7 +58,7 @@
       <div class="card-body">
         <%= for (user) in recentUsers { %>
           <div class="d-flex align-items-center mb-3">
-            <div class="bg-<%= if (user.Role == "owner") { %>primary<% } else { %>secondary<% } %> text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+            <div class="bg-<%= if (user.Role == "owner") { %>primary<% } else { %>light<% } %> text-<%= if (user.Role == "owner") { %>white<% } else { %>dark<% } %> rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
               <i class="fas fa-<%= if (user.Role == "owner") { %>crown<% } else { %>user<% } %>"></i>
             </div>
             <div class="flex-grow-1">
@@ -93,7 +93,7 @@
         <%= for (hackathon) in recentHackathons { %>
           <div class="mb-3">
             <h6 class="mb-1">
-              <a href="/hackathons/<%= hackathon.ID %>" class="text-decoration-none text-white">
+              <a href="/hackathons/<%= hackathon.ID %>" class="text-decoration-none text-dark">
                 <%= hackathon.Title %>
               </a>
             </h6>
@@ -131,7 +131,7 @@
         <%= for (project) in recentProjects { %>
           <div class="mb-3">
             <h6 class="mb-1">
-              <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-white">
+              <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-dark">
                 <%= project.Name %>
               </a>
             </h6>

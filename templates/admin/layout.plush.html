@@ -9,57 +9,179 @@
     <meta name="csrf-token" content="<%= authenticity_token %>" />
     <link rel="icon" href="<%= assetPath("images/favicon.ico") %>">
     <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+
       .admin-sidebar {
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        background: #ffffff;
+        border-right: 1px solid #e9ecef;
         min-height: calc(100vh - 56px);
         position: fixed;
         width: 250px;
         left: 0;
         top: 56px;
         z-index: 1000;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.04);
       }
+
       .admin-sidebar .nav-link {
-        color: #e8edf5;
+        color: #495057;
         padding: 12px 20px;
         border-radius: 8px;
         margin: 4px 12px;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        font-weight: 500;
       }
+
       .admin-sidebar .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #00d4ff;
+        background: #f8f9fa;
+        color: #007bff;
         text-decoration: none;
       }
+
       .admin-sidebar .nav-link.active {
-        background: linear-gradient(135deg, #00d4ff, #0072ff);
+        background: #007bff;
         color: white;
+        box-shadow: 0 2px 4px rgba(0,123,255,0.2);
       }
+
       .admin-sidebar .nav-link i {
         width: 20px;
         margin-right: 10px;
+        opacity: 0.8;
       }
+
+      .admin-sidebar .nav-link.active i {
+        opacity: 1;
+      }
+
       .admin-main {
         margin-left: 250px;
         margin-top: 56px;
-        padding: 20px;
+        padding: 30px;
+        background-color: #f8f9fa;
+        min-height: calc(100vh - 56px);
       }
+
       .admin-header {
-        background: rgba(255, 255, 255, 0.05);
+        background: #ffffff;
         border-radius: 12px;
-        padding: 20px;
+        padding: 24px;
         margin-bottom: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
       }
+
       .admin-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #ffffff;
+        border: 1px solid #e9ecef;
         border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: box-shadow 0.2s ease;
       }
+
+      .admin-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      }
+
       .admin-card .card-header {
-        background: rgba(255, 255, 255, 0.08);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
         border-radius: 12px 12px 0 0;
+        padding: 16px 20px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .admin-card .card-body {
+        padding: 20px;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 8px 16px;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .badge {
+        font-size: 0.75em;
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+
+      .table {
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+        font-weight: 600;
+        color: #495057;
+        padding: 12px 16px;
+      }
+
+      .table tbody td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+
+      .form-control {
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 8px 12px;
+      }
+
+      .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+      }
+
+      .alert {
+        border-radius: 8px;
+        border: none;
+      }
+
+      .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+
+      .text-primary {
+        color: #007bff !important;
+      }
+
+      .text-success {
+        color: #28a745 !important;
+      }
+
+      .text-info {
+        color: #17a2b8 !important;
+      }
+
+      .text-warning {
+        color: #ffc107 !important;
+      }
+
+      .text-danger {
+        color: #dc3545 !important;
       }
     </style>
   </head>
@@ -117,8 +239,8 @@
     <!-- Admin Sidebar -->
     <nav class="admin-sidebar">
       <div class="p-4">
-        <h4 class="text-white mb-4">
-          <i class="fas fa-crown text-warning me-2"></i>
+        <h4 class="text-dark mb-4 fw-bold">
+          <i class="fas fa-crown text-primary me-2"></i>
           Admin Panel
         </h4>
         <ul class="nav flex-column">
@@ -179,7 +301,7 @@
       <div class="admin-header">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h1 class="mb-1 text-white">
+            <h1 class="mb-1 text-dark fw-bold">
               <%= if (defined("pageTitle")) { %>
                 <%= pageTitle %>
               <% } else { %>
@@ -189,7 +311,7 @@
             <p class="text-muted mb-0">Manage your hackathon platform</p>
           </div>
           <div>
-            <span class="badge bg-warning text-dark">
+            <span class="badge bg-primary">
               <i class="fas fa-crown me-1"></i>
               Owner Access
             </span>
