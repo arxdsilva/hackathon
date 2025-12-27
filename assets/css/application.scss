@@ -35,7 +35,7 @@ body {
 
 /* Reusable components */
 .hero {
-	margin-top: 48px;
+	margin-top: 24px;
 	padding: 48px 40px;
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	border-radius: 16px;
@@ -50,10 +50,6 @@ body {
 }
 
 /* Page content spacing */
-.container {
-	margin-top: 3rem;
-}
-
 .page-header + .container {
 	margin-top: 2rem;
 }

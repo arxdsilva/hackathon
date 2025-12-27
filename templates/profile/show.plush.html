@@ -1,23 +1,97 @@
-<div class="hero">
-  <h1>My Profile</h1>
-  <p class="lead"><%= user.Email %> 
-    <%= if (user.Role == "owner") { %>
-      <span class="badge badge-primary">Owner</span>
-    <% } else { %>
-      <span class="badge badge-secondary">Hacker</span>
-    <% } %>
-  </p>
-</div>
+<div class="container mt-4">
+  <div class="hero">
+    <h1>My Profile</h1>
+    <p class="lead"><%= user.Email %> 
+      <%= if (user.Role == "owner") { %>
+        <span class="badge badge-primary">Owner</span>
+      <% } else { %>
+        <span class="badge badge-secondary">Hacker</span>
+      <% } %>
+    </p>
+  </div>
 
-<div class="row">
-  <div class="col-md-6">
-    <div class="panel">
-      <h3>Account Information</h3>
-      <p><strong>Email:</strong> <%= user.Email %></p>
-      <p><strong>Name:</strong> <%= if (user.Name != "") { %><%= user.Name %><% } else { %><em>Not set</em><% } %></p>
-      <p><strong>Role:</strong> <%= if (user.Role == "owner") { %>Owner<% } else { %>Hacker (Participant)<% } %></p>
-      <p><strong>Member Since:</strong> <%= user.CreatedAt.Format("Jan 2, 2006") %></p>
-      <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3>Account Information</h3>
+        </div>
+        <div class="card-body">
+          <p><strong>Email:</strong> <%= user.Email %></p>
+          <p><strong>Name:</strong> <%= if (user.Name != "") { %><%= user.Name %><% } else { %><em>Not set</em><% } %></p>
+          <p><strong>Role:</strong> <%= if (user.Role == "owner") { %>Owner<% } else { %>Hacker (Participant)<% } %></p>
+          <p><strong>Member Since:</strong> <%= user.CreatedAt.Format("Jan 2, 2006") %></p>
+          <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3>My Hackathons</h3>
+        </div>
+        <div class="card-body">
+          <%= if (len(ownedHackathons) > 0) { %>
+            <%= for (hackathon) in ownedHackathons { %>
+              <div class="mb-3 p-3 border rounded">
+                <h5><a href="/hackathons/<%= hackathon.ID %>"><%= hackathon.Title %></a></h5>
+                <p class="small text-muted"><%= hackathon.Description %></p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else { %>warning<% } %>">
+                    <%= hackathon.Status %>
+                  </span>
+                  <small class="text-muted">
+                    <%= hackathon.StartDate.Format("Jan 2") %> - <%= hackathon.EndDate.Format("Jan 2, 2006") %>
+                  </small>
+                </div>
+              </div>
+            <% } %>
+          <% } else { %>
+            <p class="text-muted">No hackathons created yet.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3>My Projects</h3>
+        </div>
+        <div class="card-body">
+          <%= if (len(projects) > 0) { %>
+            <div class="row">
+              <%= for (project) in projects { %>
+                <div class="col-md-6 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>"><%= project.Name %></a>
+                      </h6>
+                      <p class="card-text small"><%= project.Description %></p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                          <%= project.Status %>
+                        </span>
+                        <%= if (project.RepositoryURL != "") { %>
+                          <a href="<%= project.RepositoryURL %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="fab fa-github"></i>
+                          </a>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% } else { %>
+            <p class="text-muted">No projects yet.</p>
+          <% } %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
