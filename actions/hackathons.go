@@ -78,12 +78,53 @@ func HackathonsShow(c buffalo.Context) error {
 		}
 	}
 
+	// Calculate statistics for the template
+	totalParticipants := 0
+	totalTeams := 0
+	durationDays := 1
+
+	// Count total participants across all projects
+	for _, project := range *projects {
+		if count, exists := memberCounts[project.ID]; exists {
+			totalParticipants += count
+		}
+		if project.UserID != nil {
+			totalTeams++
+		}
+	}
+
+	// Calculate duration in days
+	if hackathon.EndDate.After(hackathon.StartDate) {
+		duration := hackathon.EndDate.Sub(hackathon.StartDate)
+		durationDays = int(duration.Hours() / 24)
+		if durationDays < 1 {
+			durationDays = 1
+		}
+	}
+
+	// Calculate progress percentage
+	totalProjects := len(*projects)
+	activeProjects := 0
+	for _, project := range *projects {
+		if project.Status == "active" {
+			activeProjects++
+		}
+	}
+	progressPercentage := 0
+	if totalProjects > 0 {
+		progressPercentage = (activeProjects * 100) / totalProjects
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
 	c.Set("pagination", q.Paginator)
 	c.Set("memberCounts", memberCounts)
 	c.Set("userMemberships", userMemberships)
 	c.Set("canCreateProject", canCreate)
+	c.Set("totalParticipants", totalParticipants)
+	c.Set("totalTeams", totalTeams)
+	c.Set("durationDays", durationDays)
+	c.Set("progressPercentage", progressPercentage)
 	return c.Render(http.StatusOK, r.HTML("hackathons/show.plush.html"))
 }
 

@@ -1,53 +1,213 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1><%= hackathon.Title %></h1>
-    <%= if (current_user.ID.String() == hackathon.OwnerID.String()) { %>
-      <div>
-        <a href="/hackathons/<%= hackathon.ID %>/edit" class="btn btn-secondary">
-          <i class="fas fa-edit"></i> Edit
-        </a>
-        <form action="/hackathons/<%= hackathon.ID %>" method="POST" class="d-inline">
-          <input type="hidden" name="_method" value="DELETE" />
-          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-          <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this hackathon?')">
-            <i class="fas fa-trash"></i> Delete
-          </button>
-        </form>
-      </div>
-    <% } %>
-  </div>
-
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Description</h5>
-      <p class="card-text"><%= hackathon.Description %></p>
-      
-      <hr />
-      
-      <div class="row">
-        <div class="col-md-6">
-          <h6>Start Date</h6>
-          <p><i class="fas fa-calendar-start"></i> <%= hackathon.StartDate.Format("Jan 2, 2006 3:04 PM") %></p>
+  <!-- Enhanced Header -->
+  <div class="hackathon-header bg-gradient-primary text-white rounded-lg p-4 mb-4">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-2">
+          <i class="fas fa-trophy fa-2x me-3"></i>
+          <div>
+            <h1 class="h2 mb-1"><%= hackathon.Title %></h1>
+            <p class="mb-0 text-white-50">Internal Innovation Challenge</p>
+          </div>
         </div>
-        <div class="col-md-6">
-          <h6>End Date</h6>
-          <p><i class="fas fa-calendar-check"></i> <%= hackathon.EndDate.Format("Jan 2, 2006 3:04 PM") %></p>
+        <p class="lead mb-3"><%= hackathon.Description %></p>
+        <div class="d-flex gap-2 flex-wrap">
+          <%= if (current_user.ID.String() == hackathon.OwnerID.String()) { %>
+            <a href="/hackathons/<%= hackathon.ID %>/edit" class="btn btn-light btn-sm">
+              <i class="fas fa-edit me-1"></i>Edit Hackathon
+            </a>
+            <form action="/hackathons/<%= hackathon.ID %>" method="POST" class="d-inline">
+              <input type="hidden" name="_method" value="DELETE" />
+              <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+              <button type="submit" class="btn btn-outline-light btn-sm" onclick="return confirm('Are you sure you want to delete this hackathon?')">
+                <i class="fas fa-trash me-1"></i>Delete
+              </button>
+            </form>
+          <% } %>
+          <%= if (canCreateProject) { %>
+            <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-success btn-sm">
+              <i class="fas fa-plus me-1"></i>Create Project
+            </a>
+          <% } %>
         </div>
       </div>
-      
-      <hr />
-      
-      <div>
-        <h6>Status</h6>
-        <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>secondary<% } else { %>info<% } %>">
-          <%= hackathon.Status %>
-        </span>
+      <div class="col-lg-4 text-center">
+        <div class="status-display mb-3">
+          <div class="display-4 mb-2">
+            <%= if (hackathon.Status == "active") { %>
+              <i class="fas fa-play-circle text-success"></i>
+            <% } else if (hackathon.Status == "completed") { %>
+              <i class="fas fa-check-circle text-secondary"></i>
+            <% } else { %>
+              <i class="fas fa-clock text-info"></i>
+            <% } %>
+          </div>
+          <h4 class="mb-1">
+            <span class="badge fs-6 px-3 py-2 bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>secondary<% } else { %>info<% } %>">
+              <%= hackathon.Status %>
+            </span>
+          </h4>
+          <small class="text-white-50">Hackathon Status</small>
+        </div>
       </div>
     </div>
   </div>
 
-  <%= if (hackathon.Schedule != "") { %>
-    <div class="card mt-4">
+  <!-- Key Information Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="display-4 text-primary mb-2">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <h3 class="h4 mb-1"><%= len(projects) %></h3>
+          <small class="text-muted">Total Projects</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="display-4 text-success mb-2">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="h4 mb-1">
+            <%= totalParticipants %>
+          </h3>
+          <small class="text-muted">Participants</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="display-4 text-info mb-2">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <h3 class="h4 mb-1">
+            <%= totalTeams %>
+          </h3>
+          <small class="text-muted">Teams</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="display-4 text-warning mb-2">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <h3 class="h4 mb-1">
+            <%= durationDays %>
+          </h3>
+          <small class="text-muted">Days Duration</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline and Schedule Section -->
+  <div class="row mb-4">
+    <div class="col-lg-8">
+      <!-- Enhanced Description and Schedule -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle text-primary me-2"></i>Hackathon Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-muted mb-2">
+                <i class="fas fa-calendar-start text-primary me-1"></i>Start Date & Time
+              </h6>
+              <div class="p-3 bg-light rounded">
+                <div class="h5 mb-1"><%= hackathon.StartDate.Format("Jan 2, 2006") %></div>
+                <div class="text-muted"><%= hackathon.StartDate.Format("3:04 PM") %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-muted mb-2">
+                <i class="fas fa-calendar-check text-success me-1"></i>End Date & Time
+              </h6>
+              <div class="p-3 bg-light rounded">
+                <div class="h5 mb-1"><%= hackathon.EndDate.Format("Jan 2, 2006") %></div>
+                <div class="text-muted"><%= hackathon.EndDate.Format("3:04 PM") %></div>
+              </div>
+            </div>
+          </div>
+
+          <%= if (hackathon.Schedule != "") { %>
+            <div class="mt-4">
+              <h6 class="text-muted mb-3">
+                <i class="fas fa-list-check text-info me-1"></i>Event Schedule
+              </h6>
+              <div class="schedule-content border-start border-info border-3 ps-3 bg-light p-3 rounded">
+                <%= raw(hackathon.Schedule) %>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <!-- Quick Actions and Progress -->
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-bolt text-warning me-2"></i>Quick Actions
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <%= if (canCreateProject) { %>
+              <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create New Project
+              </a>
+            <% } else { %>
+              <button class="btn btn-secondary" disabled>
+                <i class="fas fa-ban me-2"></i>Project Already Created
+              </button>
+            <% } %>
+
+            <a href="/hackathons" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Back to All Hackathons
+            </a>
+
+            <%= if (current_user.ID.String() == hackathon.OwnerID.String()) { %>
+              <hr class="my-2">
+              <small class="text-muted">Organizer Tools</small>
+              <a href="/hackathons/<%= hackathon.ID %>/edit" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>Edit Hackathon
+              </a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-chart-line text-success me-2"></i>Progress Overview
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="progress mb-3" style="height: 8px;">
+            <%= progressPercentage %>
+            <div class="progress-bar bg-success" role="progressbar" style="width: <%= progressPercentage %>%"
+                 aria-valuenow="<%= progressPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <small class="text-muted">
+            <%= progressPercentage %>% of <%= len(projects) %> projects are active
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
       <div class="card-body">
         <h5 class="card-title">Schedule</h5>
         <hr />
@@ -58,94 +218,237 @@
     </div>
   <% } %>
 
-  <div class="mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3>Projects</h3>
+  <!-- Projects Section -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">
+        <i class="fas fa-project-diagram text-primary me-2"></i>Projects
+        <span class="badge bg-primary ms-2"><%= len(projects) %></span>
+      </h4>
       <%= if (canCreateProject) { %>
-        <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Create Project
+        <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary btn-sm">
+          <i class="fas fa-plus me-1"></i>Submit Project
         </a>
-      <% } else { %>
-        <button class="btn btn-secondary" disabled title="You already have a project in this hackathon">
-          <i class="fas fa-ban"></i> Create Project
-        </button>
       <% } %>
     </div>
-    <%= if (len(projects) == 0) { %>
-      <div class="alert alert-info">
-        <i class="fas fa-info-circle"></i> No projects yet.
-      </div>
-    <% } %>
+    <div class="card-body">
+      <%= if (len(projects) == 0) { %>
+        <div class="text-center py-5">
+          <div class="mb-4">
+            <i class="fas fa-lightbulb fa-4x text-muted"></i>
+          </div>
+          <h5 class="text-muted mb-3">No projects submitted yet</h5>
+          <p class="text-muted mb-4">Be the first to submit an innovative project to this hackathon!</p>
+          <%= if (canCreateProject) { %>
+            <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary">
+              <i class="fas fa-plus me-2"></i>Create First Project
+            </a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="row">
+          <%= for (project) in projects { %>
+            <div class="col-lg-6 mb-4">
+              <div class="card h-100 border-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>primary<% } %>">
+                <div class="card-body">
+                  <div class="row align-items-start">
+                    <div class="col-3 text-center">
+                      <%= if (len(project.ImageData) > 0) { %>
+                        <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-thumbnail rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" />
+                      <% } else { %>
+                        <div class="bg-light border rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+                          <i class="fas fa-image text-muted"></i>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="col-9">
+                      <h5 class="card-title mb-2">
+                        <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" class="text-decoration-none">
+                          <%= project.Name %>
+                        </a>
+                      </h5>
+                      <p class="card-text small text-muted mb-2"><%= project.Description %></p>
 
-    <%= for (project) in projects { %>
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="row align-items-start">
-              <div class="col-md-2 text-center">
-                <%= if (len(project.ImageData) > 0) { %>
-                  <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" />
-                <% } else { %>
-                  <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                    <i class="fas fa-image text-muted fa-2x"></i>
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                          <i class="fas fa-<%= if (project.Status == "completed") { %>check<% } else if (project.Status == "suspended") { %>ban<% } else { %>code-branch<% } %> me-1"></i>
+                          <%= project.Status %>
+                        </span>
+                        <small class="text-muted">
+                          <i class="fas fa-users me-1"></i><%= memberCounts[project.ID] %>
+                        </small>
+                      </div>
+
+                      <div class="d-flex gap-1 flex-wrap">
+                        <%= if (project.UserID != nil && project.UserID.String() == current_user.ID.String()) { %>
+                          <span class="badge bg-secondary">
+                            <i class="fas fa-crown me-1"></i>Owner
+                          </span>
+                        <% } else if (userMemberships[project.ID]) { %>
+                          <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/leave" method="POST" class="d-inline">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger btn-xs">
+                              <i class="fas fa-sign-out-alt"></i> Leave
+                            </button>
+                          </form>
+                        <% } else { %>
+                          <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/join" method="POST" class="d-inline">
+                            <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+                            <button type="submit" class="btn btn-sm btn-primary btn-xs">
+                              <i class="fas fa-sign-in-alt"></i> Join
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </div>
                   </div>
-                <% } %>
-              </div>
-              <div class="col-md-7">
-                <h4 class="card-title">
-                  <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
-                </h4>
-                <p class="card-text"><%= project.Description %></p>
-                <div class="d-flex align-items-center gap-2">
-                  <small class="text-muted">
-                    <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
-                      <%= project.Status %>
-                    </span>
-                  </small>
-                </div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="mb-2">
-                  <small class="text-muted">
-                    <i class="fas fa-users"></i> <%= memberCounts[project.ID] %>
-                  </small>
-                </div>
-                <div>
-                  <%= if (project.UserID != nil && project.UserID.String() == current_user.ID.String()) { %>
-                    <span class="badge bg-secondary">
-                      <i class="fas fa-crown"></i> Owner
-                    </span>
-                  <% } else if (userMemberships[project.ID]) { %>
-                    <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/leave" method="POST" class="d-inline">
-                      <input type="hidden" name="_method" value="DELETE" />
-                      <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-                      <button type="submit" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-sign-out-alt"></i> Leave
-                      </button>
-                    </form>
-                  <% } else { %>
-                    <form action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/join" method="POST" class="d-inline">
-                      <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-                      <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Join
-                      </button>
-                    </form>
-                  <% } %>
                 </div>
               </div>
             </div>
-          </div>
+          <% } %>
         </div>
-    <% } %>
-
-    <div class="d-flex gap-2">
-      <%= if (pagination && pagination.Page < pagination.TotalPages) { %>
-        <a href="/hackathons/<%= hackathon.ID %>?page=<%= pagination.Page + 1 %>" class="btn btn-primary">
-          <i class="fas fa-chevron-down"></i> Load More
-        </a>
       <% } %>
-      <a href="/hackathons" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Hackathons
-      </a>
+
+      <!-- Load More and Navigation -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <%= if (pagination && pagination.Page < pagination.TotalPages) { %>
+            <a href="/hackathons/<%= hackathon.ID %>?page=<%= pagination.Page + 1 %>" class="btn btn-outline-primary">
+              <i class="fas fa-chevron-down me-1"></i>Load More Projects
+            </a>
+          <% } %>
+        </div>
+        <a href="/hackathons" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back to Hackathons
+        </a>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  color: white;
+}
+.hackathon-header {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #4a5568;
+}
+.hackathon-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="50" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="30" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.1;
+}
+.btn-xs {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  border-radius: 0.2rem;
+}
+
+/* Dark theme card styling */
+.card {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+.card-header {
+  background-color: #1a202c;
+  border-bottom-color: #4a5568;
+  color: #e2e8f0;
+}
+.card-body {
+  background-color: #2d3748;
+}
+.text-muted {
+  color: #a0aec0 !important;
+}
+.bg-light {
+  background-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+.schedule-content {
+  color: #e2e8f0;
+}
+.progress {
+  background-color: #4a5568;
+}
+.progress-bar {
+  background-color: #48bb78;
+}
+
+/* Status badge colors for dark theme */
+.badge {
+  color: white;
+}
+.bg-primary { background-color: #3182ce !important; }
+.bg-success { background-color: #38a169 !important; }
+.bg-info { background-color: #4299e1 !important; }
+.bg-warning { background-color: #d69e2e !important; }
+.bg-danger { background-color: #e53e3e !important; }
+.bg-secondary { background-color: #718096 !important; }
+
+/* Button styling for dark theme */
+.btn-primary {
+  background-color: #3182ce;
+  border-color: #3182ce;
+}
+.btn-primary:hover {
+  background-color: #2c5282;
+  border-color: #2c5282;
+}
+.btn-outline-primary {
+  color: #63b3ed;
+  border-color: #63b3ed;
+}
+.btn-outline-primary:hover {
+  background-color: #63b3ed;
+  border-color: #63b3ed;
+}
+.btn-outline-secondary {
+  color: #a0aec0;
+  border-color: #a0aec0;
+}
+.btn-outline-secondary:hover {
+  background-color: #a0aec0;
+  border-color: #a0aec0;
+}
+.btn-success {
+  background-color: #38a169;
+  border-color: #38a169;
+}
+.btn-success:hover {
+  background-color: #2f855a;
+  border-color: #2f855a;
+}
+.btn-outline-danger {
+  color: #fc8181;
+  border-color: #fc8181;
+}
+.btn-outline-danger:hover {
+  background-color: #fc8181;
+  border-color: #fc8181;
+}
+.btn-light {
+  background-color: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #2d3748;
+}
+.btn-outline-light {
+  color: #e2e8f0;
+  border-color: #e2e8f0;
+}
+.btn-outline-light:hover {
+  background-color: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #2d3748;
+}
+</style>
