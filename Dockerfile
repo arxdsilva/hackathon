@@ -1,26 +1,38 @@
 # This is a multi-stage Dockerfile and requires >= Docker 17.05
 # https://docs.docker.com/engine/userguide/eng-image/multistage-build/
-FROM gobuffalo/buffalo:v0.18.14 as builder
+
+# Go build stage
+FROM gobuffalo/buffalo:latest as builder
 
 ENV GOPROXY http://proxy.golang.org
+
+# Install Node.js 18.x (compatible with modern packages)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+
+# Install Go 1.24
+RUN wget https://go.dev/dl/go1.24.1.linux-amd64.tar.gz
+RUN rm -rf /usr/local/go && tar -C /usr/local -xzf go1.24.1.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+
+# Install Yarn 1.x (compatible with older Node.js)
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
+ENV PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 RUN mkdir -p /src/hackathon
 WORKDIR /src/hackathon
 
-# this will cache the npm install step, unless package.json changes
-ADD package.json .
-ADD yarn.lock .yarnrc.yml ./
-RUN mkdir .yarn
-COPY .yarn .yarn
-RUN yarn install
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
+# Copy Go modules
+COPY go.mod go.sum ./
 RUN go mod download
 
-ADD . .
+# Copy source code
+COPY . .
+
+# Install dependencies
+RUN yarn install
+
+# Build the application
 RUN buffalo build --static -o /bin/app
 
 FROM alpine

@@ -36,6 +36,7 @@ body {
 /* Reusable components */
 .hero {
 	margin-top: 24px;
+	margin-bottom: 60px;
 	padding: 48px 40px;
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	border-radius: 16px;
@@ -77,6 +78,14 @@ body {
 }
 
 .grid { margin-top: 36px; }
+
+.features-section {
+	margin-bottom: 80px;
+}
+
+.about-section {
+	margin-bottom: 60px;
+}
 
 .panel {
 	height: 100%;

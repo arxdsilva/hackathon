@@ -1,14 +1,8 @@
 ---
 development:
-  dialect: postgres
-  database: postgres
-  user: postgres
-  password: postgres
-  host: localhost
-  pool: 5
+  url: {{envOr "DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_development?sslmode=disable"}}
 
 test:
   url: {{envOr "TEST_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_test?sslmode=disable"}}
-
 production:
   url: {{envOr "DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_production?sslmode=disable"}}
