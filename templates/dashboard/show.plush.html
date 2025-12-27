@@ -1,0 +1,116 @@
+<div class="container mt-4">
+  <h1>Owner Dashboard</h1>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Users</h5>
+          <h2 class="text-primary"><%= len(users) %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Hackathons</h5>
+          <h2 class="text-success"><%= len(hackathons) %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Projects</h5>
+          <h2 class="text-info"><%= len(projects) %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>Users Management</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <%= for (user) in users { %>
+              <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h6 class="card-title"><%= user.Name %></h6>
+                    <p class="card-text text-muted"><%= user.Email %></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="badge bg-<%= if (user.Role == "owner") { %>primary<% } else { %>secondary<% } %>">
+                        <%= user.Role %>
+                      </span>
+                      <a href="/users/<%= user.ID %>/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Hackathons Overview</h5>
+        </div>
+        <div class="card-body">
+          <%= for (hackathon) in hackathons { %>
+            <div class="mb-3 p-3 border rounded">
+              <h6><%= hackathon.Title %></h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else { %>warning<% } %>">
+                  <%= hackathon.Status %>
+                </span>
+                <small class="text-muted"><%= len(projects.Where("hackathon_id = ?", hackathon.ID)) %> projects</small>
+                <a href="/hackathons/<%= hackathon.ID %>" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
+            </div>
+          <% } %>
+          <%= if (len(hackathons) == 0) { %>
+            <p class="text-muted">No hackathons yet.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>Projects Overview</h5>
+        </div>
+        <div class="card-body">
+          <%= for (project) in projects { %>
+            <div class="mb-3 p-3 border rounded">
+              <h6><%= project.Name %></h6>
+              <p class="small text-muted"><%= project.Description %></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                  <%= project.Status %>
+                </span>
+                <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="btn btn-sm btn-outline-primary">View</a>
+              </div>
+            </div>
+          <% } %>
+          <%= if (len(projects) == 0) { %>
+            <p class="text-muted">No projects yet.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="/hackathons" class="btn btn-outline-secondary">Back to Hackathons</a>
+  </div>
+</div>

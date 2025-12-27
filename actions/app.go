@@ -71,6 +71,7 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 		app.GET("/about", AboutHandler)
+		app.GET("/dashboard", RequireRoleOwner(DashboardShow))
 		app.GET("/hackathons", RequireLogin(HackathonsIndex))
 		app.GET("/hackathons/new", RequireRoleOwner(HackathonsNew))
 		app.POST("/hackathons", RequireRoleOwner(HackathonsCreate))
@@ -91,6 +92,8 @@ func App() *buffalo.App {
 		app.PUT("/profile", ProfileUpdate)
 		app.GET("/users/new", UsersNew)
 		app.POST("/users", UsersCreate)
+		app.GET("/users/{user_id}/edit", RequireRoleOwner(UsersEdit)).Name("userEditPath")
+		app.PUT("/users/{user_id}", RequireRoleOwner(UsersUpdate)).Name("userPath")
 		app.GET("/signin", AuthNew)
 		app.POST("/signin", AuthCreate)
 		app.DELETE("/signout", AuthDestroy)

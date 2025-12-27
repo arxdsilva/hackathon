@@ -205,3 +205,42 @@ p.text-muted {
 	color: #9fb0c6 !important;
 }
 
+/* Dark theme tables */
+.table {
+	background-color: rgba(255, 255, 255, 0.12);
+	border-color: rgba(255, 255, 255, 0.2);
+	color: #ffffff;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.table th, .table td {
+	border-color: rgba(255, 255, 255, 0.2);
+	color: #ffffff;
+	padding: 0.75rem;
+}
+
+.table thead th {
+	border-bottom-color: rgba(255, 255, 255, 0.3);
+	font-weight: 600;
+	background-color: rgba(255, 255, 255, 0.15);
+	color: #ffffff;
+}
+
+.table tbody tr {
+	background-color: rgba(255, 255, 255, 0.08);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.table-hover tbody tr:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.table-responsive {
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 8px;
+	background-color: rgba(255, 255, 255, 0.05);
+}

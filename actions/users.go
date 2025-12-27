@@ -41,3 +41,43 @@ func UsersCreate(c buffalo.Context) error {
 	c.Flash().Add("success", "Account created! Welcome")
 	return c.Redirect(http.StatusFound, "/")
 }
+
+// UsersEdit renders the user edit form for role management.
+func UsersEdit(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	userID := c.Param("user_id")
+	u := &models.User{}
+	if err := tx.Find(u, userID); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	c.Set("user", u)
+	return c.Render(http.StatusOK, r.HTML("users/edit.plush.html"))
+}
+
+// UsersUpdate handles updating a user's role.
+func UsersUpdate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	userID := c.Param("user_id")
+	u := &models.User{}
+	if err := tx.Find(u, userID); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	newRole := c.Request().FormValue("role")
+	if newRole != models.RoleOwner && newRole != models.RoleHacker {
+		c.Flash().Add("danger", "Invalid role")
+		return c.Redirect(http.StatusFound, "/dashboard")
+	}
+
+	u.Role = newRole
+	if err := tx.Update(u); err != nil {
+		c.Flash().Add("danger", "Could not update user")
+		return c.Redirect(http.StatusFound, "/dashboard")
+	}
+
+	c.Flash().Add("success", "User updated")
+	return c.Redirect(http.StatusFound, "/dashboard")
+}

@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>Edit User: <%= user.Name %></h1>
+
+    <%= form_for(user, {action: userPath({user_id: user.ID}), method: "PUT"}) { %>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select name="role" id="role" class="form-control">
+          <option value="hacker" <%= if user.Role == "hacker" { %>selected<% } %>>Hacker</option>
+          <option value="owner" <%= if user.Role == "owner" { %>selected<% } %>>Owner</option>
+        </select>
+      </div>
+      <button class="btn btn-primary">Update User</button>
+    <% } %>
+  </div>
+</div>

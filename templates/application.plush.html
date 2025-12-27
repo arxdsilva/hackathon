@@ -22,6 +22,9 @@
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="/hackathons">Hackathons</a></li>
+                <%= if (current_user.IsOwner()) { %>
+                  <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <% } %>
                 <li class="nav-item"><a class="nav-link" href="https://github.com/arxdsilva/hackathon" target="_blank">GitHub</a></li>
               </ul>
             <% } else { %>

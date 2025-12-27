@@ -206,3 +206,32 @@ func HackathonsDestroy(c buffalo.Context) error {
 	c.Flash().Add("success", "Hackathon deleted successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons")
 }
+
+// DashboardShow displays the owner dashboard with users and hackathon data
+func DashboardShow(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	// Fetch all users
+	users := &models.Users{}
+	if err := tx.All(users); err != nil {
+		return err
+	}
+
+	// Fetch all hackathons
+	hackathons := &models.Hackathons{}
+	if err := tx.All(hackathons); err != nil {
+		return err
+	}
+
+	// Fetch all projects
+	projects := &models.Projects{}
+	if err := tx.All(projects); err != nil {
+		return err
+	}
+
+	c.Set("users", users)
+	c.Set("hackathons", hackathons)
+	c.Set("projects", projects)
+
+	return c.Render(http.StatusOK, r.HTML("dashboard/show.plush.html"))
+}
