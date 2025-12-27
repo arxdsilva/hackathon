@@ -1,0 +1,200 @@
+<div class="row mb-4">
+  <!-- Statistics Cards -->
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card admin-card text-center h-100">
+      <div class="card-body">
+        <div class="display-4 text-primary mb-2">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="h4 mb-1"><%= stats["users"] %></h3>
+        <small class="text-muted">Total Users</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card admin-card text-center h-100">
+      <div class="card-body">
+        <div class="display-4 text-success mb-2">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3 class="h4 mb-1"><%= stats["hackathons"] %></h3>
+        <small class="text-muted">Total Hackathons</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card admin-card text-center h-100">
+      <div class="card-body">
+        <div class="display-4 text-info mb-2">
+          <i class="fas fa-project-diagram"></i>
+        </div>
+        <h3 class="h4 mb-1"><%= stats["projects"] %></h3>
+        <small class="text-muted">Total Projects</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card admin-card text-center h-100">
+      <div class="card-body">
+        <div class="display-4 text-warning mb-2">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="h4 mb-1"><%= stats["activeProjects"] %></h3>
+        <small class="text-muted">Active Projects</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Recent Users -->
+  <div class="col-md-4 mb-4">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-user-plus text-primary me-2"></i>Recent Users
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= for (user) in recentUsers { %>
+          <div class="d-flex align-items-center mb-3">
+            <div class="bg-<%= if (user.Role == "owner") { %>primary<% } else { %>secondary<% } %> text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+              <i class="fas fa-<%= if (user.Role == "owner") { %>crown<% } else { %>user<% } %>"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="mb-0"><%= user.Name %></h6>
+              <small class="text-muted"><%= user.Email %></small>
+            </div>
+            <small class="text-muted">
+              <%= user.CreatedAt.Format("Jan 2") %>
+            </small>
+          </div>
+        <% } %>
+        <%= if (len(recentUsers) == 0) { %>
+          <p class="text-muted text-center mb-0">No users yet</p>
+        <% } else { %>
+          <div class="text-center mt-3">
+            <a href="/admin/users" class="btn btn-sm btn-outline-primary">View All Users</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Hackathons -->
+  <div class="col-md-4 mb-4">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-trophy text-success me-2"></i>Recent Hackathons
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= for (hackathon) in recentHackathons { %>
+          <div class="mb-3">
+            <h6 class="mb-1">
+              <a href="/hackathons/<%= hackathon.ID %>" class="text-decoration-none text-white">
+                <%= hackathon.Title %>
+              </a>
+            </h6>
+            <p class="small text-muted mb-2"><%= hackathon.Description %></p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else { %>warning<% } %>">
+                <%= hackathon.Status %>
+              </span>
+              <small class="text-muted">
+                <%= hackathon.CreatedAt.Format("Jan 2") %>
+              </small>
+            </div>
+          </div>
+        <% } %>
+        <%= if (len(recentHackathons) == 0) { %>
+          <p class="text-muted text-center mb-0">No hackathons yet</p>
+        <% } else { %>
+          <div class="text-center mt-3">
+            <a href="/admin/hackathons" class="btn btn-sm btn-outline-success">View All Hackathons</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Projects -->
+  <div class="col-md-4 mb-4">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-project-diagram text-info me-2"></i>Recent Projects
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= for (project) in recentProjects { %>
+          <div class="mb-3">
+            <h6 class="mb-1">
+              <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-white">
+                <%= project.Name %>
+              </a>
+            </h6>
+            <p class="small text-muted mb-2"><%= project.Description %></p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                <%= project.Status %>
+              </span>
+              <small class="text-muted">
+                <%= project.CreatedAt.Format("Jan 2") %>
+              </small>
+            </div>
+          </div>
+        <% } %>
+        <%= if (len(recentProjects) == 0) { %>
+          <p class="text-muted text-center mb-0">No projects yet</p>
+        <% } else { %>
+          <div class="text-center mt-3">
+            <a href="/admin/projects" class="btn btn-sm btn-outline-info">View All Projects</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+  <div class="col-12">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-bolt text-warning me-2"></i>Quick Actions
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-3 mb-3">
+            <a href="/hackathons/new" class="btn btn-primary btn-lg w-100">
+              <i class="fas fa-plus fa-2x d-block mb-2"></i>
+              Create Hackathon
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="/users/new" class="btn btn-success btn-lg w-100">
+              <i class="fas fa-user-plus fa-2x d-block mb-2"></i>
+              Add User
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="/routes" class="btn btn-info btn-lg w-100">
+              <i class="fas fa-route fa-2x d-block mb-2"></i>
+              API Routes
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="/dashboard" class="btn btn-secondary btn-lg w-100">
+              <i class="fas fa-arrow-left fa-2x d-block mb-2"></i>
+              Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

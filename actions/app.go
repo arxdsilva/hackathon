@@ -106,8 +106,24 @@ func App() *buffalo.App {
 		app.GET("/signin", AuthNew)
 		app.POST("/signin", AuthCreate)
 		app.DELETE("/signout", AuthDestroy)
+
 		// Allow unauthenticated access to Home, About, and Auth endpoints
 		app.Middleware.Skip(Authorize, HomeHandler, AboutHandler, UsersNew, UsersCreate, AuthNew, AuthCreate)
+
+		// Admin routes
+		admin := app.Group("/admin")
+		admin.Use(RequireRoleOwner)
+		admin.GET("/", AdminIndex)
+		admin.GET("/users", AdminUsersIndex)
+		admin.GET("/users/{user_id}", AdminUsersShow)
+		admin.GET("/users/{user_id}/edit", AdminUsersEdit)
+		admin.PUT("/users/{user_id}", AdminUsersUpdate)
+		admin.DELETE("/users/{user_id}", AdminUsersDestroy)
+		admin.GET("/hackathons", AdminHackathonsIndex)
+		admin.GET("/projects", AdminProjectsIndex)
+		admin.GET("/emails", AdminEmailsIndex)
+		admin.GET("/config", AdminConfigIndex)
+		admin.GET("/passwords", AdminPasswordsIndex)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

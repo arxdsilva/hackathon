@@ -1,0 +1,143 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="mb-0">Edit User</h2>
+        <p class="text-muted mb-0">Update user information and role</p>
+      </div>
+      <div>
+        <a href="/admin/users/<%= user.ID %>" class="btn btn-outline-secondary me-2">
+          <i class="fas fa-eye me-1"></i>View User
+        </a>
+        <a href="/admin/users" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back to Users
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-edit me-2"></i>User Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="/admin/users/<%= user.ID %>">
+          <input type="hidden" name="_method" value="PUT" />
+          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name" value="<%= user.Name %>" required>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" value="<%= user.Email %>" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="hacker" <%= if (user.Role == "hacker") { %>selected<% } %>>Hacker (Participant)</option>
+              <option value="owner" <%= if (user.Role == "owner") { %>selected<% } %>>Owner (Administrator)</option>
+            </select>
+            <div class="form-text">
+              <i class="fas fa-info-circle me-1"></i>
+              Owners have full administrative access to the platform.
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Update User
+            </button>
+            <a href="/admin/users" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <!-- User Info Card -->
+    <div class="card admin-card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">User Details</h6>
+      </div>
+      <div class="card-body text-center">
+        <div class="bg-<%= if (user.Role == "owner") { %>primary<% } else { %>secondary<% } %> text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+          <i class="fas fa-<%= if (user.Role == "owner") { %>crown<% } else { %>user<% } %> fa-2x"></i>
+        </div>
+        <h5 class="mb-1"><%= user.Name %></h5>
+        <p class="text-muted mb-2"><%= user.Email %></p>
+        <span class="badge bg-<%= if (user.Role == "owner") { %>primary<% } else { %>secondary<% } %>">
+          <i class="fas fa-<%= if (user.Role == "owner") { %>crown<% } else { %>user<% } %> me-1"></i>
+          <%= user.Role %>
+        </span>
+        <div class="mt-3 pt-3 border-top">
+          <small class="text-muted">
+            <i class="fas fa-calendar me-1"></i>
+            Joined <%= user.CreatedAt.Format("January 2, 2006") %>
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card admin-card">
+      <div class="card-header">
+        <h6 class="mb-0">Quick Actions</h6>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a href="/admin/users/<%= user.ID %>" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-eye me-1"></i>View Full Profile
+          </a>
+          <%= if (user.ID.String() != current_user.ID.String()) { %>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete()">
+              <i class="fas fa-trash me-1"></i>Delete User
+            </button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<%= if (user.ID.String() != current_user.ID.String()) { %>
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete user <strong><%= user.Name %></strong>?</p>
+        <p class="text-danger small">This action cannot be undone and will remove all associated data.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="POST" action="/admin/users/<%= user.ID %>">
+          <input type="hidden" name="_method" value="DELETE" />
+          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+          <button type="submit" class="btn btn-danger">Delete User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete() {
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+<% } %>

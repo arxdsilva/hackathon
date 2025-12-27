@@ -1,0 +1,165 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="mb-0">Projects Management</h2>
+        <p class="text-muted mb-0">Manage all projects in the system</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="card admin-card mb-4">
+  <div class="card-body">
+    <form method="GET" class="row g-3">
+      <div class="col-md-6">
+        <label for="search" class="form-label">Search Projects</label>
+        <input type="text" class="form-control" id="search" name="search" value="<%= search %>" placeholder="Search by name or description...">
+      </div>
+      <div class="col-md-4">
+        <label for="status" class="form-label">Filter by Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="">All Statuses</option>
+          <option value="draft" <%= if (statusFilter == "draft") { %>selected<% } %>>Draft</option>
+          <option value="active" <%= if (statusFilter == "active") { %>selected<% } %>>Active</option>
+          <option value="completed" <%= if (statusFilter == "completed") { %>selected<% } %>>Completed</option>
+          <option value="suspended" <%= if (statusFilter == "suspended") { %>selected<% } %>>Suspended</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-outline-primary me-2">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <a href="/admin/projects" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Clear
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Projects Grid -->
+<div class="card admin-card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="fas fa-project-diagram me-2"></i>
+      Projects (<%= len(projects) %>)
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= if (len(projects) > 0) { %>
+      <div class="row">
+        <%= for (project) in projects { %>
+          <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100 border-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else if (project.Status == "active") { %>info<% } else { %>warning<% } %>">
+              <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                  <div class="me-3">
+                    <%= if (len(project.ImageData) > 0) { %>
+                      <img src="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" />
+                    <% } else { %>
+                      <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-image text-muted"></i>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h5 class="card-title mb-1">
+                      <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-white">
+                        <%= project.Name %>
+                      </a>
+                    </h5>
+                    <p class="card-text text-muted small mb-2"><%= project.Description %></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else if (project.Status == "active") { %>info<% } else { %>warning<% } %>">
+                        <i class="fas fa-<%= if (project.Status == "completed") { %>check<% } else if (project.Status == "suspended") { %>ban<% } else { %>code-branch<% } %> me-1"></i>
+                        <%= project.Status %>
+                      </span>
+                      <small class="text-muted">
+                        Hackathon #<%= project.HackathonID %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <%= if (project.RepositoryURL != "") { %>
+                  <div class="mb-2">
+                    <small class="text-muted">
+                      <i class="fab fa-github me-1"></i>
+                      <a href="<%= project.RepositoryURL %>" target="_blank" class="text-decoration-none">Repository</a>
+                    </small>
+                  </div>
+                <% } %>
+
+                <%= if (project.DemoURL != "") { %>
+                  <div class="mb-3">
+                    <small class="text-muted">
+                      <i class="fas fa-external-link-alt me-1"></i>
+                      <a href="<%= project.DemoURL %>" target="_blank" class="text-decoration-none">Demo</a>
+                    </small>
+                  </div>
+                <% } %>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <small class="text-muted">
+                    <i class="fas fa-user me-1"></i>
+                    <%= if (project.User != nil) { %>
+                      <%= project.User.Name %>
+                    <% } else { %>
+                      Unknown User
+                    <% } %>
+                  </small>
+                  <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    <%= project.CreatedAt.Format("Jan 2") %>
+                  </small>
+                </div>
+
+                <div class="d-flex gap-1">
+                  <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="btn btn-sm btn-outline-primary flex-fill">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                  <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>/edit" class="btn btn-sm btn-outline-secondary flex-fill">
+                    <i class="fas fa-edit"></i> Edit
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Pagination -->
+      <%= if (pagination.Page > 1 || pagination.Page < pagination.TotalPages) { %>
+        <nav aria-label="Projects pagination" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <%= if (pagination.Page > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="<%= pagination.PrevURL %>">Previous</a>
+              </li>
+            <% } %>
+
+            <%= for (i) in range(1, pagination.TotalPages+1) { %>
+              <li class="page-item <%= if (i == pagination.Page) { %>active<% } %>">
+                <a class="page-link" href="<%= pagination.URLForPage(i) %>"><%= i %></a>
+              </li>
+            <% } %>
+
+            <%= if (pagination.Page < pagination.TotalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="<%= pagination.NextURL %>">Next</a>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } %>
+    <% } else { %>
+      <div class="text-center py-5">
+        <i class="fas fa-project-diagram fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No projects found</h4>
+        <p class="text-muted">Try adjusting your search criteria.</p>
+      </div>
+    <% } %>
+  </div>
+</div>

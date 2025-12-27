@@ -1,0 +1,166 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-key text-danger me-2"></i>Password Reset Management
+        </h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mb-4">
+          Reset passwords for users who have forgotten theirs or need administrative assistance.
+        </p>
+
+        <!-- Reset by User Search -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h6 class="mb-0">Reset Password for Specific User</h6>
+          </div>
+          <div class="card-body">
+            <form class="row g-3">
+              <div class="col-md-8">
+                <label for="userSearch" class="form-label">Search User</label>
+                <input type="text" class="form-control" id="userSearch" placeholder="Enter email or name">
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-primary me-2" id="searchBtn">
+                  <i class="fas fa-search"></i> Search
+                </button>
+                <button type="button" class="btn btn-warning" id="resetBtn" disabled>
+                  <i class="fas fa-key"></i> Reset Password
+                </button>
+              </div>
+            </form>
+
+            <div id="userResults" class="mt-3" style="display: none;">
+              <div class="alert alert-info">
+                <strong>Selected User:</strong> <span id="selectedUser">john.doe@company.com</span>
+                <br>
+                <small class="text-muted">A temporary password will be generated and emailed to the user.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bulk Reset Options -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h6 class="mb-0">Bulk Password Reset</h6>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Warning:</strong> Bulk reset will force all selected users to change their passwords on next login.
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Reset by Role</h6>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="resetOwners">
+                  <label class="form-check-label" for="resetOwners">
+                    All Owners (<span class="text-primary">2 users</span>)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="resetHackers">
+                  <label class="form-check-label" for="resetHackers">
+                    All Hackers (<span class="text-success">15 users</span>)
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>Reset by Status</h6>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="resetInactive">
+                  <label class="form-check-label" for="resetInactive">
+                    Inactive Users (<span class="text-muted">3 users</span>)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="resetAll">
+                  <label class="form-check-label" for="resetAll">
+                    All Users (<span class="text-danger">17 users</span>)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <button type="button" class="btn btn-danger" id="bulkResetBtn">
+                <i class="fas fa-exclamation-triangle me-1"></i>Execute Bulk Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Policy -->
+        <div class="card">
+          <div class="card-header">
+            <h6 class="mb-0">Password Policy Settings</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Minimum Password Length</label>
+                  <input type="number" class="form-control" value="8" min="6" max="32">
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" checked>
+                  <label class="form-check-label">Require uppercase letters</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" checked>
+                  <label class="form-check-label">Require numbers</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Password Expiration (days)</label>
+                  <input type="number" class="form-control" value="90" min="0" max="365">
+                  <div class="form-text">0 = never expires</div>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" checked>
+                  <label class="form-check-label">Require special characters</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox">
+                  <label class="form-check-label">Prevent password reuse</label>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i>Update Policy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmResetModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Password Reset</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to reset the password for <strong id="confirmUser">selected user</strong>?</p>
+        <div class="alert alert-info">
+          <small>A temporary password will be generated and sent to their email address.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning">Reset Password</button>
+      </div>
+    </div>
+  </div>
+</div>
