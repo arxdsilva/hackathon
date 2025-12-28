@@ -43,7 +43,7 @@
 
           <div class="mb-3">
             <label for="role" class="form-label">Role</label>
-            <select class="form-select" id="role" name="role" required>
+            <select class="form-select" id="role" name="Role" required>
               <option value="hacker" <%= if (user.Role == "hacker") { %>selected<% } %>>Hacker (Participant)</option>
               <option value="owner" <%= if (user.Role == "owner") { %>selected<% } %>>Owner (Administrator)</option>
             </select>

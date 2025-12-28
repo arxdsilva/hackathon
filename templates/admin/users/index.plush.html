@@ -101,11 +101,15 @@
                     <a href="/admin/users/<%= user.ID %>/edit" class="btn btn-outline-primary" title="Edit User">
                       <i class="fas fa-edit"></i>
                     </a>
-                    <%= if (user.ID.String() != current_user.ID.String()) { %>
+                    <%= if (user.ID.String() != current_user.ID.String() && user.Role != "owner") { %>
                       <button type="button" class="btn btn-outline-danger" title="Delete User"
                               onclick="confirmDelete('<%= user.ID %>', '<%= user.Name %>')">
                         <i class="fas fa-trash"></i>
                       </button>
+                    <% } else if (user.Role == "owner") { %>
+                      <span class="text-muted small" title="Owner accounts cannot be deleted">
+                        <i class="fas fa-shield-alt me-1"></i>Protected
+                      </span>
                     <% } %>
                   </div>
                 </td>

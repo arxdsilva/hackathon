@@ -189,7 +189,7 @@ func AdminUsersUpdate(c buffalo.Context) error {
 	}
 
 	// Log the user update
-	userID := c.Value("current_user").(*models.User).ID
+	userID := c.Value("current_user").(models.User).ID
 	logAuditEvent(tx, c, &userID, "update", "user", &user.ID, fmt.Sprintf("Updated user %s (%s)", user.Name, user.Email))
 
 	c.Flash().Add("success", "User updated successfully")
@@ -205,6 +205,12 @@ func AdminUsersDestroy(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
+	// Prevent deletion of any owner accounts
+	if user.IsOwner() {
+		c.Flash().Add("danger", "Cannot delete owner accounts")
+		return c.Redirect(http.StatusFound, "/admin/users")
+	}
+
 	if err := tx.Destroy(user); err != nil {
 		c.Logger().Errorf("Failed to delete user: %v", err)
 		c.Flash().Add("danger", "Failed to delete user")
@@ -212,8 +218,8 @@ func AdminUsersDestroy(c buffalo.Context) error {
 	}
 
 	// Log the user deletion
-	userID := c.Value("current_user").(*models.User).ID
-	logAuditEvent(tx, c, &userID, "delete", "user", &user.ID, fmt.Sprintf("Deleted user %s (%s)", user.Name, user.Email))
+	currentUser := c.Value("current_user").(models.User)
+	logAuditEvent(tx, c, &currentUser.ID, "delete", "user", &user.ID, fmt.Sprintf("Deleted user %s (%s)", user.Name, user.Email))
 
 	c.Logger().Infof("User deleted successfully: %s", user.Name)
 	c.Flash().Add("success", "User deleted successfully")
@@ -260,7 +266,7 @@ func AdminUsersCreate(c buffalo.Context) error {
 	}
 
 	// Log the user creation
-	userID := c.Value("current_user").(*models.User).ID
+	userID := c.Value("current_user").(models.User).ID
 	logAuditEvent(tx, c, &userID, "create", "user", &u.ID, fmt.Sprintf("Created user %s (%s) with role %s", u.Name, u.Email, u.Role))
 
 	c.Flash().Add("success", "User created successfully")
