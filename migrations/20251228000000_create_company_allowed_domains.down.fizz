@@ -1,0 +1,1 @@
+drop_table("company_allowed_domains")

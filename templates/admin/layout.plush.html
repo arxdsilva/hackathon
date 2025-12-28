@@ -285,6 +285,12 @@
               Password Reset
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
+              <i class="fas fa-globe"></i>
+              Allowed Domains
+            </a>
+          </li>
           <li class="nav-item mt-4">
             <a class="nav-link" href="/">
               <i class="fas fa-arrow-left"></i>

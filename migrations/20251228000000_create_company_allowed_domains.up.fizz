@@ -1,0 +1,9 @@
+create_table("company_allowed_domains") {
+	t.Column("id", "uuid", {"primary": true})
+	t.Column("created_at", "timestamp", {"null": false})
+	t.Column("updated_at", "timestamp", {"null": false})
+
+	t.Column("domain", "string", {"size": 255, "null": false})
+	t.Column("is_active", "boolean", {"default": true})
+	t.Column("description", "text", {})
+}

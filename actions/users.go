@@ -2,6 +2,7 @@ package actions
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/arxdsilva/hackathon/models"
 
@@ -23,6 +24,23 @@ func UsersCreate(c buffalo.Context) error {
 	if err := c.Bind(u); err != nil {
 		c.Flash().Add("danger", "Unable to read form input")
 		return c.Redirect(http.StatusFound, "/users/new")
+	}
+
+	// Validate email domain is allowed
+	if strings.Contains(u.Email, "@") {
+		parts := strings.Split(u.Email, "@")
+		if len(parts) == 2 {
+			domain := strings.ToLower(strings.TrimSpace(parts[1]))
+			allowed, err := models.IsDomainAllowed(tx, domain)
+			if err != nil {
+				c.Flash().Add("danger", "Could not validate email domain")
+				return c.Redirect(http.StatusFound, "/users/new")
+			}
+			if !allowed {
+				c.Flash().Add("danger", "Email domain is not allowed for registration")
+				return c.Redirect(http.StatusFound, "/users/new")
+			}
+		}
 	}
 
 	verrs, err := u.Create(tx)

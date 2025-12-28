@@ -124,6 +124,10 @@ func App() *buffalo.App {
 		admin.GET("/config", AdminConfigIndex)
 		admin.PUT("/config", AdminConfigUpdate).Name("adminConfigPath")
 		admin.GET("/passwords", AdminPasswordsIndex)
+		admin.GET("/domains", AdminDomainsIndex)
+		admin.POST("/domains", AdminDomainsCreate)
+		admin.PUT("/domains/{domain_id}", AdminDomainsUpdate)
+		admin.DELETE("/domains/{domain_id}", AdminDomainsDestroy)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

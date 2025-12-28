@@ -294,3 +294,106 @@ func AdminPasswordsIndex(c buffalo.Context) error {
 	c.Set("pageTitle", "Password Reset Management")
 	return c.Render(http.StatusOK, r.HTML("admin/passwords/index.plush.html", "admin/layout.plush.html"))
 }
+
+// AdminDomainsIndex lists all company allowed domains
+func AdminDomainsIndex(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	domains := &models.CompanyAllowedDomains{}
+	if err := tx.Order("domain asc").All(domains); err != nil {
+		return err
+	}
+
+	c.Set("domains", domains)
+	c.Set("pageTitle", "Allowed Domains Management")
+	return c.Render(http.StatusOK, r.HTML("admin/domains/index.plush.html", "admin/layout.plush.html"))
+}
+
+// AdminDomainsCreate creates a new allowed domain
+func AdminDomainsCreate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	domain := &models.CompanyAllowedDomain{}
+
+	// Debug logging before binding
+	c.Logger().Info("Before binding - domain struct:", domain)
+
+	if err := c.Bind(domain); err != nil {
+		c.Flash().Add("danger", "Unable to read form input")
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	// Debug logging after binding
+	c.Logger().Info("After binding - domain:", domain.Domain)
+	c.Logger().Info("After binding - description:", domain.Description)
+	c.Logger().Info("After binding - is_active:", domain.IsActive)
+
+	// Set default values
+	if domain.IsActive == false {
+		domain.IsActive = true // Default to active
+	}
+
+	verrs, err := tx.ValidateAndCreate(domain)
+	if err != nil {
+		c.Flash().Add("danger", "Could not create domain")
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	if verrs.HasAny() {
+		c.Flash().Add("danger", verrs.String())
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	c.Flash().Add("success", "Domain added successfully!")
+	return c.Redirect(http.StatusFound, "/admin/domains")
+}
+
+// AdminDomainsUpdate updates an existing allowed domain
+func AdminDomainsUpdate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	domainID := c.Param("domain_id")
+	domain := &models.CompanyAllowedDomain{}
+	if err := tx.Find(domain, domainID); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Bind the updated values
+	if err := c.Bind(domain); err != nil {
+		c.Flash().Add("danger", "Unable to read form input")
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	verrs, err := tx.ValidateAndUpdate(domain)
+	if err != nil {
+		c.Flash().Add("danger", "Could not update domain")
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	if verrs.HasAny() {
+		c.Flash().Add("danger", verrs.String())
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	c.Flash().Add("success", "Domain updated successfully!")
+	return c.Redirect(http.StatusFound, "/admin/domains")
+}
+
+// AdminDomainsDestroy deletes an allowed domain
+func AdminDomainsDestroy(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	domainID := c.Param("domain_id")
+	domain := &models.CompanyAllowedDomain{}
+	if err := tx.Find(domain, domainID); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	if err := tx.Destroy(domain); err != nil {
+		c.Flash().Add("danger", "Could not delete domain")
+		return c.Redirect(http.StatusFound, "/admin/domains")
+	}
+
+	c.Flash().Add("success", "Domain deleted successfully!")
+	return c.Redirect(http.StatusFound, "/admin/domains")
+}
