@@ -1,6 +1,6 @@
 # Hackathon Management Platform
 
-This is a web application built with Buffalo for managing hackathons. It allows users to create and participate in hackathons, manage projects, teams, and schedules.
+This is a comprehensive web application built with Buffalo for managing hackathons. It provides a complete solution for creating, organizing, and running hackathon events with advanced features including audit logging, secure admin controls, and responsive design. The platform supports user registration, project submissions, team formation, file management, and detailed scheduling, all wrapped in a modern dark theme interface.
 
 ## Features
 
@@ -9,9 +9,20 @@ This is a web application built with Buffalo for managing hackathons. It allows 
 - Project submissions and team formation
 - File upload and management
 - Schedule management
-- Admin dashboard
-- Dark theme UI
+- Admin dashboard with comprehensive user management
+- Dark theme UI with sticky navigation
 - Docker containerization
+- **Comprehensive audit logging** - All user actions are logged with timestamps, IP addresses, and user agents
+- **Owner account protection** - Prevents deletion of owner/admin accounts for security
+- **Responsive layout** - CSS Grid-based admin panels with sticky sidebar navigation
+- **Custom branding** - Professional favicon and visual identity
+
+## Security Features
+
+- **Audit Logging**: Complete tracking of all user actions with detailed logs including timestamps, IP addresses, and user agents
+- **Owner Protection**: Owner/admin accounts cannot be deleted, preventing accidental lockouts
+- **CSRF Protection**: Built-in Cross-Site Request Forgery protection
+- **Session Management**: Secure session handling with proper authentication
 
 ## Screenshots
 
@@ -164,15 +175,18 @@ docker-compose exec postgres psql -U postgres -d hackathon_development
 ## Project Structure
 
 ```
-├── actions/          # Buffalo actions (controllers)
-├── models/           # Database models
-├── templates/        # Plush templates
-├── assets/           # CSS, JS, and image assets
-├── migrations/       # Database migrations
-├── public/           # Static files
-├── grifts/           # Buffalo tasks
-├── config/           # Application configuration
-└── docker-compose.yml # Docker services configuration
+├── actions/              # Buffalo actions (controllers)
+├── models/               # Database models with audit logging
+├── templates/            # Plush templates with responsive layouts
+├── assets/               # CSS, JS, and image assets
+├── migrations/           # Database migrations including audit_logs
+├── public/               # Static files including custom favicon
+├── docs/                 # Documentation and screenshots
+│   └── screenshots/      # Application screenshots
+├── grifts/               # Buffalo tasks
+├── config/               # Application configuration
+├── docker-compose.yml    # Docker services configuration
+└── init-db.sql          # Database initialization script
 ```
 
 ## Contributing
