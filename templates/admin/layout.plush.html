@@ -244,37 +244,37 @@
         </h4>
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link <%= if (request.URL.Path == "/admin/" || request.URL.Path == "/admin") { %>active<% } %>" href="/admin/">
+            <a class="nav-link" href="/admin/">
               <i class="fas fa-tachometer-alt"></i>
               Overview
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/users")) { %>active<% } %>" href="/admin/users">
+            <a class="nav-link" href="/admin/users">
               <i class="fas fa-users"></i>
               Users
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/hackathons")) { %>active<% } %>" href="/admin/hackathons">
+            <a class="nav-link" href="/admin/hackathons">
               <i class="fas fa-trophy"></i>
               Hackathons
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/projects")) { %>active<% } %>" href="/admin/projects">
+            <a class="nav-link" href="/admin/projects">
               <i class="fas fa-project-diagram"></i>
               Projects
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
+            <a class="nav-link" href="/admin/domains">
               <i class="fas fa-globe"></i>
               Allowed Domains
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/audit-logs")) { %>active<% } %>" href="/admin/audit-logs">
+            <a class="nav-link" href="/admin/audit-logs">
               <i class="fas fa-history"></i>
               Audit Logs
             </a>
@@ -329,5 +329,45 @@
     </main>
 
     <%= javascriptTag("application.js") %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get current path
+        const currentPath = window.location.pathname;
+        
+        // Remove any existing active classes
+        document.querySelectorAll('.admin-sidebar .nav-link').forEach(link => {
+          link.classList.remove('active');
+        });
+        
+        // Define section mappings
+        const sectionMappings = {
+          'users': '/admin/users',
+          'hackathons': '/admin/hackathons', 
+          'projects': '/admin/projects',
+          'domains': '/admin/domains',
+          'audit-logs': '/admin/audit-logs'
+        };
+        
+        // Check if we're on the overview page
+        if (currentPath === '/admin/' || currentPath === '/admin') {
+          const overviewLink = document.querySelector('.admin-sidebar .nav-link[href="/admin/"]');
+          if (overviewLink) {
+            overviewLink.classList.add('active');
+          }
+          return;
+        }
+        
+        // Check which section we're in
+        for (const [section, basePath] of Object.entries(sectionMappings)) {
+          if (currentPath.startsWith(basePath)) {
+            const sectionLink = document.querySelector(`.admin-sidebar .nav-link[href="${basePath}"]`);
+            if (sectionLink) {
+              sectionLink.classList.add('active');
+              break;
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </html>
