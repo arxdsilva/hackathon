@@ -13,7 +13,22 @@ This is a web application built with Buffalo for managing hackathons. It allows 
 - Dark theme UI
 - Docker containerization
 
+## Screenshots
+
+Here are some screenshots of the hackathon management platform:
+
+### Logged Homepage
+![Logged Homepage](docs/screenshots/logged_homepage.png)
+
+### Hackathon Overview
+![Hackathon Overview](docs/screenshots/hackathon_overview.png)
+
+### Admin Panel
+![Admin Panel](docs/screenshots/admin_panel.png)
+
 ## Prerequisites
+
+- You can run the entire stack via Docker Compose without installing Go, Node.js, or PostgreSQL locally.
 
 Before running this application, make sure you have the following installed:
 
