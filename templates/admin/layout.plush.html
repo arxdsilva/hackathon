@@ -9,6 +9,13 @@
     <meta name="csrf-token" content="<%= authenticity_token %>" />
     <link rel="icon" href="<%= assetPath("images/favicon.ico") %>">
     <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
       body {
         background-color: #f8f9fa;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -17,11 +24,11 @@
       .admin-sidebar {
         background: #ffffff;
         border-right: 1px solid #e9ecef;
-        min-height: calc(100vh - 56px);
+        min-height: calc(100vh - 80px);
         position: fixed;
         width: 250px;
         left: 0;
-        top: 56px;
+        top: 80px;
         z-index: 1000;
         box-shadow: 2px 0 4px rgba(0,0,0,0.04);
       }
@@ -59,10 +66,10 @@
 
       .admin-main {
         margin-left: 250px;
-        margin-top: 56px;
+        margin-top: 80px;
         padding: 30px;
         background-color: #f8f9fa;
-        min-height: calc(100vh - 56px);
+        min-height: calc(100vh - 80px);
       }
 
       .admin-header {
