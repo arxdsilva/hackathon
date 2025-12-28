@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -62,7 +63,6 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	var err error
 	return validate.Validate(
 		&validators.StringIsPresent{Field: u.Email, Name: "Email"},
-		&validators.StringIsPresent{Field: u.PasswordHash, Name: "PasswordHash"},
 		// ensure email uniqueness
 		&validators.FuncValidator{
 			Field:   u.Email,
@@ -78,6 +78,8 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 				if err != nil {
 					return false
 				}
+				// Debug logging
+				fmt.Printf("Email uniqueness check: Email='%s', exists=%v\n", u.Email, exists)
 				return !exists
 			},
 		},

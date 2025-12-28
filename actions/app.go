@@ -114,6 +114,8 @@ func App() *buffalo.App {
 		admin.Use(RequireRoleOwner)
 		admin.GET("/", AdminIndex)
 		admin.GET("/users", AdminUsersIndex)
+		admin.GET("/users/new", AdminUsersNew)
+		admin.POST("/users", AdminUsersCreate)
 		admin.GET("/users/{user_id}", AdminUsersShow)
 		admin.GET("/users/{user_id}/edit", AdminUsersEdit)
 		admin.PUT("/users/{user_id}", AdminUsersUpdate)

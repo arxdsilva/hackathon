@@ -1,0 +1,100 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="mb-0">Create New User</h2>
+        <p class="text-muted mb-0">Add a new user to the system</p>
+      </div>
+      <a href="/admin/users" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Users
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-user-plus me-2"></i>
+          User Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= form_for(user, {action: "/admin/users", method: "POST"}) { %>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= f.Label("Name", {class: "form-label"}) %>
+                <%= f.TextField("Name", {class: "form-control", required: true}) %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= f.Label("Email", {class: "form-label"}) %>
+                <%= f.EmailField("Email", {class: "form-control", required: true}) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= f.Label("Password", {class: "form-label"}) %>
+                <%= f.PasswordField("Password", {class: "form-control", required: true}) %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= f.Label("PasswordConfirmation", {class: "form-label"}) %>
+                <%= f.PasswordField("PasswordConfirmation", {class: "form-control", required: true}) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="user_Role" class="form-label">Role</label>
+            <select class="form-select" id="user_Role" name="Role">
+              <option value="hacker">Hacker</option>
+              <option value="owner">Owner</option>
+            </select>
+            <div class="form-text">Select the role for this user</div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Create User
+            </button>
+            <a href="/admin/users" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card admin-card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-info-circle me-2"></i>
+          Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <h6>User Roles</h6>
+        <ul class="list-unstyled">
+          <li><strong>Hacker:</strong> Regular user who can participate in hackathons</li>
+          <li><strong>Owner:</strong> Administrator with full access to the system</li>
+        </ul>
+
+        <hr>
+
+        <p class="text-muted small">
+          <i class="fas fa-shield-alt me-1"></i>
+          The user will receive an email with instructions to set up their account.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

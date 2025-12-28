@@ -79,6 +79,7 @@ func AdminUsersIndex(c buffalo.Context) error {
 	c.Set("pagination", q.Paginator)
 	c.Set("search", c.Param("search"))
 	c.Set("roleFilter", c.Param("role"))
+	c.Set("user", models.User{}) // For the add user modal form
 
 	c.Set("pageTitle", "Users Management")
 	return c.Render(http.StatusOK, r.HTML("admin/users/index.plush.html", "admin/layout.plush.html"))
@@ -163,6 +164,49 @@ func AdminUsersDestroy(c buffalo.Context) error {
 	}
 
 	c.Flash().Add("success", "User deleted successfully")
+	return c.Redirect(http.StatusFound, "/admin/users")
+}
+
+// AdminUsersNew renders the form to create a new user
+func AdminUsersNew(c buffalo.Context) error {
+	c.Set("user", models.User{})
+	c.Set("pageTitle", "Create New User")
+	return c.Render(http.StatusOK, r.HTML("admin/users/new.plush.html", "admin/layout.plush.html"))
+}
+
+// AdminUsersCreate creates a new user from admin panel
+func AdminUsersCreate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	u := &models.User{}
+	if err := c.Bind(u); err != nil {
+		c.Flash().Add("danger", "Unable to read form input")
+		return c.Redirect(http.StatusFound, "/admin/users/new")
+	}
+
+	// Set default role if not provided
+	if u.Role == "" {
+		u.Role = models.RoleHacker
+	}
+
+	// Debug logging
+	c.Logger().Infof("Attempting to create user: Email=%s, Name=%s, Role=%s", u.Email, u.Name, u.Role)
+
+	// Skip domain validation for admin-created users
+	verrs, err := tx.ValidateAndCreate(u)
+	if err != nil {
+		c.Flash().Add("danger", "Could not create user")
+		return c.Redirect(http.StatusFound, "/admin/users/new")
+	}
+
+	if verrs.HasAny() {
+		c.Logger().Infof("Validation errors: %v", verrs.Errors)
+		c.Set("errors", verrs)
+		c.Set("user", u)
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/users/new.plush.html", "admin/layout.plush.html"))
+	}
+
+	c.Flash().Add("success", "User created successfully")
 	return c.Redirect(http.StatusFound, "/admin/users")
 }
 
