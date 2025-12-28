@@ -230,6 +230,9 @@ func ProjectsCreate(c buffalo.Context) error {
 		return err
 	}
 
+	// Log project creation
+	logAuditEvent(tx, c, &currentUser.ID, "create", "project", &project.ID, fmt.Sprintf("Project created: %s", project.Name))
+
 	c.Flash().Add("success", "Project created successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
 }
@@ -321,6 +324,9 @@ func ProjectsUpdate(c buffalo.Context) error {
 		c.Set("errors", verrs)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("projects/edit.plush.html"))
 	}
+
+	// Log project update
+	logAuditEvent(tx, c, &currentUser.ID, "update", "project", &project.ID, fmt.Sprintf("Project updated: %s", project.Name))
 
 	c.Flash().Add("success", "Project updated successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)

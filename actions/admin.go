@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
@@ -9,6 +10,48 @@ import (
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gofrs/uuid"
 )
+
+// logAuditEvent logs a user action to the audit_logs table
+func logAuditEvent(tx *pop.Connection, c buffalo.Context, userID *uuid.UUID, action, resourceType string, resourceID interface{}, details string) {
+	var resourceIDStr *string
+	if resourceID != nil {
+		switch v := resourceID.(type) {
+		case *uuid.UUID:
+			if v != nil {
+				str := v.String()
+				resourceIDStr = &str
+			}
+		case uuid.UUID:
+			str := v.String()
+			resourceIDStr = &str
+		case *int:
+			if v != nil {
+				str := fmt.Sprintf("%d", *v)
+				resourceIDStr = &str
+			}
+		case int:
+			str := fmt.Sprintf("%d", v)
+			resourceIDStr = &str
+		case string:
+			resourceIDStr = &v
+		}
+	}
+
+	auditLog := &models.AuditLog{
+		UserID:       userID,
+		Action:       action,
+		ResourceType: resourceType,
+		ResourceID:   resourceIDStr,
+		Details:      details,
+		IPAddress:    c.Request().RemoteAddr,
+		UserAgent:    c.Request().UserAgent(),
+	}
+
+	// Don't fail the main operation if audit logging fails
+	if err := tx.Create(auditLog); err != nil {
+		c.Logger().Errorf("Failed to create audit log: %v", err)
+	}
+}
 
 // AdminIndex renders the main admin overview page
 func AdminIndex(c buffalo.Context) error {
@@ -145,6 +188,10 @@ func AdminUsersUpdate(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, c.Request().Referer())
 	}
 
+	// Log the user update
+	userID := c.Value("current_user").(*models.User).ID
+	logAuditEvent(tx, c, &userID, "update", "user", &user.ID, fmt.Sprintf("Updated user %s (%s)", user.Name, user.Email))
+
 	c.Flash().Add("success", "User updated successfully")
 	return c.Redirect(http.StatusFound, "/admin/users")
 }
@@ -163,6 +210,10 @@ func AdminUsersDestroy(c buffalo.Context) error {
 		c.Flash().Add("danger", "Failed to delete user")
 		return c.Redirect(http.StatusFound, "/admin/users")
 	}
+
+	// Log the user deletion
+	userID := c.Value("current_user").(*models.User).ID
+	logAuditEvent(tx, c, &userID, "delete", "user", &user.ID, fmt.Sprintf("Deleted user %s (%s)", user.Name, user.Email))
 
 	c.Logger().Infof("User deleted successfully: %s", user.Name)
 	c.Flash().Add("success", "User deleted successfully")
@@ -207,6 +258,10 @@ func AdminUsersCreate(c buffalo.Context) error {
 		c.Set("user", u)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/users/new.plush.html", "admin/layout.plush.html"))
 	}
+
+	// Log the user creation
+	userID := c.Value("current_user").(*models.User).ID
+	logAuditEvent(tx, c, &userID, "create", "user", &u.ID, fmt.Sprintf("Created user %s (%s) with role %s", u.Name, u.Email, u.Role))
 
 	c.Flash().Add("success", "User created successfully")
 	return c.Redirect(http.StatusFound, "/admin/users")
@@ -442,4 +497,58 @@ func AdminDomainsDestroy(c buffalo.Context) error {
 
 	c.Flash().Add("success", "Domain deleted successfully!")
 	return c.Redirect(http.StatusFound, "/admin/domains")
+}
+
+// AdminAuditLogsIndex displays audit logs
+func AdminAuditLogsIndex(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	auditLogs := &models.AuditLogs{}
+	q := tx.PaginateFromParams(c.Params())
+
+	// Handle search
+	if search := c.Param("search"); search != "" {
+		q = q.Where("action ILIKE ? OR resource_type ILIKE ? OR details ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	// Handle filters
+	if action := c.Param("action"); action != "" {
+		q = q.Where("action = ?", action)
+	}
+
+	if resourceType := c.Param("resource_type"); resourceType != "" {
+		q = q.Where("resource_type = ?", resourceType)
+	}
+
+	if err := q.Order("created_at DESC").All(auditLogs); err != nil {
+		return err
+	}
+
+	// Fetch user information for logs that have a user_id
+	userMap := make(map[string]string)
+	if len(*auditLogs) > 0 {
+		userIDs := make([]string, 0)
+		for _, log := range *auditLogs {
+			if log.UserID != nil {
+				userIDs = append(userIDs, log.UserID.String())
+			}
+		}
+		if len(userIDs) > 0 {
+			users := &models.Users{}
+			if err := tx.Where("id IN (?)", userIDs).All(users); err == nil {
+				for _, user := range *users {
+					userMap[user.ID.String()] = user.Name
+				}
+			}
+		}
+	}
+
+	c.Set("auditLogs", auditLogs)
+	c.Set("pagination", q.Paginator)
+	c.Set("search", c.Param("search"))
+	c.Set("actionFilter", c.Param("action"))
+	c.Set("resourceTypeFilter", c.Param("resource_type"))
+	c.Set("userMap", userMap)
+	c.Set("pageTitle", "Audit Logs")
+	return c.Render(http.StatusOK, r.HTML("admin/audit_logs/index.plush.html", "admin/layout.plush.html"))
 }

@@ -130,6 +130,7 @@ func App() *buffalo.App {
 		admin.POST("/domains", AdminDomainsCreate)
 		admin.PUT("/domains/{domain_id}", AdminDomainsUpdate)
 		admin.DELETE("/domains/{domain_id}", AdminDomainsDestroy)
+		admin.GET("/audit-logs", AdminAuditLogsIndex)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

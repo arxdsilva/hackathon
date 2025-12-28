@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -70,9 +71,14 @@ func AuthCreate(c buffalo.Context) error {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(u.Password)); err != nil {
+		// Log failed login attempt
+		logAuditEvent(tx, c, nil, "login_failed", "user", nil, fmt.Sprintf("Failed login attempt for email: %s", u.Email))
 		c.Flash().Add("danger", "Invalid email or password")
 		return c.Redirect(http.StatusFound, "/signin")
 	}
+
+	// Log successful login
+	logAuditEvent(tx, c, &dbUser.ID, "login", "user", &dbUser.ID, fmt.Sprintf("User logged in: %s (%s)", dbUser.Name, dbUser.Email))
 
 	c.Session().Set(sessionCurrentUserID, dbUser.ID.String())
 	c.Flash().Add("success", "Welcome back!")
@@ -81,6 +87,12 @@ func AuthCreate(c buffalo.Context) error {
 
 // AuthDestroy signs the user out.
 func AuthDestroy(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	if currentUser, ok := c.Value("current_user").(models.User); ok {
+		// Log logout
+		logAuditEvent(tx, c, &currentUser.ID, "logout", "user", &currentUser.ID, fmt.Sprintf("User logged out: %s (%s)", currentUser.Name, currentUser.Email))
+	}
+
 	c.Session().Clear()
 	c.Flash().Add("success", "Signed out")
 	return c.Redirect(http.StatusFound, "/")

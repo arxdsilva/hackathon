@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -172,6 +173,9 @@ func HackathonsCreate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("hackathons/new.plush.html"))
 	}
 
+	// Log hackathon creation
+	logAuditEvent(tx, c, &currentUser.ID, "create", "hackathon", &hackathon.ID, fmt.Sprintf("Hackathon created: %s", hackathon.Title))
+
 	c.Flash().Add("success", "Hackathon created successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d", hackathon.ID)
 }
@@ -227,6 +231,10 @@ func HackathonsUpdate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("hackathons/edit.plush.html"))
 	}
 
+	// Log hackathon update
+	currentUser := c.Value("current_user").(models.User)
+	logAuditEvent(tx, c, &currentUser.ID, "update", "hackathon", &hackathon.ID, fmt.Sprintf("Hackathon updated: %s", hackathon.Title))
+
 	c.Flash().Add("success", "Hackathon updated successfully!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%d", hackathon.ID)
 }
@@ -239,6 +247,10 @@ func HackathonsDestroy(c buffalo.Context) error {
 	if err := tx.Find(hackathon, c.Param("hackathon_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
+
+	// Log hackathon deletion
+	currentUser := c.Value("current_user").(models.User)
+	logAuditEvent(tx, c, &currentUser.ID, "delete", "hackathon", &hackathon.ID, fmt.Sprintf("Hackathon deleted: %s", hackathon.Title))
 
 	if err := tx.Destroy(hackathon); err != nil {
 		return err

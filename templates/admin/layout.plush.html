@@ -244,43 +244,49 @@
         </h4>
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link <%= if (request.URL.Path == "/admin/") { %>active<% } %>" href="/admin/">
+            <a class="nav-link <%= if (request.URL.Path == "/admin/" || request.URL.Path == "/admin") { %>active<% } %>" href="/admin/">
               <i class="fas fa-tachometer-alt"></i>
               Overview
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/users")) { %>active<% } %>" href="/admin/users">
+            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/users")) { %>active<% } %>" href="/admin/users">
               <i class="fas fa-users"></i>
               Users
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/hackathons")) { %>active<% } %>" href="/admin/hackathons">
+            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/hackathons")) { %>active<% } %>" href="/admin/hackathons">
               <i class="fas fa-trophy"></i>
               Hackathons
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/projects")) { %>active<% } %>" href="/admin/projects">
+            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/projects")) { %>active<% } %>" href="/admin/projects">
               <i class="fas fa-project-diagram"></i>
               Projects
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
+            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
               <i class="fas fa-globe"></i>
               Allowed Domains
             </a>
           </li>
           <li class="nav-item">
-            <!-- <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/config")) { %>active<% } %>" href="/admin/config"> -->
+            <a class="nav-link <%= if (strings.Contains(request.URL.Path, "/admin/audit-logs")) { %>active<% } %>" href="/admin/audit-logs">
+              <i class="fas fa-history"></i>
+              Audit Logs
+            </a>
+          </li>
+          <li class="nav-item">
+            <!-- <a class="nav-link <%= if (request.URL.Path == "/admin/config") { %>active<% } %>" href="/admin/config"> -->
               <i class="fas fa-cogs"></i>
               Company Configuration <span class="badge bg-secondary">Coming soon</span>
             </a>
           </li>
           <li class="nav-item">
-            <!-- <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/passwords")) { %>active<% } %>" href="/admin/passwords"> -->
+            <!-- <a class="nav-link <%= if (request.URL.Path == "/admin/passwords") { %>active<% } %>" href="/admin/passwords"> -->
               <i class="fas fa-key"></i>
               Password Reset <span class="badge bg-secondary">Coming soon</span>
             </a>

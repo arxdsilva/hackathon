@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -54,6 +55,9 @@ func UsersCreate(c buffalo.Context) error {
 		c.Set("user", u)
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("users/new.plush.html"))
 	}
+
+	// Log the user registration
+	logAuditEvent(tx, c, &u.ID, "register", "user", &u.ID, fmt.Sprintf("User registered: %s (%s)", u.Name, u.Email))
 
 	// Only set session if no user is currently logged in (prevents admin session switching)
 	if _, ok := c.Session().Get(sessionCurrentUserID).(string); !ok {

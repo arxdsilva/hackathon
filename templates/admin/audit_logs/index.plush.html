@@ -1,0 +1,199 @@
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="mb-0">Audit Logs</h2>
+        <p class="text-muted mb-0">Track all admin actions and system events</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="card admin-card mb-4">
+  <div class="card-body">
+    <form method="GET" class="row g-3">
+      <div class="col-md-4">
+        <label for="search" class="form-label">Search Logs</label>
+        <input type="text" class="form-control" id="search" name="search" value="<%= search %>" placeholder="Search actions, types, or details...">
+      </div>
+      <div class="col-md-3">
+        <label for="action" class="form-label">Action</label>
+        <select class="form-select" id="action" name="action">
+          <option value="">All Actions</option>
+          <option value="create" <%= if (actionFilter == "create") { %>selected<% } %>>Create</option>
+          <option value="update" <%= if (actionFilter == "update") { %>selected<% } %>>Update</option>
+          <option value="delete" <%= if (actionFilter == "delete") { %>selected<% } %>>Delete</option>
+          <option value="register" <%= if (actionFilter == "register") { %>selected<% } %>>Register</option>
+          <option value="login" <%= if (actionFilter == "login") { %>selected<% } %>>Login</option>
+          <option value="login_failed" <%= if (actionFilter == "login_failed") { %>selected<% } %>>Login Failed</option>
+          <option value="logout" <%= if (actionFilter == "logout") { %>selected<% } %>>Logout</option>
+          <option value="join" <%= if (actionFilter == "join") { %>selected<% } %>>Join Project</option>
+          <option value="leave" <%= if (actionFilter == "leave") { %>selected<% } %>>Leave Project</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="resource_type" class="form-label">Resource Type</label>
+        <select class="form-select" id="resource_type" name="resource_type">
+          <option value="">All Types</option>
+          <option value="user" <%= if (resourceTypeFilter == "user") { %>selected<% } %>>User</option>
+          <option value="hackathon" <%= if (resourceTypeFilter == "hackathon") { %>selected<% } %>>Hackathon</option>
+          <option value="project" <%= if (resourceTypeFilter == "project") { %>selected<% } %>>Project</option>
+          <option value="project_membership" <%= if (resourceTypeFilter == "project_membership") { %>selected<% } %>>Project Membership</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-outline-primary me-2">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <a href="/admin/audit-logs" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Clear
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Audit Logs Table -->
+<div class="card admin-card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="fas fa-history me-2"></i>
+      Activity Logs (<%= len(auditLogs) %>)
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= if (len(auditLogs) > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Admin</th>
+              <th>Action</th>
+              <th>Resource</th>
+              <th>Details</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for (log) in auditLogs { %>
+              <tr>
+                <td>
+                  <small class="text-muted">
+                    <%= log.CreatedAt.Format("Jan 2, 2006 15:04:05") %>
+                  </small>
+                </td>
+                <td>
+                  <%= if (log.UserID != nil) { %>
+                    <%= if (userMap[log.UserID.String()] != "") { %>
+                      <span class="badge bg-primary">
+                        <i class="fas fa-user me-1"></i><%= userMap[log.UserID.String()] %>
+                      </span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">
+                        <i class="fas fa-user me-1"></i>User
+                      </span>
+                    <% } %>
+                  <% } else { %>
+                    <span class="text-muted">System</span>
+                  <% } %>
+                </td>
+                <td>
+                  <%= if (log.Action == "create") { %>
+                    <span class="badge bg-success">
+                      <i class="fas fa-plus me-1"></i>Create
+                    </span>
+                  <% } else if (log.Action == "update") { %>
+                    <span class="badge bg-warning">
+                      <i class="fas fa-edit me-1"></i>Update
+                    </span>
+                  <% } else if (log.Action == "delete") { %>
+                    <span class="badge bg-danger">
+                      <i class="fas fa-trash me-1"></i>Delete
+                    </span>
+                  <% } else if (log.Action == "register") { %>
+                    <span class="badge bg-primary">
+                      <i class="fas fa-user-plus me-1"></i>Register
+                    </span>
+                  <% } else if (log.Action == "login") { %>
+                    <span class="badge bg-success">
+                      <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </span>
+                  <% } else if (log.Action == "login_failed") { %>
+                    <span class="badge bg-danger">
+                      <i class="fas fa-exclamation-triangle me-1"></i>Login Failed
+                    </span>
+                  <% } else if (log.Action == "logout") { %>
+                    <span class="badge bg-secondary">
+                      <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </span>
+                  <% } else if (log.Action == "join") { %>
+                    <span class="badge bg-info">
+                      <i class="fas fa-user-plus me-1"></i>Join
+                    </span>
+                  <% } else if (log.Action == "leave") { %>
+                    <span class="badge bg-warning">
+                      <i class="fas fa-user-minus me-1"></i>Leave
+                    </span>
+                  <% } else { %>
+                    <span class="badge bg-secondary"><%= log.Action %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <span class="badge bg-info">
+                    <i class="fas fa-<%= if (log.ResourceType == "user") { %>user<% } else if (log.ResourceType == "hackathon") { %>trophy<% } else if (log.ResourceType == "project") { %>project-diagram<% } else if (log.ResourceType == "project_membership") { %>users<% } else { %>circle<% } %> me-1"></i>
+                    <%= if (log.ResourceType == "project_membership") { %>Project Membership<% } else { %><%= log.ResourceType %><% } %>
+                  </span>
+                </td>
+                <td>
+                  <small><%= log.Details %></small>
+                </td>
+                <td>
+                  <small class="text-muted">
+                    <%= if (log.IPAddress != "") { %>
+                      <%= log.IPAddress %>
+                    <% } else { %>
+                      -
+                    <% } %>
+                  </small>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <%= if (pagination.Page > 1 || pagination.Page < pagination.TotalPages) { %>
+        <nav aria-label="Audit logs pagination" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <%= if (pagination.Page > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="<%= pagination.PrevURL %>">Previous</a>
+              </li>
+            <% } %>
+
+            <%= for (i) in range(1, pagination.TotalPages+1) { %>
+              <li class="page-item <%= if (i == pagination.Page) { %>active<% } %>">
+                <a class="page-link" href="<%= pagination.URLForPage(i) %>"><%= i %></a>
+              </li>
+            <% } %>
+
+            <%= if (pagination.Page < pagination.TotalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="<%= pagination.NextURL %>">Next</a>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } %>
+    <% } else { %>
+      <div class="text-center py-5">
+        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No audit logs found</h4>
+        <p class="text-muted">Activity logs will appear here as admin actions are performed.</p>
+      </div>
+    <% } %>
+  </div>
+</div>

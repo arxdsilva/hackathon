@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
@@ -44,6 +45,9 @@ func ProjectMembershipsCreate(c buffalo.Context) error {
 		return err
 	}
 
+	// Log project membership creation
+	logAuditEvent(tx, c, &currentUser.ID, "join", "project_membership", &membership.ID, fmt.Sprintf("User joined project: %s", project.Name))
+
 	c.Flash().Add("success", "You joined the project!")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)
 }
@@ -76,6 +80,9 @@ func ProjectMembershipsDestroy(c buffalo.Context) error {
 	if err := tx.Destroy(membership); err != nil {
 		return err
 	}
+
+	// Log project membership deletion
+	logAuditEvent(tx, c, &currentUser.ID, "leave", "project_membership", &membership.ID, fmt.Sprintf("User left project: %s", project.Name))
 
 	c.Flash().Add("success", "You left the project.")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)

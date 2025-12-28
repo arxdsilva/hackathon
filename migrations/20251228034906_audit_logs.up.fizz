@@ -1,0 +1,12 @@
+create_table("audit_logs") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("user_id", "uuid", {"null": true})
+	t.Column("action", "string", {})
+	t.Column("resource_type", "string", {})
+	t.Column("resource_id", "string", {"null": true})
+	t.Column("details", "text", {"null": true})
+	t.Column("ip_address", "string", {"null": true})
+	t.Column("user_agent", "string", {"null": true})
+	t.Column("created_at", "timestamp", {})
+	t.Column("updated_at", "timestamp", {})
+}
