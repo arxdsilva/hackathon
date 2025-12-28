@@ -16,6 +16,7 @@ type Project struct {
 	CreatedAt        time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt        time.Time  `json:"updated_at" db:"updated_at"`
 	HackathonID      int        `json:"hackathon_id" db:"hackathon_id"`
+	Hackathon        *Hackathon `json:"hackathon,omitempty" belongs_to:"hackathon" fk_id:"hackathon_id"`
 	UserID           *uuid.UUID `json:"user_id" db:"user_id"`
 	User             *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
 	Name             string     `json:"name" db:"name"`

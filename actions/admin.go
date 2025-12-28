@@ -93,9 +93,9 @@ func AdminUsersShow(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	// Get user's projects
+	// Get user's projects with hackathon information
 	projects := &models.Projects{}
-	if err := tx.Where("user_id = ?", user.ID).All(projects); err != nil {
+	if err := tx.Eager("Hackathon").Where("user_id = ?", user.ID).All(projects); err != nil {
 		return err
 	}
 
