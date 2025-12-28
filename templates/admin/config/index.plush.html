@@ -7,130 +7,276 @@
         </h5>
       </div>
       <div class="card-body">
-        <form>
+        <%= if (errors) { %>
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <%= for (field, messages) in errors { %>
+                <%= for (message) in messages { %>
+                  <li><%= message %></li>
+                <% } %>
+              <% } %>
+            </ul>
+          </div>
+        <% } %>
+
+        <form method="POST" action="<%= adminConfigPath() %>">
+          <input name="_method" type="hidden" value="PUT">
+          <!-- Branding & Identity Section -->
+          <h6 class="text-primary mb-3"><i class="fas fa-building me-2"></i>Branding & Identity</h6>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="companyName" class="form-label">Company Name</label>
-              <input type="text" class="form-control" id="companyName" value="My Company" required>
+              <label for="company_name" class="form-label">Company Name *</label>
+              <input type="text" class="form-control" id="company_name" name="company_name" value="<%= config.CompanyName %>" required>
             </div>
             <div class="col-md-6 mb-3">
-              <label for="companyEmail" class="form-label">Contact Email</label>
-              <input type="email" class="form-control" id="companyEmail" value="admin@company.com" required>
+              <label for="contact_email" class="form-label">Contact Email *</label>
+              <input type="email" class="form-control" id="contact_email" name="contact_email" value="<%= config.ContactEmail %>" required>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="maxProjects" class="form-label">Max Projects per User</label>
-              <input type="number" class="form-control" id="maxProjects" value="5" min="1" max="20">
+              <label for="website_url" class="form-label">Website URL</label>
+              <input type="url" class="form-control" id="website_url" name="website_url" value="<%= config.WebsiteURL %>">
             </div>
             <div class="col-md-6 mb-3">
-              <label for="maxHackathons" class="form-label">Max Active Hackathons</label>
-              <input type="number" class="form-control" id="maxHackathons" value="10" min="1" max="50">
+              <label for="support_email" class="form-label">Support Email</label>
+              <input type="email" class="form-control" id="support_email" name="support_email" value="<%= config.SupportEmail %>">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="company_logo_url" class="form-label">Company Logo URL</label>
+              <input type="url" class="form-control" id="company_logo_url" name="company_logo_url" value="<%= config.CompanyLogoURL %>">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="default_user_role" class="form-label">Default User Role</label>
+              <select class="form-select" id="default_user_role" name="default_user_role">
+                <option value="hacker" <%= if (config.DefaultUserRole == "hacker") { %>selected<% } %>>Hacker</option>
+                <option value="owner" <%= if (config.DefaultUserRole == "owner") { %>selected<% } %>>Owner</option>
+              </select>
             </div>
           </div>
 
           <div class="mb-3">
-            <label for="companyDescription" class="form-label">Company Description</label>
-            <textarea class="form-control" id="companyDescription" rows="3">A leading company in innovation and technology.</textarea>
+            <label for="company_description" class="form-label">Company Description</label>
+            <textarea class="form-control" id="company_description" name="company_description" rows="3"><%= config.CompanyDescription %></textarea>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label">Features</label>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="allowRegistration" checked>
-                  <label class="form-check-label" for="allowRegistration">
-                    Allow User Registration
-                  </label>
-                </div>
+          <div class="alert alert-info mb-3">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Coming Soon:</strong> Additional hackathon settings and configurations are under development.
+          </div>
+          <!-- Registration & Access Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-user-plus me-2"></i>Registration & Access</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="allow_public_registration" name="allow_public_registration" value="true" <%= if (config.AllowPublicRegistration) { %>checked<% } %>>
+                <label class="form-check-label" for="allow_public_registration">
+                  Allow Public Registration
+                </label>
               </div>
-              <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="requireApproval" checked>
-                  <label class="form-check-label" for="requireApproval">
-                    Require Project Approval
-                  </label>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="enableNotifications">
-                  <label class="form-check-label" for="enableNotifications">
-                    Email Notifications
-                  </label>
-                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="require_email_verification" name="require_email_verification" value="true" <%= if (config.RequireEmailVerification) { %>checked<% } %>>
+                <label class="form-check-label" for="require_email_verification">
+                  Require Email Verification
+                </label>
               </div>
             </div>
           </div>
 
-          <div class="d-flex justify-content-end">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="allow_guest_access" name="allow_guest_access" value="true" <%= if (config.AllowGuestAccess) { %>checked<% } %>>
+                <label class="form-check-label" for="allow_guest_access">
+                  Allow Guest Access to Hackathons
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hackathon Settings Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-calendar-alt me-2"></i>Hackathon Settings</h6>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="max_projects_per_user" class="form-label">Max Projects per User</label>
+              <input type="number" class="form-control" id="max_projects_per_user" name="max_projects_per_user" value="<%= config.MaxProjectsPerUser %>" min="1" max="20">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="max_team_size" class="form-label">Max Team Size</label>
+              <input type="number" class="form-control" id="max_team_size" name="max_team_size" value="<%= config.MaxTeamSize %>" min="1" max="10">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="max_active_hackathons" class="form-label">Max Active Hackathons</label>
+              <input type="number" class="form-control" id="max_active_hackathons" name="max_active_hackathons" value="<%= config.MaxActiveHackathons %>" min="1" max="50">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="default_hackathon_duration_hours" class="form-label">Default Hackathon Duration (hours)</label>
+              <input type="number" class="form-control" id="default_hackathon_duration_hours" name="default_hackathon_duration_hours" value="<%= config.DefaultHackathonDurationHours %>" min="1" max="168">
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="require_project_approval" name="require_project_approval" value="true" <%= if (config.RequireProjectApproval) { %>checked<% } %>>
+            <label class="form-check-label" for="require_project_approval">
+              Require Project Approval
+            </label>
+          </div>
+
+          <!-- Email & Notifications Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-envelope me-2"></i>Email & Notifications</h6>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="from_email_address" class="form-label">From Email Address</label>
+              <input type="email" class="form-control" id="from_email_address" name="from_email_address" value="<%= config.FromEmailAddress %>">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="smtp_port" class="form-label">SMTP Port</label>
+              <input type="number" class="form-control" id="smtp_port" name="smtp_port" value="<%= config.SMTPPort %>" min="1" max="65535">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="smtp_server" class="form-label">SMTP Server</label>
+              <input type="text" class="form-control" id="smtp_server" name="smtp_server" value="<%= config.SMTPServer %>">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="smtp_username" class="form-label">SMTP Username</label>
+              <input type="text" class="form-control" id="smtp_username" name="smtp_username" value="<%= config.SMTPUsername %>">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="smtp_password" class="form-label">SMTP Password</label>
+            <input type="password" class="form-control" id="smtp_password" name="smtp_password" value="<%= config.SMTPPassword %>">
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="email_notifications_enabled" name="email_notifications_enabled" value="true" <%= if (config.EmailNotificationsEnabled) { %>checked<% } %>>
+            <label class="form-check-label" for="email_notifications_enabled">
+              Enable Email Notifications
+            </label>
+          </div>
+
+          <!-- Security Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-shield-alt me-2"></i>Security Settings</h6>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="password_min_length" class="form-label">Minimum Password Length</label>
+              <input type="number" class="form-control" id="password_min_length" name="password_min_length" value="<%= config.PasswordMinLength %>" min="6" max="32">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="session_timeout_minutes" class="form-label">Session Timeout (minutes)</label>
+              <input type="number" class="form-control" id="session_timeout_minutes" name="session_timeout_minutes" value="<%= config.SessionTimeoutMinutes %>" min="15" max="1440">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="password_require_uppercase" name="password_require_uppercase" value="true" <%= if (config.PasswordRequireUppercase) { %>checked<% } %>>
+                <label class="form-check-label" for="password_require_uppercase">
+                  Require Uppercase Letters
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="password_require_numbers" name="password_require_numbers" value="true" <%= if (config.PasswordRequireNumbers) { %>checked<% } %>>
+                <label class="form-check-label" for="password_require_numbers">
+                  Require Numbers
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="password_require_special_chars" name="password_require_special_chars" value="true" <%= if (config.PasswordRequireSpecialChars) { %>checked<% } %>>
+                <label class="form-check-label" for="password_require_special_chars">
+                  Require Special Characters
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="two_factor_required" name="two_factor_required" value="true" <%= if (config.TwoFactorRequired) { %>checked<% } %>>
+            <label class="form-check-label" for="two_factor_required">
+              Require Two-Factor Authentication
+            </label>
+          </div>
+
+          <!-- Legal & Compliance Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-gavel me-2"></i>Legal & Compliance</h6>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="terms_of_service_url" class="form-label">Terms of Service URL</label>
+              <input type="url" class="form-control" id="terms_of_service_url" name="terms_of_service_url" value="<%= config.TermsOfServiceURL %>">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="privacy_policy_url" class="form-label">Privacy Policy URL</label>
+              <input type="url" class="form-control" id="privacy_policy_url" name="privacy_policy_url" value="<%= config.PrivacyPolicyURL %>">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="data_retention_days" class="form-label">Data Retention (days)</label>
+            <input type="number" class="form-control" id="data_retention_days" name="data_retention_days" value="<%= config.DataRetentionDays %>" min="30" max="2555">
+          </div>
+
+          <!-- Feature Toggles Section -->
+          <h6 class="text-primary mb-3 mt-4"><i class="fas fa-toggle-on me-2"></i>Feature Toggles</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="file_uploads_enabled" name="file_uploads_enabled" value="true" <%= if (config.FileUploadsEnabled) { %>checked<% } %>>
+                <label class="form-check-label" for="file_uploads_enabled">
+                  Enable File Uploads
+                </label>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="project_images_enabled" name="project_images_enabled" value="true" <%= if (config.ProjectImagesEnabled) { %>checked<% } %>>
+                <label class="form-check-label" for="project_images_enabled">
+                  Enable Project Images
+                </label>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="team_formation_enabled" name="team_formation_enabled" value="true" <%= if (config.TeamFormationEnabled) { %>checked<% } %>>
+                <label class="form-check-label" for="team_formation_enabled">
+                  Enable Team Formation
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="public_profiles_enabled" name="public_profiles_enabled" value="true" <%= if (config.PublicProfilesEnabled) { %>checked<% } %>>
+                <label class="form-check-label" for="public_profiles_enabled">
+                  Enable Public Profiles
+                </label>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="analytics_enabled" name="analytics_enabled" value="true" <%= if (config.AnalyticsEnabled) { %>checked<% } %>>
+                <label class="form-check-label" for="analytics_enabled">
+                  Enable Analytics
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-save me-1"></i>Save Configuration
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row mt-4">
-  <div class="col-md-6">
-    <div class="card admin-card">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="fas fa-shield-alt text-success me-2"></i>Security Settings
-        </h6>
-      </div>
-      <div class="card-body">
-        <div class="mb-3">
-          <label class="form-label">Session Timeout (minutes)</label>
-          <input type="number" class="form-control" value="60" min="15" max="480">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Password Requirements</label>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" checked>
-            <label class="form-check-label">Minimum 8 characters</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" checked>
-            <label class="form-check-label">Require special characters</label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-6">
-    <div class="card admin-card">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="fas fa-database text-info me-2"></i>System Settings
-        </h6>
-      </div>
-      <div class="card-body">
-        <div class="mb-3">
-          <label class="form-label">Database Backup</label>
-          <select class="form-select">
-            <option>Daily</option>
-            <option>Weekly</option>
-            <option>Monthly</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Log Retention (days)</label>
-          <input type="number" class="form-control" value="90" min="7" max="365">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Maintenance Mode</label>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="maintenanceMode">
-            <label class="form-check-label" for="maintenanceMode">Enable maintenance mode</label>
-          </div>
-        </div>
       </div>
     </div>
   </div>

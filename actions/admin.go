@@ -7,9 +7,10 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
+	"github.com/gofrs/uuid"
 )
 
-// AdminIndex renders the main admin dashboard
+// AdminIndex renders the main admin overview page
 func AdminIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
@@ -49,7 +50,7 @@ func AdminIndex(c buffalo.Context) error {
 	c.Set("recentHackathons", recentHackathons)
 	c.Set("recentProjects", recentProjects)
 
-	c.Set("pageTitle", "Dashboard")
+	c.Set("pageTitle", "Overview")
 	return c.Render(http.StatusOK, r.HTML("admin/index.plush.html", "admin/layout.plush.html"))
 }
 
@@ -231,10 +232,61 @@ func AdminEmailsIndex(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("admin/emails/index.plush.html", "admin/layout.plush.html"))
 }
 
-// AdminConfigIndex manages company configuration
+// AdminConfigIndex manages company configuration settings
 func AdminConfigIndex(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	config, err := models.GetDefaultConfig(tx)
+	if err != nil {
+		return err
+	}
+
+	c.Set("config", config)
 	c.Set("pageTitle", "Company Configuration")
 	return c.Render(http.StatusOK, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
+}
+
+// AdminConfigUpdate updates company configuration settings
+func AdminConfigUpdate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	config := &models.CompanyConfiguration{}
+	if err := c.Bind(config); err != nil {
+		return err
+	}
+
+	// Try to find existing config
+	existingConfig := &models.CompanyConfiguration{}
+	err := tx.First(existingConfig)
+	if err != nil {
+		// If no config exists, create a new one
+		config.ID = uuid.Must(uuid.NewV4())
+		verrs, err := tx.ValidateAndCreate(config)
+		if err != nil {
+			return err
+		}
+		if verrs.HasAny() {
+			c.Set("errors", verrs)
+			c.Set("config", config)
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
+		}
+	} else {
+		// Update existing config
+		config.ID = existingConfig.ID
+		config.CreatedAt = existingConfig.CreatedAt
+		verrs, err := tx.ValidateAndUpdate(config)
+		if err != nil {
+			return err
+		}
+		if verrs.HasAny() {
+			c.Set("errors", verrs)
+			c.Set("config", config)
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
+		}
+	}
+
+	c.Flash().Add("success", "Company configuration updated successfully!")
+	return c.Redirect(http.StatusFound, "/admin/config")
 }
 
 // AdminPasswordsIndex manages password reset functionality

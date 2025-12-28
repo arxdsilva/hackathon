@@ -1,0 +1,6 @@
+- id: "company_configuration.created.success"
+  translation: "CompanyConfiguration was successfully created."
+- id: "company_configuration.updated.success"
+  translation: "CompanyConfiguration was successfully updated."
+- id: "company_configuration.destroyed.success"
+  translation: "CompanyConfiguration was successfully destroyed."

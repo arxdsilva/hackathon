@@ -1,0 +1,47 @@
+create_table("company_configurations") {
+	t.Column("id", "uuid", {"primary": true})
+	t.Column("created_at", "timestamp", {"null": false})
+	t.Column("updated_at", "timestamp", {"null": false})
+
+	t.Column("company_name", "string", {"size": 255, "null": false})
+	t.Column("company_logo_url", "string", {"size": 500})
+	t.Column("company_description", "text", {})
+	t.Column("contact_email", "string", {"size": 255, "null": false})
+	t.Column("website_url", "string", {"size": 500})
+	t.Column("support_email", "string", {"size": 255})
+
+	t.Column("allow_public_registration", "boolean", {"default": true})
+	t.Column("require_email_verification", "boolean", {"default": true})
+	t.Column("default_user_role", "string", {"size": 50, "null": false, "default": "hacker"})
+	t.Column("allow_guest_access", "boolean", {"default": false})
+
+	t.Column("max_projects_per_user", "integer", {"default": 5})
+	t.Column("max_team_size", "integer", {"default": 4})
+	t.Column("max_active_hackathons", "integer", {"default": 10})
+	t.Column("default_hackathon_duration_hours", "integer", {"default": 48})
+	t.Column("require_project_approval", "boolean", {"default": false})
+
+	t.Column("smtp_server", "string", {"size": 255})
+	t.Column("smtp_port", "integer", {"default": 587})
+	t.Column("smtp_username", "string", {"size": 255})
+	t.Column("smtp_password", "string", {"size": 255})
+	t.Column("from_email_address", "string", {"size": 255})
+	t.Column("email_notifications_enabled", "boolean", {"default": true})
+
+	t.Column("password_min_length", "integer", {"default": 8})
+	t.Column("password_require_uppercase", "boolean", {"default": true})
+	t.Column("password_require_numbers", "boolean", {"default": true})
+	t.Column("password_require_special_chars", "boolean", {"default": false})
+	t.Column("session_timeout_minutes", "integer", {"default": 480})
+	t.Column("two_factor_required", "boolean", {"default": false})
+
+	t.Column("terms_of_service_url", "string", {"size": 500})
+	t.Column("privacy_policy_url", "string", {"size": 500})
+	t.Column("data_retention_days", "integer", {"default": 2555})
+
+	t.Column("file_uploads_enabled", "boolean", {"default": true})
+	t.Column("project_images_enabled", "boolean", {"default": true})
+	t.Column("team_formation_enabled", "boolean", {"default": true})
+	t.Column("public_profiles_enabled", "boolean", {"default": true})
+	t.Column("analytics_enabled", "boolean", {"default": false})
+}

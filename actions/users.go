@@ -69,15 +69,15 @@ func UsersUpdate(c buffalo.Context) error {
 	newRole := c.Request().FormValue("role")
 	if newRole != models.RoleOwner && newRole != models.RoleHacker {
 		c.Flash().Add("danger", "Invalid role")
-		return c.Redirect(http.StatusFound, "/dashboard")
+		return c.Redirect(http.StatusFound, "/admin")
 	}
 
 	u.Role = newRole
 	if err := tx.Update(u); err != nil {
 		c.Flash().Add("danger", "Could not update user")
-		return c.Redirect(http.StatusFound, "/dashboard")
+		return c.Redirect(http.StatusFound, "/admin")
 	}
 
 	c.Flash().Add("success", "User updated")
-	return c.Redirect(http.StatusFound, "/dashboard")
+	return c.Redirect(http.StatusFound, "/admin")
 }

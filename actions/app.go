@@ -71,7 +71,6 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 		app.GET("/about", AboutHandler)
-		app.GET("/dashboard", RequireRoleOwner(DashboardShow))
 		app.GET("/hackathons", RequireLogin(HackathonsIndex))
 		app.GET("/hackathons/new", RequireRoleOwner(HackathonsNew))
 		app.POST("/hackathons", RequireRoleOwner(HackathonsCreate))
@@ -123,6 +122,7 @@ func App() *buffalo.App {
 		admin.GET("/projects", AdminProjectsIndex)
 		admin.GET("/emails", AdminEmailsIndex)
 		admin.GET("/config", AdminConfigIndex)
+		admin.PUT("/config", AdminConfigUpdate).Name("adminConfigPath")
 		admin.GET("/passwords", AdminPasswordsIndex)
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
