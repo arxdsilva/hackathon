@@ -268,9 +268,9 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/emails")) { %>active<% } %>" href="/admin/emails">
-              <i class="fas fa-envelope"></i>
-              Email Domains
+            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
+              <i class="fas fa-globe"></i>
+              Allowed Domains
             </a>
           </li>
           <li class="nav-item">
@@ -280,15 +280,9 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/passwords")) { %>active<% } %>" href="/admin/passwords">
+            <!-- <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/passwords")) { %>active<% } %>" href="/admin/passwords"> -->
               <i class="fas fa-key"></i>
-              Password Reset
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link <%= if (strings.HasPrefix(request.URL.Path, "/admin/domains")) { %>active<% } %>" href="/admin/domains">
-              <i class="fas fa-globe"></i>
-              Allowed Domains
+              Password Reset <span class="badge bg-secondary">Coming soon</span>
             </a>
           </li>
           <li class="nav-item mt-4">
