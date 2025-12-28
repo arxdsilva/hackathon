@@ -152,30 +152,6 @@
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark">
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Delete</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete user <strong id="deleteUserName"></strong>?</p>
-        <p class="text-danger small">This action cannot be undone.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form id="deleteForm" method="POST" style="display: inline;">
-          <input type="hidden" name="_method" value="DELETE" />
-          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-          <button type="submit" class="btn btn-danger">Delete User</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Add User Modal -->
 <div class="modal fade" id="addUserModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -268,9 +244,11 @@
 
 <script>
 function confirmDelete(userId, userName) {
+  console.log('confirmDelete called with', userId, userName);
   document.getElementById('deleteUserName').textContent = userName;
   document.getElementById('deleteForm').action = '/admin/users/' + userId;
-  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+  console.log('Form action set to:', document.getElementById('deleteForm').action);
+  $('#deleteModal').modal('show');
 }
 
 // Reset form when add user modal is closed

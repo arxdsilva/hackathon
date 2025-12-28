@@ -159,10 +159,12 @@ func AdminUsersDestroy(c buffalo.Context) error {
 	}
 
 	if err := tx.Destroy(user); err != nil {
+		c.Logger().Errorf("Failed to delete user: %v", err)
 		c.Flash().Add("danger", "Failed to delete user")
 		return c.Redirect(http.StatusFound, "/admin/users")
 	}
 
+	c.Logger().Infof("User deleted successfully: %s", user.Name)
 	c.Flash().Add("success", "User deleted successfully")
 	return c.Redirect(http.StatusFound, "/admin/users")
 }
