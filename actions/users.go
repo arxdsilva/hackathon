@@ -37,9 +37,16 @@ func UsersCreate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.HTML("users/new.plush.html"))
 	}
 
-	c.Session().Set(sessionCurrentUserID, u.ID.String())
-	c.Flash().Add("success", "Account created! Welcome")
-	return c.Redirect(http.StatusFound, "/")
+	// Only set session if no user is currently logged in (prevents admin session switching)
+	if _, ok := c.Session().Get(sessionCurrentUserID).(string); !ok {
+		c.Session().Set(sessionCurrentUserID, u.ID.String())
+		c.Flash().Add("success", "Account created! Welcome")
+		return c.Redirect(http.StatusFound, "/")
+	}
+
+	// If admin created the user, redirect back to admin with success message
+	c.Flash().Add("success", "User created successfully")
+	return c.Redirect(http.StatusFound, "/admin/users")
 }
 
 // UsersEdit renders the user edit form for role management.
