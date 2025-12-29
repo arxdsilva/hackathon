@@ -2,7 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
@@ -380,7 +379,7 @@ func AdminConfigIndex(c buffalo.Context) error {
 
 	c.Set("config", config)
 	c.Set("pageTitle", "Company Configuration")
-	return c.Render(http.StatusOK, r.String("Company Configuration"))
+	return c.Render(http.StatusOK, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
 }
 
 // bindConfigBooleans manually sets boolean fields from form params since c.Bind doesn't parse "true" correctly
@@ -444,11 +443,7 @@ func AdminConfigUpdate(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/admin/config")
 	}
 
-	log.Printf("newconfig: %+v", existingConfig)
-
 	verrs, err := tx.ValidateAndUpdate(existingConfig)
-	log.Printf("err: %+v", err)
-	log.Printf("verr: %+v", verrs)
 	if err != nil {
 		return err
 	}
