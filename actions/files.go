@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/arxdsilva/hackathon/models"
+	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -15,9 +16,10 @@ import (
 // FilesIndex lists all files
 func FilesIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
+	repoManager := repository.NewRepositoryManager(tx)
 
-	files := &models.Files{}
-	if err := tx.All(files); err != nil {
+	files, err := repoManager.File().FindAll()
+	if err != nil {
 		return err
 	}
 
@@ -28,9 +30,10 @@ func FilesIndex(c buffalo.Context) error {
 // FilesShow displays a single file
 func FilesShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
+	repoManager := repository.NewRepositoryManager(tx)
 
-	file := &models.File{}
-	if err := tx.Eager("User", "Hackathon", "Project").Find(file, c.Param("file_id")); err != nil {
+	file, err := repoManager.File().FindByID(c.Param("file_id"))
+	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
@@ -41,16 +44,17 @@ func FilesShow(c buffalo.Context) error {
 // FilesNew renders the upload form
 func FilesNew(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
+	repoManager := repository.NewRepositoryManager(tx)
 
 	// Get all hackathons for the dropdown
-	hackathons := &models.Hackathons{}
-	if err := tx.All(hackathons); err != nil {
+	hackathons, err := repoManager.File().FindAllHackathons()
+	if err != nil {
 		return err
 	}
 
 	// Get all projects for the dropdown
-	projects := &models.Projects{}
-	if err := tx.All(projects); err != nil {
+	projects, err := repoManager.File().FindAllProjects()
+	if err != nil {
 		return err
 	}
 

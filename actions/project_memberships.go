@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
+	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -14,32 +15,32 @@ import (
 func ProjectMembershipsCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
+	repoManager := repository.NewRepositoryManager(tx)
 
 	projectID := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
 	// Check if already a member
-	count, err := tx.Where("project_id = ? AND user_id = ?", projectID, currentUser.ID).Count(&models.ProjectMembership{})
+	isMember, err := repoManager.ProjectMembership().IsUserMember(projectID, currentUser.ID)
 	if err != nil {
 		return err
 	}
-	if count > 0 {
+	if isMember {
 		c.Flash().Add("warning", "You are already a member of this project.")
 		return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)
 	}
 
-	// Create membership
-	membership := &models.ProjectMembership{
-		ProjectID: 0, // will be set by binding
-		UserID:    currentUser.ID,
-	}
-
-	// Parse projectID as int
-	var project models.Project
-	if err := tx.Find(&project, projectID); err != nil {
+	// Find the project
+	project, err := repoManager.Project().FindByID(projectID)
+	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
-	membership.ProjectID = project.ID
+
+	// Create membership
+	membership := &models.ProjectMembership{
+		ProjectID: project.ID,
+		UserID:    currentUser.ID,
+	}
 
 	if err := tx.Create(membership); err != nil {
 		return err
@@ -56,13 +57,14 @@ func ProjectMembershipsCreate(c buffalo.Context) error {
 func ProjectMembershipsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
+	repoManager := repository.NewRepositoryManager(tx)
 
 	projectID := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
 	// Check if user is the project owner
-	var project models.Project
-	if err := tx.Find(&project, projectID); err != nil {
+	project, err := repoManager.Project().FindByID(projectID)
+	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 	if project.UserID != nil && *project.UserID == currentUser.ID {
@@ -71,8 +73,8 @@ func ProjectMembershipsDestroy(c buffalo.Context) error {
 	}
 
 	// Find and delete membership
-	membership := &models.ProjectMembership{}
-	if err := tx.Where("project_id = ? AND user_id = ?", projectID, currentUser.ID).First(membership); err != nil {
+	membership, err := repoManager.ProjectMembership().FindByProjectIDAndUserID(projectID, currentUser.ID)
+	if err != nil {
 		c.Flash().Add("warning", "You are not a member of this project.")
 		return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)
 	}

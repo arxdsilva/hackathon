@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
+	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -13,20 +14,22 @@ import (
 func ProfileShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	user := c.Value("current_user").(models.User)
+	repoManager := repository.NewRepositoryManager(tx)
 
 	// Fetch hackathons owned by this user
-	var ownedHackathons models.Hackathons
-	if err := tx.Where("owner_id = ?", user.ID).All(&ownedHackathons); err != nil {
+	ownedHackathons, err := repoManager.Hackathon().FindByOwnerID(user.ID)
+	if err != nil {
 		return err
 	}
 
 	// Fetch projects created by this user
-	var createdProjects models.Projects
-	if err := tx.Where("user_id = ?", user.ID).All(&createdProjects); err != nil {
+	createdProjects, err := repoManager.Project().FindByUserID(user.ID)
+	if err != nil {
 		return err
 	}
 
-	// Fetch projects where user is a member
+	// For member projects, we still need the complex logic to get projects through memberships
+	// This is a bit complex for the repository pattern, so we'll keep it for now
 	var memberships models.ProjectMemberships
 	if err := tx.Where("user_id = ?", user.ID).Eager("Project").All(&memberships); err != nil {
 		return err
@@ -41,7 +44,7 @@ func ProfileShow(c buffalo.Context) error {
 	}
 
 	// Combine and deduplicate projects
-	allProjects := append(createdProjects, memberProjects...)
+	allProjects := append(*createdProjects, memberProjects...)
 
 	c.Set("user", user)
 	c.Set("ownedHackathons", ownedHackathons)

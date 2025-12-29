@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/arxdsilva/hackathon/models"
+	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -32,7 +33,8 @@ func UsersCreate(c buffalo.Context) error {
 		parts := strings.Split(u.Email, "@")
 		if len(parts) == 2 {
 			domain := strings.ToLower(strings.TrimSpace(parts[1]))
-			allowed, err := models.IsDomainAllowed(tx, domain)
+			repoManager := repository.NewRepositoryManager(tx)
+			allowed, err := repoManager.CompanyAllowedDomain().IsDomainAllowed(domain)
 			if err != nil {
 				c.Flash().Add("danger", "Could not validate email domain")
 				return c.Redirect(http.StatusFound, "/users/new")
