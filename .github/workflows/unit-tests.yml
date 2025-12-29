@@ -44,7 +44,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: hackathon_test_isolated
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d hackathon_test_isolated"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -71,6 +71,9 @@ jobs:
     - name: Download dependencies
       run: go mod download
 
+    - name: Install PostgreSQL client
+      run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
     - name: Install Buffalo CLI
       run: |
         go install github.com/gobuffalo/pop/v6/soda@latest
@@ -78,14 +81,20 @@ jobs:
 
     - name: Set up test database
       run: |
-        psql -h localhost -U postgres -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+        echo "Waiting for PostgreSQL to be ready..."
+        until pg_isready -h localhost -p 5432 -U postgres -d hackathon_test_isolated; do
+          echo "PostgreSQL is unavailable - sleeping"
+          sleep 2
+        done
+        echo "PostgreSQL is up - executing command"
+        psql -h localhost -p 5432 -U postgres -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
       env:
         PGPASSWORD: postgres
 
     - name: Run migrations
       run: soda migrate up -e test
       env:
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
+        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable&_fk=true
 
     - name: Run integration tests
       run: go test ./actions -run ".*Integration.*" -v
