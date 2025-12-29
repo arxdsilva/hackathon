@@ -1,0 +1,6 @@
+add_column("company_configurations", "smtp_server", "string")
+add_column("company_configurations", "smtp_port", "integer", {default: 587})
+add_column("company_configurations", "smtp_username", "string")
+add_column("company_configurations", "smtp_password", "string")
+add_column("company_configurations", "from_email_address", "string", {default: "noreply@hackathon.com"})
+add_column("company_configurations", "email_notifications_enabled", "boolean", {default: true})

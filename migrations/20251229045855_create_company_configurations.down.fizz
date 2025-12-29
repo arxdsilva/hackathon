@@ -1,0 +1,1 @@
+sql("DELETE FROM company_configurations WHERE company_name = 'Hackathon Platform';")

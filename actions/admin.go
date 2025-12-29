@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
@@ -382,20 +383,38 @@ func AdminConfigIndex(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
 }
 
+// bindConfigBooleans manually sets boolean fields from form params since c.Bind doesn't parse "true" correctly
+func bindConfigBooleans(c buffalo.Context, config *models.CompanyConfiguration) {
+	config.AllowPublicRegistration = c.Param("allow_public_registration") == "true"
+	config.RequireEmailVerification = c.Param("require_email_verification") == "true"
+	config.AllowGuestAccess = c.Param("allow_guest_access") == "true"
+	config.RequireProjectApproval = c.Param("require_project_approval") == "true"
+	config.PasswordRequireUppercase = c.Param("password_require_uppercase") == "true"
+	config.PasswordRequireNumbers = c.Param("password_require_numbers") == "true"
+	config.PasswordRequireSpecialChars = c.Param("password_require_special_chars") == "true"
+	config.TwoFactorRequired = c.Param("two_factor_required") == "true"
+	config.FileUploadsEnabled = c.Param("file_uploads_enabled") == "true"
+	config.ProjectImagesEnabled = c.Param("project_images_enabled") == "true"
+	config.TeamFormationEnabled = c.Param("team_formation_enabled") == "true"
+	config.PublicProfilesEnabled = c.Param("public_profiles_enabled") == "true"
+	config.AnalyticsEnabled = c.Param("analytics_enabled") == "true"
+}
+
 // AdminConfigUpdate updates company configuration settings
 func AdminConfigUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
-	config := &models.CompanyConfiguration{}
-	if err := c.Bind(config); err != nil {
-		return err
-	}
-
-	// Try to find existing config
+	// Find the canonical config (smallest ID)
 	existingConfig := &models.CompanyConfiguration{}
 	err := tx.First(existingConfig)
 	if err != nil {
 		// If no config exists, create a new one
+		config := &models.CompanyConfiguration{}
+		if err := c.Bind(config); err != nil {
+			return err
+		}
+		// Manually handle boolean fields
+		bindConfigBooleans(c, config)
 		config.ID = uuid.Must(uuid.NewV4())
 		verrs, err := tx.ValidateAndCreate(config)
 		if err != nil {
@@ -406,19 +425,37 @@ func AdminConfigUpdate(c buffalo.Context) error {
 			c.Set("config", config)
 			return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
 		}
-	} else {
-		// Update existing config
-		config.ID = existingConfig.ID
-		config.CreatedAt = existingConfig.CreatedAt
-		verrs, err := tx.ValidateAndUpdate(config)
-		if err != nil {
-			return err
-		}
-		if verrs.HasAny() {
-			c.Set("errors", verrs)
-			c.Set("config", config)
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
-		}
+		return c.Redirect(http.StatusFound, "/admin/config")
+	}
+
+	// Update the existing config - only update fields that changed
+	newConfig := &models.CompanyConfiguration{}
+	if err := c.Bind(newConfig); err != nil {
+		return err
+	}
+
+	// Manually handle boolean fields since c.Bind doesn't parse "true" correctly for bools
+	bindConfigBooleans(c, newConfig)
+
+	// Check if any fields changed and update them
+	changed := existingConfig.UpdateChangedFields(newConfig)
+	if !changed {
+		c.Flash().Add("info", "No changes were made to the configuration.")
+		return c.Redirect(http.StatusFound, "/admin/config")
+	}
+
+	log.Printf("newconfig: %+v", existingConfig)
+
+	verrs, err := tx.ValidateAndUpdate(existingConfig)
+	log.Printf("err: %+v", err)
+	log.Printf("verr: %+v", verrs)
+	if err != nil {
+		return err
+	}
+	if verrs.HasAny() {
+		c.Set("errors", verrs)
+		c.Set("config", existingConfig)
+		return c.Render(http.StatusUnprocessableEntity, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
 	}
 
 	c.Flash().Add("success", "Company configuration updated successfully!")

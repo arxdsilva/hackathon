@@ -1,0 +1,6 @@
+drop_column("company_configurations", "smtp_server")
+drop_column("company_configurations", "smtp_port")
+drop_column("company_configurations", "smtp_username")
+drop_column("company_configurations", "smtp_password")
+drop_column("company_configurations", "from_email_address")
+drop_column("company_configurations", "email_notifications_enabled")
