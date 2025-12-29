@@ -15,7 +15,6 @@ import (
 	"github.com/gobuffalo/middleware/forcessl"
 	"github.com/gobuffalo/middleware/i18n"
 	"github.com/gobuffalo/middleware/paramlogger"
-	"github.com/gobuffalo/plush/v4"
 	"github.com/unrolled/secure"
 )
 
@@ -57,9 +56,7 @@ func App() *buffalo.App {
 
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
-		if envy.Get("GO_ENV", "development") != "test" {
-			app.Use(csrf.New)
-		}
+		app.Use(csrf.New)
 
 		// Wraps each request in a transaction.
 		//   c.Value("tx").(*pop.Connection)
@@ -71,11 +68,6 @@ func App() *buffalo.App {
 		// Load the current user into context and protect routes.
 		app.Use(SetCurrentUser)
 		app.Use(Authorize)
-
-		// Set up template helpers
-		plush.Helpers.Add("authenticity_token", func() string {
-			return "" // Return empty token when CSRF is disabled
-		})
 
 		app.GET("/", HomeHandler)
 		app.GET("/about", AboutHandler)

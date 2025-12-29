@@ -99,5 +99,4 @@ jobs:
     - name: Run integration tests
       run: go test ./actions -run "Test_ActionSuite" -v
       env:
-        GO_ENV: test
         TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
