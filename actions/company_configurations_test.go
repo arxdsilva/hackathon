@@ -176,7 +176,12 @@ func (as *ActionSuite) Test_AdminConfigUpdate_NoChanges_Integration() {
 
 	res := as.HTML("/admin/config").Put(form)
 	as.Equal(http.StatusFound, res.Code) // Should redirect
-	as.Contains(as.Session.Get("flash").(map[string][]string)["info"][0], "No changes were made")
+
+	flash := as.Session.Get("flash")
+	as.NotNil(flash)
+	flashMap, ok := flash.(map[string][]string)
+	as.True(ok)
+	as.Contains(flashMap["info"][0], "No changes were made")
 }
 
 func (as *ActionSuite) Test_AdminConfigUpdate_AccessDenied_Integration() {
