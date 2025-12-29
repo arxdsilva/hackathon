@@ -94,7 +94,7 @@ jobs:
     - name: Run migrations
       run: soda migrate up -e test
       env:
-        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable&_fk=true
+        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
 
     - name: Run integration tests
       run: go test ./actions -run ".*Integration.*" -v
