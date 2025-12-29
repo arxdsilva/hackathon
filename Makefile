@@ -71,11 +71,11 @@ db-setup: ## Set up development database
 
 db-migrate: ## Run database migrations
 	@echo "🗃️ Running database migrations..."
-	buffalo db migrate up
+	soda migrate up
 
 db-reset: ## Reset database (drop and recreate)
 	@echo "💥 Resetting database..."
-	buffalo db reset
+	soda reset
 
 db-seed: ## Seed database with initial data
 	@echo "🌱 Seeding database..."

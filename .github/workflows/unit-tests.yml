@@ -71,6 +71,11 @@ jobs:
     - name: Download dependencies
       run: go mod download
 
+    - name: Install Buffalo CLI
+      run: |
+        go install github.com/gobuffalo/pop/v6/soda@latest
+        echo "$HOME/go/bin" >> $GITHUB_PATH
+
     - name: Set up test database
       run: |
         psql -h localhost -U postgres -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
@@ -78,9 +83,9 @@ jobs:
         PGPASSWORD: postgres
 
     - name: Run migrations
-      run: DATABASE_URL="postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
+      run: soda migrate up -e test
       env:
-        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
 
     - name: Run integration tests
       run: go test ./actions -run ".*Integration.*" -v
