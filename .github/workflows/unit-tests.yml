@@ -97,6 +97,6 @@ jobs:
         TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
 
     - name: Run integration tests
-      run: go test ./actions -run ".*Integration.*" -v
+      run: go test ./actions -run "Test_ActionSuite" -v
       env:
         TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
