@@ -79,6 +79,14 @@ func (c *CompanyConfiguration) Validate(tx *pop.Connection) (*validate.Errors, e
 		&validators.StringIsPresent{Field: c.CompanyName, Name: "CompanyName"},
 		&validators.StringIsPresent{Field: c.ContactEmail, Name: "ContactEmail"},
 		&validators.StringIsPresent{Field: c.DefaultUserRole, Name: "DefaultUserRole"},
+		&validators.FuncValidator{
+			Field:   c.DefaultUserRole,
+			Name:    "DefaultUserRole",
+			Message: "DefaultUserRole must be either 'hacker' or 'owner'",
+			Fn: func() bool {
+				return c.DefaultUserRole == RoleHacker || c.DefaultUserRole == RoleOwner
+			},
+		},
 	), nil
 }
 

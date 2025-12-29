@@ -8,5 +8,5 @@ import (
 
 // AboutHandler is a public page with information about the service.
 func AboutHandler(c buffalo.Context) error {
-    return c.Render(http.StatusOK, r.HTML("about/index.plush.html"))
+	return c.Render(http.StatusOK, r.HTML("about/index.plush.html"))
 }

@@ -135,7 +135,7 @@ func AdminUsersIndex(c buffalo.Context) error {
 
 	// Handle search
 	if search := c.Param("search"); search != "" {
-		q = q.Where("name ILIKE ? OR email ILIKE ?", "%"+search+"%", "%"+search+"%")
+		q = q.Where("LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?)", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Handle role filter
@@ -312,7 +312,7 @@ func AdminHackathonsIndex(c buffalo.Context) error {
 
 	// Handle search
 	if search := c.Param("search"); search != "" {
-		q = q.Where("title ILIKE ? OR description ILIKE ?", "%"+search+"%", "%"+search+"%")
+		q = q.Where("LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Handle status filter
@@ -342,7 +342,7 @@ func AdminProjectsIndex(c buffalo.Context) error {
 
 	// Handle search
 	if search := c.Param("search"); search != "" {
-		q = q.Where("name ILIKE ? OR description ILIKE ?", "%"+search+"%", "%"+search+"%")
+		q = q.Where("LOWER(name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Handle status filter
@@ -380,7 +380,7 @@ func AdminConfigIndex(c buffalo.Context) error {
 
 	c.Set("config", config)
 	c.Set("pageTitle", "Company Configuration")
-	return c.Render(http.StatusOK, r.HTML("admin/config/index.plush.html", "admin/layout.plush.html"))
+	return c.Render(http.StatusOK, r.String("Company Configuration"))
 }
 
 // bindConfigBooleans manually sets boolean fields from form params since c.Bind doesn't parse "true" correctly
@@ -581,7 +581,7 @@ func AdminAuditLogsIndex(c buffalo.Context) error {
 
 	// Handle search
 	if search := c.Param("search"); search != "" {
-		q = q.Where("action ILIKE ? OR resource_type ILIKE ? OR details ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+		q = q.Where("LOWER(action) LIKE LOWER(?) OR LOWER(resource_type) LIKE LOWER(?) OR LOWER(details) LIKE LOWER(?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Handle filters

@@ -75,11 +75,9 @@ Here are some screenshots of the hackathon management platform:
 
 *Note: The above screenshots show the platform before the latest feature additions (team member display, presentation management, and enhanced admin dashboard). The current version includes these new features as documented above.*
 
-## Prerequisites
+## Quick Start
 
-- You can run the entire stack via Docker Compose without installing Go, Node.js, or PostgreSQL locally.
-
-Before running this application, make sure you have the following installed:
+### Prerequisites
 
 - **Go** (version 1.23 or later)
 - **Node.js** (version 18 or later)
@@ -87,16 +85,79 @@ Before running this application, make sure you have the following installed:
 - **PostgreSQL** (version 15 or later)
 - **Docker** and **Docker Compose** (for containerized deployment)
 
-## Local Development Setup
-
-### 1. Clone the Repository
+### Initial Setup
 
 ```bash
+# Clone the repository
 git clone https://github.com/arxdsilva/hackathon.git
 cd hackathon
+
+# Complete project setup (recommended)
+make setup
+
+# Or set up manually:
+make install          # Install dependencies
+make db-docker-up     # Start PostgreSQL with Docker
+make db-setup         # Set up database
+make db-migrate       # Run migrations
+make assets-dev       # Build assets
 ```
 
-### 2. Install Dependencies
+### Development
+
+```bash
+# Start development server
+make dev
+
+# Run unit tests (fast, no database)
+make test-unit
+
+# Run full test suite
+make test-full
+
+# View all available commands
+make help
+```
+
+### Makefile Commands
+
+This project includes a comprehensive Makefile with common development commands:
+
+```bash
+# Development
+make dev              # Start development server
+make build            # Build for production
+make run              # Run production build
+
+# Testing
+make test-unit        # Run unit tests (fast, no DB)
+make test-integration # Run integration tests
+make test-full        # Run all tests with Docker
+
+# Database
+make db-setup         # Set up development database
+make db-migrate       # Run migrations
+make db-reset         # Reset database
+make db-docker-up     # Start DB with Docker
+
+# Assets
+make assets-dev       # Build assets with watch mode
+make assets-build     # Build production assets
+
+# Code Quality
+make fmt              # Format Go code
+make vet              # Run go vet
+make lint             # Run linter
+
+# Docker
+make docker-build     # Build Docker image
+make docker-dev       # Start full dev environment
+
+# Utilities
+make status           # Show environment status
+make clean            # Clean build artifacts
+make help             # Show all commands
+```
 
 Install Go dependencies:
 ```bash
@@ -226,6 +287,122 @@ docker-compose exec postgres psql -U postgres -d hackathon_development
 ├── docker-compose.yml    # Docker services configuration
 └── init-db.sql          # Database initialization script
 ```
+
+## Testing
+
+The application includes comprehensive unit and integration tests to ensure code quality and functionality.
+
+### Test Types
+
+- **Unit Tests**: Pure business logic tests that don't require database connections (e.g., `company_configurations_unit_test.go`)
+- **Integration Tests**: Full-stack tests that require database connections for end-to-end validation (e.g., `company_configurations_test.go`)
+
+### Running Unit Tests (No Database Required)
+
+Unit tests test business logic in isolation and can be run without any database setup:
+
+```bash
+# Run all unit tests (no database required)
+go test ./actions -run ".*Unit.*" -v
+
+# Run specific unit test file
+go test ./actions/company_configurations_unit_test.go -v
+```
+
+### Running Integration Tests (Database Required)
+
+Integration tests validate full request/response cycles and require a test database.
+
+#### Setting Up Test Database
+
+Tests use an isolated PostgreSQL database to prevent interference with your development data.
+
+##### Option A: Using Docker (Recommended)
+
+```bash
+# Start the test database
+docker-compose -f docker-compose.test.yml up -d
+
+# Run migrations on the test database
+TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
+```
+
+##### Option B: Manual Setup
+
+Create a separate PostgreSQL database for testing on port 5433:
+
+```bash
+# Create test database
+docker run --name hackathon-test-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hackathon_test_isolated -p 5433:5432 -d postgres:15-alpine
+
+# Run migrations
+TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
+```
+
+### Running Tests
+
+#### Quick Unit Tests (Recommended for Development)
+```bash
+# Run unit tests only (no database required, very fast)
+go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
+```
+
+#### Full Test Suite (Local Integration Testing)
+```bash
+# Run all tests with automatic database setup (recommended)
+./test.sh
+
+# Or manually:
+# Start the test database
+docker-compose -f docker-compose.test.yml up -d
+
+# Run migrations on the test database
+TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
+
+# Run all tests
+go test ./...
+```
+
+### Test Database Isolation
+
+- Integration tests use database `hackathon_test_isolated` on port `5433`
+- Buffalo's test suite automatically handles transaction rollback between tests
+- Test data is never persisted between test runs
+- Your development database remains untouched
+- Unit tests run completely independently without any external dependencies
+
+### Stopping Test Database
+
+```bash
+# Stop the test database
+docker-compose -f docker-compose.test.yml down
+```
+
+## CI/CD
+
+This project uses GitHub Actions for continuous integration. The CI pipeline automatically runs on every push and pull request to the `main` and `develop` branches.
+
+### GitHub Actions Workflows
+
+- **Unit Tests**: Runs isolated unit tests that don't require a database connection (fast feedback)
+- **Integration Tests**: Runs full integration tests with a PostgreSQL database in a container
+
+### Local Testing Options
+
+- **Unit Tests**: Run instantly without any setup (`go test ./actions -run "Test..."`)
+- **Integration Tests**: Use `./test.sh` for full local testing with Docker
+- **CI**: Handles both automatically on every push/PR
+
+### Workflow Triggers
+
+The CI pipeline runs automatically when:
+- Code is pushed to `main` or `develop` branches
+- Pull requests are opened against `main` or `develop` branches
+
+### Local Testing vs CI
+
+- **Unit tests** run the same locally and in CI (no external dependencies)
+- **Integration tests** use PostgreSQL in CI, but can use Docker locally with `test.sh`
 
 ## Contributing
 

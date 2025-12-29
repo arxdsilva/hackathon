@@ -19,7 +19,7 @@
           </div>
         <% } %>
 
-        <form method="POST" action="<%= adminConfigPath() %>">
+        <form method="POST" action="/admin/config">
           <input name="_method" type="hidden" value="PUT">
           <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
           <!-- Branding & Identity Section -->

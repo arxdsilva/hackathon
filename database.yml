@@ -3,6 +3,9 @@ development:
   url: {{envOr "DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_development?sslmode=disable"}}
 
 test:
-  url: {{envOr "TEST_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_test?sslmode=disable"}}
+  dialect: sqlite3
+  database: ":memory:"
+  url: {{envOr "TEST_DATABASE_URL" "sqlite3://file::memory:?_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=cache_size(1000)&_pragma=busy_timeout(3000)"}}
+
 production:
   url: {{envOr "DATABASE_URL" "postgres://postgres:postgres@localhost:5432/hackathon_production?sslmode=disable"}}

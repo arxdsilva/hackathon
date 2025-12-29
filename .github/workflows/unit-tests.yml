@@ -1,0 +1,77 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23'
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Run unit tests (no database required)
+      run: go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Set up PostgreSQL
+      uses: actions/setup-postgres@v1
+      with:
+        postgres-version: 15
+
+    - name: Create test database
+      run: |
+        createdb hackathon_test_isolated
+        psql -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+
+    - name: Run migrations
+      run: DATABASE_URL="postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
+      env:
+        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
+
+    - name: Run integration tests
+      run: go test ./actions -run ".*Integration.*" -v
+      env:
+        TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable
