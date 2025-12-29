@@ -64,7 +64,7 @@ func AdminIndex(c buffalo.Context) error {
 	tx.RawQuery("SELECT COUNT(*) FROM hackathons").First(&hackathonCount)
 	tx.RawQuery("SELECT COUNT(*) FROM projects").First(&projectCount)
 	tx.RawQuery("SELECT COUNT(*) FROM projects WHERE status = 'active'").First(&activeProjectCount)
-	tx.RawQuery("SELECT COUNT(*) FROM projects WHERE presenting = true").First(&presentingProjectCount)
+	tx.RawQuery("SELECT COUNT(*) FROM projects WHERE presenting = true AND hackathon_id IN (SELECT id FROM hackathons WHERE status IN ('active', 'upcoming'))").First(&presentingProjectCount)
 
 	// Get recent users
 	recentUsers := &models.Users{}
@@ -86,7 +86,7 @@ func AdminIndex(c buffalo.Context) error {
 
 	// Get presenting projects
 	presentingProjects := &models.Projects{}
-	if err := tx.Where("presenting = ?", true).Order("presentation_order ASC").Eager("User", "Hackathon").All(presentingProjects); err != nil {
+	if err := tx.Where("presenting = ? AND hackathon_id IN (SELECT id FROM hackathons WHERE status IN (?, ?))", true, "active", "upcoming").Order("presentation_order ASC").Eager("User", "Hackathon").All(presentingProjects); err != nil {
 		return err
 	}
 
