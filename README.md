@@ -16,6 +16,9 @@ This is a comprehensive web application built with Buffalo for managing hackatho
 - **Owner account protection** - Prevents deletion of owner/admin accounts for security
 - **Responsive layout** - CSS Grid-based admin panels with sticky sidebar navigation
 - **Custom branding** - Professional favicon and visual identity
+- **Team member display** - Project pages show all team members with their roles and join dates
+- **Presentation management** - Projects can opt-in to presentations with toggle functionality and admin oversight
+- **Admin presentations dashboard** - Comprehensive view of all presenting projects across hackathons with presentation order tracking
 
 ## Security Features
 
@@ -23,6 +26,39 @@ This is a comprehensive web application built with Buffalo for managing hackatho
 - **Owner Protection**: Owner/admin accounts cannot be deleted, preventing accidental lockouts
 - **CSRF Protection**: Built-in Cross-Site Request Forgery protection
 - **Session Management**: Secure session handling with proper authentication
+
+## New Features (December 28, 2025)
+
+### Team Member Display
+Project pages now display comprehensive team information including:
+- **Team member list** with names, emails, and roles (owner/member)
+- **Join timestamps** showing when each member joined the project
+- **Visual indicators** distinguishing project owners from regular members
+- **Responsive design** that works well on all screen sizes
+
+### Presentation Management System
+A complete presentation workflow for hackathon projects featuring:
+- **Presentation toggle** - Project owners can opt their projects in/out of presentations
+- **Presentation status tracking** - Clear visual indicators showing presentation eligibility
+- **Audit logging** - All presentation status changes are logged for transparency
+- **Presentation order** - Automatic timestamp-based ordering for presentation scheduling
+
+### Admin Presentations Dashboard
+Enhanced admin panel with dedicated presentations oversight:
+- **Presenting projects statistics** - Count of projects opting to present across all hackathons
+- **Comprehensive project listing** - All presenting projects with detailed information
+- **Presentation order display** - Projects ordered by when they opted to present
+- **Cross-hackathon visibility** - Admin can see presentations from all hackathons they manage
+- **Project details** - Names, descriptions, repository links, and team information
+- **Visual project cards** - Clean card-based layout with project images and metadata
+
+### Hackathon Presentation Display
+Hackathon overview pages now feature:
+- **Presenting projects section** - Dedicated area showing all projects that will present
+- **Presentation order** - Projects displayed in the order they opted to present
+- **Project thumbnails** - Visual representation with project images
+- **Team member counts** - Quick overview of team sizes
+- **Direct links** - Easy navigation to individual project pages
 
 ## Screenshots
 
@@ -36,6 +72,8 @@ Here are some screenshots of the hackathon management platform:
 
 ### Admin Panel
 ![Admin Panel](docs/screenshots/admin_panel.png)
+
+*Note: The above screenshots show the platform before the latest feature additions (team member display, presentation management, and enhanced admin dashboard). The current version includes these new features as documented above.*
 
 ## Prerequisites
 
@@ -200,3 +238,5 @@ docker-compose exec postgres psql -U postgres -d hackathon_development
 ## License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+
+<!-- presentation: resource -->
