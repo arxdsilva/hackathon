@@ -146,10 +146,40 @@ func ProjectsShow(c buffalo.Context) error {
 		return err
 	}
 
+	// Load project members
+	memberships := &models.ProjectMemberships{}
+	if err := tx.Where("project_id = ?", project.ID).All(memberships); err != nil {
+		return err
+	}
+
+	// Load users for the memberships
+	userIDs := make([]interface{}, len(*memberships))
+	for i, membership := range *memberships {
+		userIDs[i] = membership.UserID
+	}
+
+	projectUsers := &models.Users{}
+	if len(userIDs) > 0 {
+		if err := tx.Where("id IN (?)", userIDs...).All(projectUsers); err != nil {
+			return err
+		}
+	}
+
+	// Check if current user is a member
+	isMember := false
+	if cu, ok := c.Value("current_user").(models.User); ok {
+		count, err := tx.Where("project_id = ? AND user_id = ?", project.ID, cu.ID).Count(&models.ProjectMembership{})
+		if err == nil && count > 0 {
+			isMember = true
+		}
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("project", project)
 	c.Set("isProjectOwner", isOwner)
 	c.Set("files", files)
+	c.Set("projectUsers", projectUsers)
+	c.Set("isMember", isMember)
 	return c.Render(http.StatusOK, r.HTML("projects/show.plush.html"))
 }
 

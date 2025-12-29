@@ -31,4 +31,4 @@ generated/
 !.yarn/sdks
 !.yarn/versions
 app
-
+main
