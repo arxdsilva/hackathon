@@ -15,6 +15,7 @@ import (
 	"github.com/gobuffalo/middleware/forcessl"
 	"github.com/gobuffalo/middleware/i18n"
 	"github.com/gobuffalo/middleware/paramlogger"
+	"github.com/gobuffalo/plush/v4"
 	"github.com/unrolled/secure"
 )
 
@@ -70,6 +71,11 @@ func App() *buffalo.App {
 		// Load the current user into context and protect routes.
 		app.Use(SetCurrentUser)
 		app.Use(Authorize)
+
+		// Set up template helpers
+		plush.Helpers.Add("authenticity_token", func() string {
+			return "" // Return empty token when CSRF is disabled
+		})
 
 		app.GET("/", HomeHandler)
 		app.GET("/about", AboutHandler)
