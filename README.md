@@ -79,7 +79,7 @@ Here are some screenshots of the hackathon management platform:
 
 ### Prerequisites
 
-- **Go** (version 1.23 or later)
+- **Go** (version 1.25 or later)
 - **Node.js** (version 18 or later)
 - **Yarn** (version 1.x)
 - **PostgreSQL** (version 15 or later)

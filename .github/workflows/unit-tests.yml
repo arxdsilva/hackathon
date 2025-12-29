@@ -17,7 +17,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.23'
+        go-version: '1.25'
 
     - name: Cache Go modules
       uses: actions/cache@v3
@@ -35,6 +35,21 @@ jobs:
 
   integration-tests:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: hackathon_test_isolated
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
     - name: Checkout code
@@ -56,15 +71,11 @@ jobs:
     - name: Download dependencies
       run: go mod download
 
-    - name: Set up PostgreSQL
-      uses: actions/setup-postgres@v1
-      with:
-        postgres-version: 15
-
-    - name: Create test database
+    - name: Set up test database
       run: |
-        createdb hackathon_test_isolated
-        psql -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+        psql -h localhost -U postgres -d hackathon_test_isolated -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+      env:
+        PGPASSWORD: postgres
 
     - name: Run migrations
       run: DATABASE_URL="postgres://postgres:postgres@localhost:5432/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
