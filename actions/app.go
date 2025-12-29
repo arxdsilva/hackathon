@@ -56,7 +56,7 @@ func App() *buffalo.App {
 
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
-		if ENV != "test" {
+		if envy.Get("GO_ENV", "development") != "test" {
 			app.Use(csrf.New)
 		}
 

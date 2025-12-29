@@ -12,9 +12,6 @@ type ActionSuite struct {
 }
 
 func Test_ActionSuite(t *testing.T) {
-	// Set test environment to disable CSRF
-	os.Setenv("GO_ENV", "test")
-
 	// Use TEST_DATABASE_URL if set (for CI), otherwise use in-memory SQLite for local tests
 	if os.Getenv("TEST_DATABASE_URL") == "" {
 		os.Setenv("TEST_DATABASE_URL", "sqlite3://file::memory:?_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=cache_size(1000)&_pragma=busy_timeout(3000)")
