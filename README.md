@@ -1,5 +1,7 @@
 # Hackathon Management Platform
 
+[![CI](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml)
+
 This is a comprehensive web application built with Buffalo for managing hackathons. It provides a complete solution for creating, organizing, and running hackathon events with advanced features including audit logging, secure admin controls, and responsive design. The platform supports user registration, project submissions, team formation, file management, and detailed scheduling, all wrapped in a modern dark theme interface.
 
 ## Features
