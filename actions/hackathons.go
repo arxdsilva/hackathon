@@ -79,6 +79,13 @@ func HackathonsShow(c buffalo.Context) error {
 		}
 	}
 
+	// Load presenting projects ordered by presentation_order
+	presentingProjects := &models.Projects{}
+	if err := tx.Where("hackathon_id = ? AND presenting = ?", hackathon.ID, true).
+		Order("presentation_order asc").Eager("User").All(presentingProjects); err != nil {
+		return err
+	}
+
 	// Calculate statistics for the template
 	totalParticipants := 0
 	totalTeams := 0
@@ -118,6 +125,7 @@ func HackathonsShow(c buffalo.Context) error {
 
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
+	c.Set("presentingProjects", presentingProjects)
 	c.Set("pagination", q.Paginator)
 	c.Set("memberCounts", memberCounts)
 	c.Set("userMemberships", userMemberships)

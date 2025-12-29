@@ -200,6 +200,61 @@
     </div>
   <% } %>
 
+  <!-- Presenting Projects Section -->
+  <%= if (len(presentingProjects) > 0) { %>
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white">
+        <h4 class="mb-0">
+          <i class="fas fa-microphone text-white me-2"></i>Presenting Projects
+          <span class="badge bg-light text-dark ms-2"><%= len(presentingProjects) %></span>
+        </h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <%= for (i, project) in presentingProjects { %>
+            <div class="col-lg-6 col-xl-4 mb-4">
+              <div class="card h-100 border-success">
+                <div class="card-header bg-success text-white">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-light text-dark">#<%= i + 1 %></span>
+                    <i class="fas fa-microphone"></i>
+                  </div>
+                </div>
+                <%= if (project.ImageData != nil && len(project.ImageData) > 0) { %>
+                  <img src="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="card-img-top" style="height: 200px; object-fit: cover;" />
+                <% } %>
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>" class="text-decoration-none text-dark">
+                      <%= project.Name %>
+                    </a>
+                  </h5>
+                  <p class="card-text text-muted small"><%= project.Description %></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                      <i class="fas fa-user me-1"></i>
+                      <%= if (project.User != nil) { %>
+                        <%= if (project.User.Name != "") { project.User.Name } else { project.User.Email } %>
+                      <% } else { %>
+                        Unknown
+                      <% } %>
+                    </small>
+                    <small class="text-success">
+                      <i class="fas fa-clock me-1"></i>
+                      <%= if (project.PresentationOrder != nil) { %>
+                        <%= project.PresentationOrder.Format("Jan 2, 15:04") %>
+                      <% } %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
   <!-- Projects Section -->
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">

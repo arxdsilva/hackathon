@@ -86,6 +86,7 @@ func App() *buffalo.App {
 		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}/image", ProjectsUpdateImage)
 		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/edit", ProjectsEdit)
 		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsUpdate)
+		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/toggle-presenting", ProjectsTogglePresenting)
 		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/join", ProjectMembershipsCreate)
 		app.DELETE("/hackathons/{hackathon_id}/projects/{project_id}/leave", ProjectMembershipsDestroy)
 		app.GET("/routes", RequireRoleOwner(RoutesHandler))

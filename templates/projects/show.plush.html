@@ -8,6 +8,13 @@
     </div>
     <%= if (isProjectOwner) { %>
       <div>
+        <form method="POST" action="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/toggle-presenting" style="display: inline;">
+          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+          <button type="submit" class="btn <%= if (project.Presenting) { %>btn-warning<% } else { %>btn-info<% } %> me-2">
+            <i class="fas <%= if (project.Presenting) { %>fa-microphone-slash<% } else { %>fa-microphone<% } %>"></i> 
+            <%= if (project.Presenting) { %>Stop Presenting<% } else { %>Start Presenting<% } %>
+          </button>
+        </form>
         <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>/edit" class="btn btn-secondary">
           <i class="fas fa-edit"></i> Edit
         </a>

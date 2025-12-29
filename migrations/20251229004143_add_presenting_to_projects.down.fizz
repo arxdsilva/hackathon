@@ -1,0 +1,2 @@
+remove_column("projects", "presenting")
+remove_column("projects", "presentation_order")

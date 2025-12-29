@@ -58,12 +58,13 @@ func AdminIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	// Get statistics
-	var userCount, hackathonCount, projectCount, activeProjectCount int
+	var userCount, hackathonCount, projectCount, activeProjectCount, presentingProjectCount int
 
 	tx.RawQuery("SELECT COUNT(*) FROM users").First(&userCount)
 	tx.RawQuery("SELECT COUNT(*) FROM hackathons").First(&hackathonCount)
 	tx.RawQuery("SELECT COUNT(*) FROM projects").First(&projectCount)
 	tx.RawQuery("SELECT COUNT(*) FROM projects WHERE status = 'active'").First(&activeProjectCount)
+	tx.RawQuery("SELECT COUNT(*) FROM projects WHERE presenting = true").First(&presentingProjectCount)
 
 	// Get recent users
 	recentUsers := &models.Users{}
@@ -83,15 +84,23 @@ func AdminIndex(c buffalo.Context) error {
 		return err
 	}
 
+	// Get presenting projects
+	presentingProjects := &models.Projects{}
+	if err := tx.Where("presenting = ?", true).Order("presentation_order ASC").Eager("User", "Hackathon").All(presentingProjects); err != nil {
+		return err
+	}
+
 	c.Set("stats", map[string]int{
-		"users":          userCount,
-		"hackathons":     hackathonCount,
-		"projects":       projectCount,
-		"activeProjects": activeProjectCount,
+		"users":              userCount,
+		"hackathons":         hackathonCount,
+		"projects":           projectCount,
+		"activeProjects":     activeProjectCount,
+		"presentingProjects": presentingProjectCount,
 	})
 	c.Set("recentUsers", recentUsers)
 	c.Set("recentHackathons", recentHackathons)
 	c.Set("recentProjects", recentProjects)
+	c.Set("presentingProjects", presentingProjects)
 
 	c.Set("pageTitle", "Overview")
 	return c.Render(http.StatusOK, r.HTML("admin/index.plush.html", "admin/layout.plush.html"))

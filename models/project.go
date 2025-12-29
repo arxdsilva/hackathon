@@ -12,20 +12,22 @@ import (
 
 // Project represents a hackathon project submission
 type Project struct {
-	ID               int        `json:"id" db:"id"`
-	CreatedAt        time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt        time.Time  `json:"updated_at" db:"updated_at"`
-	HackathonID      int        `json:"hackathon_id" db:"hackathon_id"`
-	Hackathon        *Hackathon `json:"hackathon,omitempty" belongs_to:"hackathon" fk_id:"hackathon_id"`
-	UserID           *uuid.UUID `json:"user_id" db:"user_id"`
-	User             *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
-	Name             string     `json:"name" db:"name"`
-	Description      string     `json:"description" db:"description"`
-	RepositoryURL    string     `json:"repository_url" db:"repository_url"`
-	DemoURL          string     `json:"demo_url" db:"demo_url"`
-	Status           string     `json:"status" db:"status"`
-	ImageData        []byte     `json:"image_data" db:"image_data"`
-	ImageContentType *string    `json:"image_content_type" db:"image_content_type"`
+	ID                int        `json:"id" db:"id"`
+	CreatedAt         time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at" db:"updated_at"`
+	HackathonID       int        `json:"hackathon_id" db:"hackathon_id"`
+	Hackathon         *Hackathon `json:"hackathon,omitempty" belongs_to:"hackathon" fk_id:"hackathon_id"`
+	UserID            *uuid.UUID `json:"user_id" db:"user_id"`
+	User              *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
+	Name              string     `json:"name" db:"name"`
+	Description       string     `json:"description" db:"description"`
+	RepositoryURL     string     `json:"repository_url" db:"repository_url"`
+	DemoURL           string     `json:"demo_url" db:"demo_url"`
+	Status            string     `json:"status" db:"status"`
+	ImageData         []byte     `json:"image_data" db:"image_data"`
+	ImageContentType  *string    `json:"image_content_type" db:"image_content_type"`
+	Presenting        bool       `json:"presenting" db:"presenting"`
+	PresentationOrder *time.Time `json:"presentation_order" db:"presentation_order"`
 }
 
 // String is not required by pop and may be deleted

@@ -44,7 +44,90 @@
       </div>
     </div>
   </div>
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card admin-card text-center h-100">
+      <div class="card-body">
+        <div class="display-4 text-danger mb-2">
+          <i class="fas fa-microphone"></i>
+        </div>
+        <h3 class="h4 mb-1"><%= stats["presentingProjects"] %></h3>
+        <small class="text-muted">Presenting Projects</small>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Presenting Projects Section -->
+<%= if (len(presentingProjects) > 0) { %>
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card admin-card border-success">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+          <i class="fas fa-microphone text-white me-2"></i>Presenting Projects
+          <span class="badge bg-light text-dark ms-2"><%= len(presentingProjects) %></span>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <%= for (i, project) in presentingProjects { %>
+            <div class="col-lg-6 col-xl-4 mb-4">
+              <div class="card h-100 border-success">
+                <div class="card-header bg-success text-white">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-light text-dark">#<%= i + 1 %></span>
+                    <i class="fas fa-microphone"></i>
+                  </div>
+                </div>
+                <%= if (project.ImageData != nil && len(project.ImageData) > 0) { %>
+                  <img src="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="card-img-top" style="height: 150px; object-fit: cover;" />
+                <% } %>
+                <div class="card-body">
+                  <h6 class="card-title">
+                    <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-dark">
+                      <%= project.Name %>
+                    </a>
+                  </h6>
+                  <p class="card-text small text-muted mb-2"><%= project.Description %></p>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">
+                      <i class="fas fa-trophy me-1"></i>
+                      <%= if (project.Hackathon != nil) { %>
+                        <a href="/hackathons/<%= project.HackathonID %>" class="text-decoration-none"><%= project.Hackathon.Title %></a>
+                      <% } else { %>
+                        Unknown Hackathon
+                      <% } %>
+                    </small>
+                    <small class="text-success">
+                      <i class="fas fa-clock me-1"></i>
+                      <%= if (project.PresentationOrder != nil) { %>
+                        <%= project.PresentationOrder.Format("Jan 2, 15:04") %>
+                      <% } %>
+                    </small>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                      <i class="fas fa-user me-1"></i>
+                      <%= if (project.User != nil) { %>
+                        <%= if (project.User.Name != "") { project.User.Name } else { project.User.Email } %>
+                      <% } else { %>
+                        Unknown
+                      <% } %>
+                    </small>
+                    <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
+                      <%= project.Status %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
 
 <div class="row">
   <!-- Recent Users -->
@@ -97,7 +180,6 @@
                 <%= hackathon.Title %>
               </a>
             </h6>
-            <p class="small text-muted mb-2"><%= hackathon.Description %></p>
             <div class="d-flex justify-content-between align-items-center">
               <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else { %>warning<% } %>">
                 <%= hackathon.Status %>

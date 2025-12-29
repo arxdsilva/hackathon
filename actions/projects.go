@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/arxdsilva/hackathon/models"
 
@@ -364,3 +365,51 @@ func ProjectsUpdate(c buffalo.Context) error {
 
 // ProjectsDestroy deletes a project from the DB
 // ProjectsDestroy is disabled: projects are retained and cannot be deleted.
+
+// ProjectsTogglePresenting toggles the presenting status of a project
+func ProjectsTogglePresenting(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	project := &models.Project{}
+
+	if err := tx.Find(project, c.Param("project_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Check if current user is the project owner
+	isOwner := false
+	if cu, ok := c.Value("current_user").(models.User); ok && project.UserID != nil {
+		isOwner = *project.UserID == cu.ID
+	}
+
+	if !isOwner {
+		return c.Error(http.StatusForbidden, fmt.Errorf("only project owner can toggle presenting status"))
+	}
+
+	// Toggle presenting status
+	project.Presenting = !project.Presenting
+
+	// Set or clear presentation order
+	if project.Presenting {
+		now := time.Now()
+		project.PresentationOrder = &now
+	} else {
+		project.PresentationOrder = nil
+	}
+
+	// Update the project
+	if err := tx.Update(project); err != nil {
+		return err
+	}
+
+	// Log the action
+	if cu, ok := c.Value("current_user").(models.User); ok {
+		action := "set_presenting"
+		if !project.Presenting {
+			action = "unset_presenting"
+		}
+		logAuditEvent(tx, c, &cu.ID, action, "project", &project.ID, fmt.Sprintf("Project presenting status changed: %s", project.Name))
+	}
+
+	c.Flash().Add("success", "Project presenting status updated!")
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+}
