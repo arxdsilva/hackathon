@@ -1,6 +1,7 @@
 # Hackathon Management Platform
 
 [![CI](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml)
+[![codecov](https://codecov.io/gh/arxdsilva/hackathon/branch/main/graph/badge.svg)](https://codecov.io/gh/arxdsilva/hackathon)
 
 This is a comprehensive web application built with Buffalo for managing hackathons. It provides a complete solution for creating, organizing, and running hackathon events with advanced features including audit logging, secure admin controls, and responsive design. The platform supports user registration, project submissions, team formation, file management, and detailed scheduling, all wrapped in a modern dark theme interface.
 
@@ -295,7 +296,13 @@ The application includes comprehensive unit tests to ensure code quality and fun
 
 ### Test Types
 
-- **Unit Tests**: Pure business logic tests that don't require database connections (e.g., `company_configurations_unit_test.go`)
+- **Unit Tests**: Pure business logic tests that don't require database connections
+- **Mock-Based Tests**: Repository interface tests using generated mocks
+- **Validation Tests**: Business logic validation without external dependencies
+
+### Test Coverage
+
+[![codecov](https://codecov.io/gh/arxdsilva/hackathon/branch/main/graph/badge.svg)](https://codecov.io/gh/arxdsilva/hackathon)
 
 ### Running Unit Tests (No Database Required)
 
@@ -303,14 +310,32 @@ Unit tests test business logic in isolation and can be run without any database 
 
 ```bash
 # Run all unit tests (no database required)
-go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
+go test ./actions -v
 
-# Run specific unit test file
-go test ./actions/company_configurations_unit_test.go -v
+# Run tests with coverage
+go test ./actions -cover
+
+# Generate coverage report
+go test ./actions -coverprofile=coverage.out
+go tool cover -html=coverage.out -o coverage.html
 
 # Run all tests
 go test ./...
 ```
+
+### Test Organization
+
+Tests are organized by functionality in corresponding `<filename>_test.go` files:
+
+- `auth_test.go` - Authentication tests
+- `users_test.go` - User management tests
+- `profile_test.go` - Profile display tests
+- `admin_test.go` - Admin functionality tests
+- `files_test.go` - File management tests
+- `pages_test.go` - Public pages tests
+- `project_memberships_test.go` - Project membership tests
+- `company_configurations_unit_test.go` - Configuration validation tests
+- `repository_mock_example_test.go` - Mock usage examples
 
 ### Test Execution
 

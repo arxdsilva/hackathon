@@ -30,5 +30,10 @@ jobs:
     - name: Download dependencies
       run: go mod download
 
-    - name: Run unit tests (no database required)
-      run: go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
+    - name: Run unit tests with coverage
+      run: go test ./actions -coverprofile=coverage.txt
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
