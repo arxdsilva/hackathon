@@ -52,6 +52,11 @@ func TestAdminConfigIndex_WithMock(t *testing.T) {
 		Return(10, nil).
 		Times(1)
 
+	// Actually call the method to satisfy the expectation
+	count, err := mockRepo.UserCount()
+	r.NoError(err)
+	r.Equal(10, count)
+
 	// This demonstrates the mock setup - in a real test you'd inject this
 	// into your handler and test the actual logic
 	r.NotNil(mockRepo)
