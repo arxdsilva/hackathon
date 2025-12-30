@@ -1,7 +1,7 @@
 # Hackathon Management Platform Makefile
 # A comprehensive build and development tool for the Buffalo application
 
-.PHONY: help setup install deps build run dev test test-unit db-setup db-migrate db-reset db-seed assets assets-dev assets-build docker-build docker-run docker-stop clean lint fmt vet mod-tidy
+.PHONY: help setup install deps build run dev test test-unit mocks db-setup db-migrate db-reset db-seed assets assets-dev assets-build docker-build docker-run docker-stop clean lint fmt vet mod-tidy
 
 # Default target
 help: ## Show this help message
@@ -17,6 +17,7 @@ help: ## Show this help message
 	@echo "  make dev            # Start development server"
 	@echo "  make test           # Run all tests"
 	@echo "  make test-unit      # Run unit tests only (fast)"
+	@echo "  make mocks          # Generate mocks for interfaces"
 	@echo "  make db-migrate     # Run database migrations"
 
 # Setup and Installation
@@ -54,6 +55,11 @@ test: test-unit ## Run all tests (unit only)
 test-unit: ## Run unit tests only (no database required)
 	@echo "🧪 Running unit tests..."
 	go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
+
+# Mock Generation
+mocks: ## Generate mocks for interfaces
+	@echo "🤖 Generating mocks..."
+	~/go/bin/mockgen -source=repository/interfaces.go -destination=repository/mock_repository.go -package=repository
 
 # Database Operations
 db-setup: ## Set up development database
