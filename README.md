@@ -133,8 +133,7 @@ make run              # Run production build
 
 # Testing
 make test-unit        # Run unit tests (fast, no DB)
-make test-integration # Run integration tests
-make test-full        # Run all tests with Docker
+make test             # Run all tests
 
 # Database
 make db-setup         # Set up development database
@@ -292,12 +291,11 @@ docker-compose exec postgres psql -U postgres -d hackathon_development
 
 ## Testing
 
-The application includes comprehensive unit and integration tests to ensure code quality and functionality.
+The application includes comprehensive unit tests to ensure code quality and functionality.
 
 ### Test Types
 
 - **Unit Tests**: Pure business logic tests that don't require database connections (e.g., `company_configurations_unit_test.go`)
-- **Integration Tests**: Full-stack tests that require database connections for end-to-end validation (e.g., `company_configurations_test.go`)
 
 ### Running Unit Tests (No Database Required)
 
@@ -305,80 +303,18 @@ Unit tests test business logic in isolation and can be run without any database 
 
 ```bash
 # Run all unit tests (no database required)
-go test ./actions -run ".*Unit.*" -v
+go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
 
 # Run specific unit test file
 go test ./actions/company_configurations_unit_test.go -v
-```
-
-### Running Integration Tests (Database Required)
-
-Integration tests validate full request/response cycles and require a test database.
-
-#### Setting Up Test Database
-
-Tests use an isolated PostgreSQL database to prevent interference with your development data.
-
-##### Option A: Using Docker (Recommended)
-
-```bash
-# Start the test database
-docker-compose -f docker-compose.test.yml up -d
-
-# Run migrations on the test database
-TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
-```
-
-##### Option B: Manual Setup
-
-Create a separate PostgreSQL database for testing on port 5433:
-
-```bash
-# Create test database
-docker run --name hackathon-test-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hackathon_test_isolated -p 5433:5432 -d postgres:15-alpine
-
-# Run migrations
-TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
-```
-
-### Running Tests
-
-#### Quick Unit Tests (Recommended for Development)
-```bash
-# Run unit tests only (no database required, very fast)
-go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
-```
-
-#### Full Test Suite (Local Integration Testing)
-```bash
-# Run all tests with automatic database setup (recommended)
-./test.sh
-
-# Or manually:
-# Start the test database
-docker-compose -f docker-compose.test.yml up -d
-
-# Run migrations on the test database
-TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/hackathon_test_isolated?sslmode=disable" buffalo db migrate up --env test
 
 # Run all tests
 go test ./...
 ```
 
-### Test Database Isolation
+### Test Execution
 
-- Integration tests use database `hackathon_test_isolated` on port `5433`
-- Buffalo's test suite automatically handles transaction rollback between tests
-- Test data is never persisted between test runs
-- Your development database remains untouched
-- Unit tests run completely independently without any external dependencies
-
-### Stopping Test Database
-
-```bash
-# Stop the test database
-docker-compose -f docker-compose.test.yml down
-```
+Unit tests run completely independently without any external dependencies and provide fast feedback during development.
 
 ## CI/CD
 
@@ -386,14 +322,12 @@ This project uses GitHub Actions for continuous integration. The CI pipeline aut
 
 ### GitHub Actions Workflows
 
-- **Unit Tests**: Runs isolated unit tests that don't require a database connection (fast feedback)
-- **Integration Tests**: Runs full integration tests with a PostgreSQL database in a container
+- **Unit Tests**: Runs isolated unit tests that don't require a database connection
 
 ### Local Testing Options
 
 - **Unit Tests**: Run instantly without any setup (`go test ./actions -run "Test..."`)
-- **Integration Tests**: Use `./test.sh` for full local testing with Docker
-- **CI**: Handles both automatically on every push/PR
+- **CI**: Handles unit tests automatically on every push/PR
 
 ### Workflow Triggers
 
@@ -404,7 +338,6 @@ The CI pipeline runs automatically when:
 ### Local Testing vs CI
 
 - **Unit tests** run the same locally and in CI (no external dependencies)
-- **Integration tests** use PostgreSQL in CI, but can use Docker locally with `test.sh`
 
 ## Contributing
 

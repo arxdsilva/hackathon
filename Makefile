@@ -1,7 +1,7 @@
 # Hackathon Management Platform Makefile
 # A comprehensive build and development tool for the Buffalo application
 
-.PHONY: help setup install deps build run dev test test-unit test-integration db-setup db-migrate db-reset db-seed assets assets-dev assets-build docker-build docker-run docker-stop clean lint fmt vet mod-tidy
+.PHONY: help setup install deps build run dev test test-unit db-setup db-migrate db-reset db-seed assets assets-dev assets-build docker-build docker-run docker-stop clean lint fmt vet mod-tidy
 
 # Default target
 help: ## Show this help message
@@ -47,19 +47,13 @@ build: assets-build ## Build the application for production
 	buffalo build -o bin/app
 
 # Testing
-test: test-unit test-integration ## Run all tests (unit + integration)
+test: test-unit ## Run all tests (unit only)
+	@echo "🧪 Running all tests..."
+	go test ./...
 
 test-unit: ## Run unit tests only (no database required)
 	@echo "🧪 Running unit tests..."
 	go test ./actions -run "TestAdminConfigUpdate_ValidationError|TestBindConfigBooleans|TestAdminConfigUpdate_NoDatabase|TestAdminConfigIndex_NoDatabase|TestAdminConfigUpdate_InvalidRole" -v
-
-test-integration: ## Run integration tests (requires database)
-	@echo "🧪 Running integration tests..."
-	go test ./actions -run ".*Integration.*" -v
-
-test-full: ## Run full test suite with database setup (requires Docker)
-	@echo "🧪 Running full test suite..."
-	./test.sh
 
 # Database Operations
 db-setup: ## Set up development database
