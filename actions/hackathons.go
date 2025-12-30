@@ -13,7 +13,7 @@ import (
 )
 
 // HackathonsIndex lists all hackathons
-func HackathonsIndex(c buffalo.Context) error {
+func (a *MyApp) HackathonsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathons := &models.Hackathons{}
 
@@ -29,7 +29,7 @@ func HackathonsIndex(c buffalo.Context) error {
 }
 
 // HackathonsShow displays a single hackathon
-func HackathonsShow(c buffalo.Context) error {
+func (a *MyApp) HackathonsShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 
@@ -138,13 +138,13 @@ func HackathonsShow(c buffalo.Context) error {
 }
 
 // HackathonsNew renders the form for creating a new hackathon (owner-only)
-func HackathonsNew(c buffalo.Context) error {
+func (a *MyApp) HackathonsNew(c buffalo.Context) error {
 	c.Set("hackathon", &models.Hackathon{})
 	return c.Render(http.StatusOK, r.HTML("hackathons/new.plush.html"))
 }
 
 // HackathonsCreate adds a new hackathon to the DB (owner-only)
-func HackathonsCreate(c buffalo.Context) error {
+func (a *MyApp) HackathonsCreate(c buffalo.Context) error {
 	hackathon := &models.Hackathon{}
 
 	// Manually parse form fields to avoid binding ID
@@ -189,7 +189,7 @@ func HackathonsCreate(c buffalo.Context) error {
 }
 
 // HackathonsEdit renders the form for editing a hackathon (owner-only)
-func HackathonsEdit(c buffalo.Context) error {
+func (a *MyApp) HackathonsEdit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 
@@ -202,7 +202,7 @@ func HackathonsEdit(c buffalo.Context) error {
 }
 
 // HackathonsUpdate updates a hackathon in the DB (owner-only)
-func HackathonsUpdate(c buffalo.Context) error {
+func (a *MyApp) HackathonsUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 
@@ -248,7 +248,7 @@ func HackathonsUpdate(c buffalo.Context) error {
 }
 
 // HackathonsDestroy deletes a hackathon from the DB (owner-only)
-func HackathonsDestroy(c buffalo.Context) error {
+func (a *MyApp) HackathonsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 

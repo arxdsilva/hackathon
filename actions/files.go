@@ -14,7 +14,7 @@ import (
 )
 
 // FilesIndex lists all files
-func FilesIndex(c buffalo.Context) error {
+func (a *MyApp) FilesIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -28,7 +28,7 @@ func FilesIndex(c buffalo.Context) error {
 }
 
 // FilesShow displays a single file
-func FilesShow(c buffalo.Context) error {
+func (a *MyApp) FilesShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -42,7 +42,7 @@ func FilesShow(c buffalo.Context) error {
 }
 
 // FilesNew renders the upload form
-func FilesNew(c buffalo.Context) error {
+func (a *MyApp) FilesNew(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -65,7 +65,7 @@ func FilesNew(c buffalo.Context) error {
 }
 
 // FilesCreate handles file upload
-func FilesCreate(c buffalo.Context) error {
+func (a *MyApp) FilesCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	user := c.Value("current_user").(models.User)
 
@@ -132,7 +132,7 @@ func FilesCreate(c buffalo.Context) error {
 }
 
 // FilesDownload serves the file for download
-func FilesDownload(c buffalo.Context) error {
+func (a *MyApp) FilesDownload(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	file := &models.File{}
@@ -148,7 +148,7 @@ func FilesDownload(c buffalo.Context) error {
 }
 
 // FilesDestroy deletes a file
-func FilesDestroy(c buffalo.Context) error {
+func (a *MyApp) FilesDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	file := &models.File{}

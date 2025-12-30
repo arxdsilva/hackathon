@@ -11,7 +11,7 @@ import (
 )
 
 // ProfileShow displays the user's profile.
-func ProfileShow(c buffalo.Context) error {
+func (a *MyApp) ProfileShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	user := c.Value("current_user").(models.User)
 	repoManager := repository.NewRepositoryManager(tx)
@@ -53,14 +53,14 @@ func ProfileShow(c buffalo.Context) error {
 }
 
 // ProfileEdit renders the profile edit form.
-func ProfileEdit(c buffalo.Context) error {
+func (a *MyApp) ProfileEdit(c buffalo.Context) error {
 	user := c.Value("current_user").(models.User)
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("profile/edit.plush.html"))
 }
 
 // ProfileUpdate handles profile updates.
-func ProfileUpdate(c buffalo.Context) error {
+func (a *MyApp) ProfileUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	user := c.Value("current_user").(models.User)
 

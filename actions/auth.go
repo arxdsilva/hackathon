@@ -16,7 +16,7 @@ import (
 const sessionCurrentUserID = "current_user_id"
 
 // SetCurrentUser loads the current user from the session and attaches it to the context.
-func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
+func (a *MyApp) SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if uid, ok := c.Session().Get(sessionCurrentUserID).(string); ok && uid != "" {
 			tx, ok := c.Value("tx").(*pop.Connection)
@@ -32,7 +32,7 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 }
 
 // Authorize ensures a user is signed in before proceeding.
-func Authorize(next buffalo.Handler) buffalo.Handler {
+func (a *MyApp) Authorize(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		// allow public assets without auth
 		if strings.HasPrefix(c.Request().URL.Path, "/assets/") {
@@ -49,13 +49,13 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 }
 
 // AuthNew renders the sign-in form.
-func AuthNew(c buffalo.Context) error {
+func (a *MyApp) AuthNew(c buffalo.Context) error {
 	c.Set("user", models.User{})
 	return c.Render(http.StatusOK, r.HTML("auth/new.plush.html"))
 }
 
 // AuthCreate handles sign-in.
-func AuthCreate(c buffalo.Context) error {
+func (a *MyApp) AuthCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	u := models.User{}
 	if err := c.Bind(&u); err != nil {
@@ -88,7 +88,7 @@ func AuthCreate(c buffalo.Context) error {
 }
 
 // AuthDestroy signs the user out.
-func AuthDestroy(c buffalo.Context) error {
+func (a *MyApp) AuthDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	if currentUser, ok := c.Value("current_user").(models.User); ok {
 		// Log logout

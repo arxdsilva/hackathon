@@ -13,13 +13,13 @@ import (
 )
 
 // UsersNew renders the sign-up form.
-func UsersNew(c buffalo.Context) error {
+func (a *MyApp) UsersNew(c buffalo.Context) error {
 	c.Set("user", models.User{})
 	return c.Render(http.StatusOK, r.HTML("users/new.plush.html"))
 }
 
 // UsersCreate handles user registration.
-func UsersCreate(c buffalo.Context) error {
+func (a *MyApp) UsersCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	u := &models.User{}
@@ -74,7 +74,7 @@ func UsersCreate(c buffalo.Context) error {
 }
 
 // UsersEdit renders the user edit form for role management.
-func UsersEdit(c buffalo.Context) error {
+func (a *MyApp) UsersEdit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	userID := c.Param("user_id")
@@ -88,7 +88,7 @@ func UsersEdit(c buffalo.Context) error {
 }
 
 // UsersUpdate handles updating a user's role.
-func UsersUpdate(c buffalo.Context) error {
+func (a *MyApp) UsersUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	userID := c.Param("user_id")

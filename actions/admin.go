@@ -55,7 +55,7 @@ func logAuditEvent(tx *pop.Connection, c buffalo.Context, userID *uuid.UUID, act
 }
 
 // AdminIndex renders the main admin overview page
-func AdminIndex(c buffalo.Context) error {
+func (a *MyApp) AdminIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -126,7 +126,7 @@ func AdminIndex(c buffalo.Context) error {
 }
 
 // AdminUsersIndex lists all users for admin management
-func AdminUsersIndex(c buffalo.Context) error {
+func (a *MyApp) AdminUsersIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	users := &models.Users{}
@@ -157,7 +157,7 @@ func AdminUsersIndex(c buffalo.Context) error {
 }
 
 // AdminUsersShow displays a specific user
-func AdminUsersShow(c buffalo.Context) error {
+func (a *MyApp) AdminUsersShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -180,7 +180,7 @@ func AdminUsersShow(c buffalo.Context) error {
 }
 
 // AdminUsersEdit renders the user edit form
-func AdminUsersEdit(c buffalo.Context) error {
+func (a *MyApp) AdminUsersEdit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	user := &models.User{}
@@ -194,7 +194,7 @@ func AdminUsersEdit(c buffalo.Context) error {
 }
 
 // AdminUsersUpdate handles user updates
-func AdminUsersUpdate(c buffalo.Context) error {
+func (a *MyApp) AdminUsersUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	user := &models.User{}
@@ -226,7 +226,7 @@ func AdminUsersUpdate(c buffalo.Context) error {
 }
 
 // AdminUsersDestroy deletes a user
-func AdminUsersDestroy(c buffalo.Context) error {
+func (a *MyApp) AdminUsersDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	user := &models.User{}
@@ -256,14 +256,14 @@ func AdminUsersDestroy(c buffalo.Context) error {
 }
 
 // AdminUsersNew renders the form to create a new user
-func AdminUsersNew(c buffalo.Context) error {
+func (a *MyApp) AdminUsersNew(c buffalo.Context) error {
 	c.Set("user", models.User{})
 	c.Set("pageTitle", "Create New User")
 	return c.Render(http.StatusOK, r.HTML("admin/users/new.plush.html", "admin/layout.plush.html"))
 }
 
 // AdminUsersCreate creates a new user from admin panel
-func AdminUsersCreate(c buffalo.Context) error {
+func (a *MyApp) AdminUsersCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	u := &models.User{}
@@ -303,7 +303,7 @@ func AdminUsersCreate(c buffalo.Context) error {
 }
 
 // AdminHackathonsIndex lists all hackathons
-func AdminHackathonsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminHackathonsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	hackathons := &models.Hackathons{}
@@ -333,7 +333,7 @@ func AdminHackathonsIndex(c buffalo.Context) error {
 }
 
 // AdminProjectsIndex lists all projects
-func AdminProjectsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminProjectsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	projects := &models.Projects{}
@@ -363,13 +363,13 @@ func AdminProjectsIndex(c buffalo.Context) error {
 }
 
 // AdminEmailsIndex manages allowed email domains
-func AdminEmailsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminEmailsIndex(c buffalo.Context) error {
 	c.Set("pageTitle", "Email Domains Management")
 	return c.Render(http.StatusOK, r.HTML("admin/emails/index.plush.html", "admin/layout.plush.html"))
 }
 
 // AdminConfigIndex manages company configuration settings
-func AdminConfigIndex(c buffalo.Context) error {
+func (a *MyApp) AdminConfigIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	config, err := models.GetDefaultConfig(tx)
@@ -400,7 +400,7 @@ func bindConfigBooleans(c buffalo.Context, config *models.CompanyConfiguration) 
 }
 
 // AdminConfigUpdate updates company configuration settings
-func AdminConfigUpdate(c buffalo.Context) error {
+func (a *MyApp) AdminConfigUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	// Find the canonical config (smallest ID)
@@ -458,13 +458,13 @@ func AdminConfigUpdate(c buffalo.Context) error {
 }
 
 // AdminPasswordsIndex manages password reset functionality
-func AdminPasswordsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminPasswordsIndex(c buffalo.Context) error {
 	c.Set("pageTitle", "Password Reset Management")
 	return c.Render(http.StatusOK, r.HTML("admin/passwords/index.plush.html", "admin/layout.plush.html"))
 }
 
 // AdminDomainsIndex lists all company allowed domains
-func AdminDomainsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminDomainsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
@@ -479,7 +479,7 @@ func AdminDomainsIndex(c buffalo.Context) error {
 }
 
 // AdminDomainsCreate creates a new allowed domain
-func AdminDomainsCreate(c buffalo.Context) error {
+func (a *MyApp) AdminDomainsCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	domain := &models.CompanyAllowedDomain{}
@@ -518,7 +518,7 @@ func AdminDomainsCreate(c buffalo.Context) error {
 }
 
 // AdminDomainsUpdate updates an existing allowed domain
-func AdminDomainsUpdate(c buffalo.Context) error {
+func (a *MyApp) AdminDomainsUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	domainID := c.Param("domain_id")
@@ -549,7 +549,7 @@ func AdminDomainsUpdate(c buffalo.Context) error {
 }
 
 // AdminDomainsDestroy deletes an allowed domain
-func AdminDomainsDestroy(c buffalo.Context) error {
+func (a *MyApp) AdminDomainsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	domainID := c.Param("domain_id")
@@ -568,7 +568,7 @@ func AdminDomainsDestroy(c buffalo.Context) error {
 }
 
 // AdminAuditLogsIndex displays audit logs
-func AdminAuditLogsIndex(c buffalo.Context) error {
+func (a *MyApp) AdminAuditLogsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 
 	auditLogs := &models.AuditLogs{}

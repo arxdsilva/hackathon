@@ -10,7 +10,7 @@ import (
 )
 
 // RequireLogin middleware ensures the user is logged in.
-func RequireLogin(next buffalo.Handler) buffalo.Handler {
+func (a *MyApp) RequireLogin(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		_, ok := c.Value("current_user").(models.User)
 		if !ok {
@@ -22,7 +22,7 @@ func RequireLogin(next buffalo.Handler) buffalo.Handler {
 }
 
 // RequireRoleOwner middleware ensures the user has the "owner" role.
-func RequireRoleOwner(next buffalo.Handler) buffalo.Handler {
+func (a *MyApp) RequireRoleOwner(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		user, ok := c.Value("current_user").(models.User)
 		if !ok || user.Role != models.RoleOwner {
@@ -34,7 +34,7 @@ func RequireRoleOwner(next buffalo.Handler) buffalo.Handler {
 }
 
 // RequireHackathonOwner middleware ensures only the owner of the hackathon can access a route.
-func RequireHackathonOwner(next buffalo.Handler) buffalo.Handler {
+func (a *MyApp) RequireHackathonOwner(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		user, ok := c.Value("current_user").(models.User)
 		if !ok {

@@ -14,7 +14,7 @@ import (
 )
 
 // ProjectsImage serves the project image
-func ProjectsImage(c buffalo.Context) error {
+func (a *MyApp) ProjectsImage(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 
@@ -32,7 +32,7 @@ func ProjectsImage(c buffalo.Context) error {
 }
 
 // ProjectsUpdateImage updates only the project image
-func ProjectsUpdateImage(c buffalo.Context) error {
+func (a *MyApp) ProjectsUpdateImage(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 
@@ -93,7 +93,7 @@ func ProjectsUpdateImage(c buffalo.Context) error {
 }
 
 // ProjectsIndex lists all projects for a hackathon
-func ProjectsIndex(c buffalo.Context) error {
+func (a *MyApp) ProjectsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 
@@ -122,7 +122,7 @@ func ProjectsIndex(c buffalo.Context) error {
 }
 
 // ProjectsShow displays a single project
-func ProjectsShow(c buffalo.Context) error {
+func (a *MyApp) ProjectsShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 
@@ -185,7 +185,7 @@ func ProjectsShow(c buffalo.Context) error {
 }
 
 // ProjectsNew renders the form for creating a new project
-func ProjectsNew(c buffalo.Context) error {
+func (a *MyApp) ProjectsNew(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	hackathon := &models.Hackathon{}
 
@@ -199,7 +199,7 @@ func ProjectsNew(c buffalo.Context) error {
 }
 
 // ProjectsCreate adds a new project to the DB
-func ProjectsCreate(c buffalo.Context) error {
+func (a *MyApp) ProjectsCreate(c buffalo.Context) error {
 	project := &models.Project{}
 	if err := c.Bind(project); err != nil {
 		return err
@@ -269,7 +269,7 @@ func ProjectsCreate(c buffalo.Context) error {
 }
 
 // ProjectsEdit renders the form for editing a project
-func ProjectsEdit(c buffalo.Context) error {
+func (a *MyApp) ProjectsEdit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 
@@ -295,7 +295,7 @@ func ProjectsEdit(c buffalo.Context) error {
 }
 
 // ProjectsUpdate updates a project in the DB
-func ProjectsUpdate(c buffalo.Context) error {
+func (a *MyApp) ProjectsUpdate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 
@@ -367,7 +367,7 @@ func ProjectsUpdate(c buffalo.Context) error {
 // ProjectsDestroy is disabled: projects are retained and cannot be deleted.
 
 // ProjectsTogglePresenting toggles the presenting status of a project
-func ProjectsTogglePresenting(c buffalo.Context) error {
+func (a *MyApp) ProjectsTogglePresenting(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	project := &models.Project{}
 

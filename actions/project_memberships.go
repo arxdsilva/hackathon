@@ -12,7 +12,7 @@ import (
 )
 
 // ProjectMembershipsCreate allows a user to join a project
-func ProjectMembershipsCreate(c buffalo.Context) error {
+func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
 	repoManager := repository.NewRepositoryManager(tx)
@@ -54,7 +54,7 @@ func ProjectMembershipsCreate(c buffalo.Context) error {
 }
 
 // ProjectMembershipsDestroy allows a user to leave a project
-func ProjectMembershipsDestroy(c buffalo.Context) error {
+func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
 	repoManager := repository.NewRepositoryManager(tx)

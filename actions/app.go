@@ -22,8 +22,12 @@ import (
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
 
+type MyApp struct {
+	*buffalo.App
+}
+
 var (
-	app     *buffalo.App
+	myApp   *MyApp
 	appOnce sync.Once
 	T       *i18n.Translator
 )
@@ -43,110 +47,110 @@ var (
 // declared after it to never be called.
 func App() *buffalo.App {
 	appOnce.Do(func() {
-		app = buffalo.New(buffalo.Options{
+		myApp = &MyApp{buffalo.New(buffalo.Options{
 			Env:         ENV,
 			SessionName: "_hackathon_session",
-		})
+		})}
 
 		// Automatically redirect to SSL
-		app.Use(forceSSL())
+		myApp.Use(myApp.forceSSL())
 
 		// Log request parameters (filters apply).
-		app.Use(paramlogger.ParameterLogger)
+		myApp.Use(paramlogger.ParameterLogger)
 
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
-		app.Use(csrf.New)
+		myApp.Use(csrf.New)
 
 		// Wraps each request in a transaction.
 		//   c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
-		app.Use(popmw.Transaction(models.DB))
+		myApp.Use(popmw.Transaction(models.DB))
 		// Setup and use translations:
-		app.Use(translations())
+		myApp.Use(myApp.translations())
 
 		// Load the current user into context and protect routes.
-		app.Use(SetCurrentUser)
-		app.Use(Authorize)
+		myApp.Use(myApp.SetCurrentUser)
+		myApp.Use(myApp.Authorize)
 
-		app.GET("/", HomeHandler)
-		app.GET("/about", AboutHandler)
-		app.GET("/hackathons", RequireLogin(HackathonsIndex))
-		app.GET("/hackathons/new", RequireRoleOwner(HackathonsNew))
-		app.POST("/hackathons", RequireRoleOwner(HackathonsCreate))
-		app.GET("/hackathons/{hackathon_id}", HackathonsShow)
-		app.GET("/hackathons/{hackathon_id}/edit", RequireHackathonOwner(HackathonsEdit))
-		app.PUT("/hackathons/{hackathon_id}", RequireHackathonOwner(HackathonsUpdate))
-		app.DELETE("/hackathons/{hackathon_id}", RequireHackathonOwner(HackathonsDestroy))
-		app.GET("/hackathons/{hackathon_id}/projects", ProjectsIndex)
-		app.GET("/hackathons/{hackathon_id}/projects/new", ProjectsNew)
-		app.POST("/hackathons/{hackathon_id}/projects", ProjectsCreate)
-		app.GET("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsShow)
-		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/image", ProjectsImage)
-		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}/image", ProjectsUpdateImage)
-		app.GET("/hackathons/{hackathon_id}/projects/{project_id}/edit", ProjectsEdit)
-		app.PUT("/hackathons/{hackathon_id}/projects/{project_id}", ProjectsUpdate)
-		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/toggle-presenting", ProjectsTogglePresenting)
-		app.POST("/hackathons/{hackathon_id}/projects/{project_id}/join", ProjectMembershipsCreate)
-		app.DELETE("/hackathons/{hackathon_id}/projects/{project_id}/leave", ProjectMembershipsDestroy)
-		app.GET("/routes", RequireRoleOwner(RoutesHandler))
-		app.GET("/profile", ProfileShow)
-		app.GET("/profile/edit", ProfileEdit)
-		app.PUT("/profile", ProfileUpdate)
-		app.GET("/users/new", UsersNew)
-		app.POST("/users", UsersCreate)
-		app.GET("/users/{user_id}/edit", RequireRoleOwner(UsersEdit)).Name("userEditPath")
-		app.PUT("/users/{user_id}", RequireRoleOwner(UsersUpdate)).Name("userPath")
-		app.GET("/files", RequireLogin(FilesIndex))
-		app.GET("/files/new", RequireLogin(FilesNew))
-		app.POST("/files", RequireLogin(FilesCreate))
-		app.GET("/files/{file_id}", RequireLogin(FilesShow))
-		app.GET("/files/{file_id}/download", RequireLogin(FilesDownload))
-		app.DELETE("/files/{file_id}", RequireLogin(FilesDestroy))
-		app.GET("/signin", AuthNew)
-		app.POST("/signin", AuthCreate)
-		app.DELETE("/signout", AuthDestroy)
+		myApp.GET("/", myApp.HomeHandler)
+		myApp.GET("/about", myApp.AboutHandler)
+		myApp.GET("/hackathons", myApp.RequireLogin(myApp.HackathonsIndex))
+		myApp.GET("/hackathons/new", myApp.RequireRoleOwner(myApp.HackathonsNew))
+		myApp.POST("/hackathons", myApp.RequireRoleOwner(myApp.HackathonsCreate))
+		myApp.GET("/hackathons/{hackathon_id}", myApp.HackathonsShow)
+		myApp.GET("/hackathons/{hackathon_id}/edit", myApp.RequireHackathonOwner(myApp.HackathonsEdit))
+		myApp.PUT("/hackathons/{hackathon_id}", myApp.RequireHackathonOwner(myApp.HackathonsUpdate))
+		myApp.DELETE("/hackathons/{hackathon_id}", myApp.RequireHackathonOwner(myApp.HackathonsDestroy))
+		myApp.GET("/hackathons/{hackathon_id}/projects", myApp.ProjectsIndex)
+		myApp.GET("/hackathons/{hackathon_id}/projects/new", myApp.ProjectsNew)
+		myApp.POST("/hackathons/{hackathon_id}/projects", myApp.ProjectsCreate)
+		myApp.GET("/hackathons/{hackathon_id}/projects/{project_id}", myApp.ProjectsShow)
+		myApp.GET("/hackathons/{hackathon_id}/projects/{project_id}/image", myApp.ProjectsImage)
+		myApp.PUT("/hackathons/{hackathon_id}/projects/{project_id}/image", myApp.ProjectsUpdateImage)
+		myApp.GET("/hackathons/{hackathon_id}/projects/{project_id}/edit", myApp.ProjectsEdit)
+		myApp.PUT("/hackathons/{hackathon_id}/projects/{project_id}", myApp.ProjectsUpdate)
+		myApp.POST("/hackathons/{hackathon_id}/projects/{project_id}/toggle-presenting", myApp.ProjectsTogglePresenting)
+		myApp.POST("/hackathons/{hackathon_id}/projects/{project_id}/join", myApp.ProjectMembershipsCreate)
+		myApp.DELETE("/hackathons/{hackathon_id}/projects/{project_id}/leave", myApp.ProjectMembershipsDestroy)
+		myApp.GET("/routes", myApp.RequireRoleOwner(myApp.RoutesHandler))
+		myApp.GET("/profile", myApp.ProfileShow)
+		myApp.GET("/profile/edit", myApp.ProfileEdit)
+		myApp.PUT("/profile", myApp.ProfileUpdate)
+		myApp.GET("/users/new", myApp.UsersNew)
+		myApp.POST("/users", myApp.UsersCreate)
+		myApp.GET("/users/{user_id}/edit", myApp.RequireRoleOwner(myApp.UsersEdit)).Name("userEditPath")
+		myApp.PUT("/users/{user_id}", myApp.RequireRoleOwner(myApp.UsersUpdate)).Name("userPath")
+		myApp.GET("/files", myApp.RequireLogin(myApp.FilesIndex))
+		myApp.GET("/files/new", myApp.RequireLogin(myApp.FilesNew))
+		myApp.POST("/files", myApp.RequireLogin(myApp.FilesCreate))
+		myApp.GET("/files/{file_id}", myApp.RequireLogin(myApp.FilesShow))
+		myApp.GET("/files/{file_id}/download", myApp.RequireLogin(myApp.FilesDownload))
+		myApp.DELETE("/files/{file_id}", myApp.RequireLogin(myApp.FilesDestroy))
+		myApp.GET("/signin", myApp.AuthNew)
+		myApp.POST("/signin", myApp.AuthCreate)
+		myApp.DELETE("/signout", myApp.AuthDestroy)
 
 		// Allow unauthenticated access to Home, About, and Auth endpoints
-		app.Middleware.Skip(Authorize, HomeHandler, AboutHandler, UsersNew, UsersCreate, AuthNew, AuthCreate)
+		myApp.Middleware.Skip(myApp.Authorize, myApp.HomeHandler, myApp.AboutHandler, myApp.UsersNew, myApp.UsersCreate, myApp.AuthNew, myApp.AuthCreate)
 
 		// Admin routes
-		admin := app.Group("/admin")
-		admin.Use(RequireRoleOwner)
-		admin.GET("/", AdminIndex)
-		admin.GET("/users", AdminUsersIndex)
-		admin.GET("/users/new", AdminUsersNew)
-		admin.POST("/users", AdminUsersCreate)
-		admin.GET("/users/{user_id}", AdminUsersShow)
-		admin.GET("/users/{user_id}/edit", AdminUsersEdit)
-		admin.PUT("/users/{user_id}", AdminUsersUpdate)
-		admin.DELETE("/users/{user_id}", AdminUsersDestroy)
-		admin.GET("/hackathons", AdminHackathonsIndex)
-		admin.GET("/projects", AdminProjectsIndex)
-		admin.GET("/emails", AdminEmailsIndex)
-		admin.GET("/config", AdminConfigIndex)
-		admin.PUT("/config", AdminConfigUpdate).Name("adminConfigPath")
-		admin.GET("/passwords", AdminPasswordsIndex)
-		admin.GET("/domains", AdminDomainsIndex)
-		admin.POST("/domains", AdminDomainsCreate)
-		admin.PUT("/domains/{domain_id}", AdminDomainsUpdate)
-		admin.DELETE("/domains/{domain_id}", AdminDomainsDestroy)
-		admin.GET("/audit-logs", AdminAuditLogsIndex)
+		admin := myApp.Group("/admin")
+		admin.Use(myApp.RequireRoleOwner)
+		admin.GET("/", myApp.AdminIndex)
+		admin.GET("/users", myApp.AdminUsersIndex)
+		admin.GET("/users/new", myApp.AdminUsersNew)
+		admin.POST("/users", myApp.AdminUsersCreate)
+		admin.GET("/users/{user_id}", myApp.AdminUsersShow)
+		admin.GET("/users/{user_id}/edit", myApp.AdminUsersEdit)
+		admin.PUT("/users/{user_id}", myApp.AdminUsersUpdate)
+		admin.DELETE("/users/{user_id}", myApp.AdminUsersDestroy)
+		admin.GET("/hackathons", myApp.AdminHackathonsIndex)
+		admin.GET("/projects", myApp.AdminProjectsIndex)
+		admin.GET("/emails", myApp.AdminEmailsIndex)
+		admin.GET("/config", myApp.AdminConfigIndex)
+		admin.PUT("/config", myApp.AdminConfigUpdate).Name("adminConfigPath")
+		admin.GET("/passwords", myApp.AdminPasswordsIndex)
+		admin.GET("/domains", myApp.AdminDomainsIndex)
+		admin.POST("/domains", myApp.AdminDomainsCreate)
+		admin.PUT("/domains/{domain_id}", myApp.AdminDomainsUpdate)
+		admin.DELETE("/domains/{domain_id}", myApp.AdminDomainsDestroy)
+		admin.GET("/audit-logs", myApp.AdminAuditLogsIndex)
 
-		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
+		myApp.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 
-	return app
+	return myApp.App
 }
 
 // translations will load locale files, set up the translator `actions.T`,
 // and will return a middleware to use to load the correct locale for each
 // request.
 // for more information: https://gobuffalo.io/en/docs/localization
-func translations() buffalo.MiddlewareFunc {
+func (a *MyApp) translations() buffalo.MiddlewareFunc {
 	var err error
 	if T, err = i18n.New(locales.FS(), "en-US"); err != nil {
-		app.Stop(err)
+		a.Stop(err)
 	}
 	return T.Middleware()
 }
@@ -156,7 +160,7 @@ func translations() buffalo.MiddlewareFunc {
 // This middleware does **not** enable SSL. for your application. To do that
 // we recommend using a proxy: https://gobuffalo.io/en/docs/proxy
 // for more information: https://github.com/unrolled/secure/
-func forceSSL() buffalo.MiddlewareFunc {
+func (a *MyApp) forceSSL() buffalo.MiddlewareFunc {
 	return forcessl.Middleware(secure.Options{
 		SSLRedirect:     ENV == "production",
 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},

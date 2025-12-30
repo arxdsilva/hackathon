@@ -10,7 +10,7 @@ import (
 )
 
 // ScheduleIndex shows schedules across all hackathons (public view).
-func ScheduleIndex(c buffalo.Context) error {
+func (a *MyApp) ScheduleIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	repoManager := repository.NewRepositoryManager(tx)
 
