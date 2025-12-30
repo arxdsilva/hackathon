@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
-	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -57,54 +56,54 @@ func logAuditEvent(tx *pop.Connection, c buffalo.Context, userID *uuid.UUID, act
 // AdminIndex renders the main admin overview page
 func (a *MyApp) AdminIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	// Get statistics
-	userCount, err := repoManager.User().Count()
+	userCount, err := repoManager.UserCount()
 	if err != nil {
 		return err
 	}
 
-	hackathonCount, err := repoManager.Hackathon().Count()
+	hackathonCount, err := repoManager.HackathonCount()
 	if err != nil {
 		return err
 	}
 
-	projectCount, err := repoManager.Project().Count()
+	projectCount, err := repoManager.ProjectCount()
 	if err != nil {
 		return err
 	}
 
-	activeProjectCount, err := repoManager.Project().CountActive()
+	activeProjectCount, err := repoManager.ProjectCountActive()
 	if err != nil {
 		return err
 	}
 
-	presentingProjectCount, err := repoManager.Project().CountPresenting()
+	presentingProjectCount, err := repoManager.ProjectCountPresenting()
 	if err != nil {
 		return err
 	}
 
 	// Get recent users
-	recentUsers, err := repoManager.User().GetRecent(5)
+	recentUsers, err := repoManager.UserGetRecent(5)
 	if err != nil {
 		return err
 	}
 
 	// Get recent hackathons
-	recentHackathons, err := repoManager.Hackathon().GetRecent(5)
+	recentHackathons, err := repoManager.HackathonGetRecent(5)
 	if err != nil {
 		return err
 	}
 
 	// Get recent projects
-	recentProjects, err := repoManager.Project().GetRecent(5)
+	recentProjects, err := repoManager.ProjectGetRecent(5)
 	if err != nil {
 		return err
 	}
 
 	// Get presenting projects
-	presentingProjects, err := repoManager.Project().FindPresentingFromActiveHackathons()
+	presentingProjects, err := repoManager.ProjectFindPresentingFromActiveHackathons()
 	if err != nil {
 		return err
 	}
@@ -159,15 +158,15 @@ func (a *MyApp) AdminUsersIndex(c buffalo.Context) error {
 // AdminUsersShow displays a specific user
 func (a *MyApp) AdminUsersShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
-	user, err := repoManager.User().FindByID(c.Param("user_id"))
+	user, err := repoManager.UserFindByID(c.Param("user_id"))
 	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
 	// Get user's projects with hackathon information
-	projects, err := repoManager.Project().FindByUserIDWithHackathon(user.ID)
+	projects, err := repoManager.ProjectFindByUserIDWithHackathon(user.ID)
 	if err != nil {
 		return err
 	}
@@ -466,9 +465,9 @@ func (a *MyApp) AdminPasswordsIndex(c buffalo.Context) error {
 // AdminDomainsIndex lists all company allowed domains
 func (a *MyApp) AdminDomainsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
-	domains, err := repoManager.CompanyAllowedDomain().FindAll()
+	domains, err := repoManager.CompanyAllowedDomainFindAll()
 	if err != nil {
 		return err
 	}

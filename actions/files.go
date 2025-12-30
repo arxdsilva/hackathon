@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/arxdsilva/hackathon/models"
-	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -16,9 +15,9 @@ import (
 // FilesIndex lists all files
 func (a *MyApp) FilesIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
-	files, err := repoManager.File().FindAll()
+	files, err := repoManager.FileFindAll()
 	if err != nil {
 		return err
 	}
@@ -30,9 +29,9 @@ func (a *MyApp) FilesIndex(c buffalo.Context) error {
 // FilesShow displays a single file
 func (a *MyApp) FilesShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
-	file, err := repoManager.File().FindByID(c.Param("file_id"))
+	file, err := repoManager.FileFindByID(c.Param("file_id"))
 	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
@@ -44,16 +43,16 @@ func (a *MyApp) FilesShow(c buffalo.Context) error {
 // FilesNew renders the upload form
 func (a *MyApp) FilesNew(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	// Get all hackathons for the dropdown
-	hackathons, err := repoManager.File().FindAllHackathons()
+	hackathons, err := repoManager.FileFindAllHackathons()
 	if err != nil {
 		return err
 	}
 
 	// Get all projects for the dropdown
-	projects, err := repoManager.File().FindAllProjects()
+	projects, err := repoManager.FileFindAllProjects()
 	if err != nil {
 		return err
 	}

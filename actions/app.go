@@ -7,6 +7,7 @@ import (
 	"github.com/arxdsilva/hackathon/locales"
 	"github.com/arxdsilva/hackathon/models"
 	"github.com/arxdsilva/hackathon/public"
+	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
@@ -15,6 +16,7 @@ import (
 	"github.com/gobuffalo/middleware/forcessl"
 	"github.com/gobuffalo/middleware/i18n"
 	"github.com/gobuffalo/middleware/paramlogger"
+	"github.com/gobuffalo/pop/v6"
 	"github.com/unrolled/secure"
 )
 
@@ -24,6 +26,11 @@ var ENV = envy.Get("GO_ENV", "development")
 
 type MyApp struct {
 	*buffalo.App
+}
+
+// Repository returns a repository interface for the given transaction
+func (a *MyApp) Repository(tx *pop.Connection) repository.RepositoryInterface {
+	return repository.NewRepositoryManager(tx)
 }
 
 var (

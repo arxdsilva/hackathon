@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
-	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -15,13 +14,13 @@ import (
 func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	projectID := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
 	// Check if already a member
-	isMember, err := repoManager.ProjectMembership().IsUserMember(projectID, currentUser.ID)
+	isMember, err := repoManager.ProjectMembershipIsUserMember(projectID, currentUser.ID)
 	if err != nil {
 		return err
 	}
@@ -31,7 +30,7 @@ func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	}
 
 	// Find the project
-	project, err := repoManager.Project().FindByID(projectID)
+	project, err := repoManager.ProjectFindByID(projectID)
 	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
@@ -57,13 +56,13 @@ func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	currentUser := c.Value("current_user").(models.User)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	projectID := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
 	// Check if user is the project owner
-	project, err := repoManager.Project().FindByID(projectID)
+	project, err := repoManager.ProjectFindByID(projectID)
 	if err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
@@ -73,7 +72,7 @@ func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 	}
 
 	// Find and delete membership
-	membership, err := repoManager.ProjectMembership().FindByProjectIDAndUserID(projectID, currentUser.ID)
+	membership, err := repoManager.ProjectMembershipFindByProjectIDAndUserID(projectID, currentUser.ID)
 	if err != nil {
 		c.Flash().Add("warning", "You are not a member of this project.")
 		return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/arxdsilva/hackathon/models"
-	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -65,8 +64,8 @@ func (a *MyApp) AuthCreate(c buffalo.Context) error {
 
 	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
 
-	repoManager := repository.NewRepositoryManager(tx)
-	dbUser, err := repoManager.User().FindByEmail(u.Email)
+	repoManager := a.Repository(tx)
+	dbUser, err := repoManager.UserFindByEmail(u.Email)
 	if err != nil {
 		c.Flash().Add("danger", "Invalid email or password")
 		return c.Redirect(http.StatusFound, "/signin")

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/arxdsilva/hackathon/models"
-	"github.com/arxdsilva/hackathon/repository"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
@@ -14,16 +13,16 @@ import (
 func (a *MyApp) ProfileShow(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	user := c.Value("current_user").(models.User)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	// Fetch hackathons owned by this user
-	ownedHackathons, err := repoManager.Hackathon().FindByOwnerID(user.ID)
+	ownedHackathons, err := repoManager.HackathonFindByOwnerID(user.ID)
 	if err != nil {
 		return err
 	}
 
 	// Fetch projects created by this user
-	createdProjects, err := repoManager.Project().FindByUserID(user.ID)
+	createdProjects, err := repoManager.ProjectFindByUserID(user.ID)
 	if err != nil {
 		return err
 	}

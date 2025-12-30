@@ -3,8 +3,6 @@ package actions
 import (
 	"net/http"
 
-	"github.com/arxdsilva/hackathon/repository"
-
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v6"
 )
@@ -12,10 +10,10 @@ import (
 // ScheduleIndex shows schedules across all hackathons (public view).
 func (a *MyApp) ScheduleIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	repoManager := repository.NewRepositoryManager(tx)
+	repoManager := a.Repository(tx)
 
 	// Get all active/upcoming hackathons with schedules
-	hackathons, err := repoManager.Hackathon().GetActiveWithSchedule()
+	hackathons, err := repoManager.HackathonGetActiveWithSchedule()
 	if err != nil {
 		return err
 	}
