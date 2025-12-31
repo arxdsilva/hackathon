@@ -1,5 +1,5 @@
 create_table("project_memberships") {
-	t.Column("id", "integer", {"primary": true})
+	t.Column("id", "uuid", {"primary": true})
 	t.Column("project_id", "integer", {"null": false})
 	t.Column("user_id", "uuid", {"null": false})
 	t.Timestamps()

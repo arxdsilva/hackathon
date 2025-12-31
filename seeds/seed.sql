@@ -26,15 +26,15 @@ INSERT INTO projects (id,  user_id, created_at, updated_at, hackathon_id, name, 
 
 -- Insert project memberships (founders are automatically added, but let's add some team members)
 INSERT INTO project_memberships (id, created_at, updated_at, project_id, user_id) VALUES
-(1, NOW(), NOW(), 1, '550e8400-e29b-41d4-a716-446655440001'), -- John is founder
-(2, NOW(), NOW(), 1, '550e8400-e29b-41d4-a716-446655440003'), -- Bob joins John's project
-(3, NOW(), NOW(), 2, '550e8400-e29b-41d4-a716-446655440002'), -- Jane is founder
-(4, NOW(), NOW(), 2, '550e8400-e29b-41d4-a716-446655440004'), -- Alice joins Jane's project
-(5, NOW(), NOW(), 3, '550e8400-e29b-41d4-a716-446655440003'), -- Bob is founder
-(6, NOW(), NOW(), 4, '550e8400-e29b-41d4-a716-446655440004'), -- Alice is founder
-(7, NOW(), NOW(), 4, '550e8400-e29b-41d4-a716-446655440002'), -- Jane joins Alice's project
-(8, NOW(), NOW(), 5, '550e8400-e29b-41d4-a716-446655440001'), -- John is founder
-(9, NOW(), NOW(), 6, '550e8400-e29b-41d4-a716-446655440002'); -- Jane is founder
+('650e8400-e29b-41d4-a716-446655440001', NOW(), NOW(), 1, '550e8400-e29b-41d4-a716-446655440001'), -- John is founder
+('650e8400-e29b-41d4-a716-446655440002', NOW(), NOW(), 1, '550e8400-e29b-41d4-a716-446655440003'), -- Bob joins John's project
+('650e8400-e29b-41d4-a716-446655440003', NOW(), NOW(), 2, '550e8400-e29b-41d4-a716-446655440002'), -- Jane is founder
+('650e8400-e29b-41d4-a716-446655440004', NOW(), NOW(), 2, '550e8400-e29b-41d4-a716-446655440004'), -- Alice joins Jane's project
+('650e8400-e29b-41d4-a716-446655440005', NOW(), NOW(), 3, '550e8400-e29b-41d4-a716-446655440003'), -- Bob is founder
+('650e8400-e29b-41d4-a716-446655440006', NOW(), NOW(), 4, '550e8400-e29b-41d4-a716-446655440004'), -- Alice is founder
+('650e8400-e29b-41d4-a716-446655440007', NOW(), NOW(), 4, '550e8400-e29b-41d4-a716-446655440002'), -- Jane joins Alice's project
+('650e8400-e29b-41d4-a716-446655440008', NOW(), NOW(), 5, '550e8400-e29b-41d4-a716-446655440001'), -- John is founder
+('650e8400-e29b-41d4-a716-446655440009', NOW(), NOW(), 6, '550e8400-e29b-41d4-a716-446655440002'); -- Jane is founder
 
 -- Insert some sample files (using dummy data for demonstration)
 INSERT INTO files (id, created_at, updated_at, filename, data, content_type, size, user_id, hackathon_id, project_id) VALUES

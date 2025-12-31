@@ -2,7 +2,10 @@ package actions
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/arxdsilva/hackathon/models"
 
@@ -16,8 +19,14 @@ func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	currentUser := c.Value("current_user").(models.User)
 	repoManager := a.Repository(tx)
 
-	projectID := c.Param("project_id")
+	projectIDStr := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
+
+	// Convert projectID to int
+	projectID, err := strconv.Atoi(projectIDStr)
+	if err != nil {
+		return c.Error(http.StatusBadRequest, fmt.Errorf("invalid project ID: %w", err))
+	}
 
 	// Check if already a member
 	isMember, err := repoManager.ProjectMembershipIsUserMember(projectID, currentUser.ID)
@@ -42,6 +51,11 @@ func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	}
 
 	if err := tx.Create(membership); err != nil {
+		// Check if it's a duplicate key error (user already member)
+		if isDuplicateError(err) {
+			c.Flash().Add("warning", "You are already a member of this project.")
+			return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)
+		}
 		return err
 	}
 
@@ -58,8 +72,14 @@ func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 	currentUser := c.Value("current_user").(models.User)
 	repoManager := a.Repository(tx)
 
-	projectID := c.Param("project_id")
+	projectIDStr := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
+
+	// Convert projectID to int
+	projectID, err := strconv.Atoi(projectIDStr)
+	if err != nil {
+		return c.Error(http.StatusBadRequest, fmt.Errorf("invalid project ID: %w", err))
+	}
 
 	// Check if user is the project owner
 	project, err := repoManager.ProjectFindByID(projectID)
@@ -87,4 +107,16 @@ func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 
 	c.Flash().Add("success", "You left the project.")
 	return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathonID)
+}
+
+// isDuplicateError checks if the error is a duplicate key violation
+func isDuplicateError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errStr := err.Error()
+	log.Println(">>> error: ", errStr)
+	return strings.Contains(errStr, "duplicate key value") ||
+		strings.Contains(errStr, "UNIQUE constraint failed") ||
+		strings.Contains(errStr, "23505") // PostgreSQL duplicate key error code
 }
