@@ -19,6 +19,7 @@
         <div class="card-body">
           <p><strong>Email:</strong> <%= user.Email %></p>
           <p><strong>Name:</strong> <%= if (user.Name != "") { %><%= user.Name %><% } else { %><em>Not set</em><% } %></p>
+          <p><strong>Company Team:</strong> <%= if (user.CompanyTeam != "") { %><%= user.CompanyTeam %><% } else { %><em>Not set</em><% } %></p>
           <p><strong>Role:</strong> <%= if (user.Role == "owner") { %>Owner<% } else { %>Hacker (Participant)<% } %></p>
           <p><strong>Member Since:</strong> <%= user.CreatedAt.Format("Jan 2, 2006") %></p>
           <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>

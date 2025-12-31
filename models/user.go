@@ -27,6 +27,7 @@ type User struct {
 	UpdatedAt            time.Time `db:"updated_at" json:"updated_at"`
 	Email                string    `db:"email" json:"email"`
 	Name                 string    `db:"name" json:"name"`
+	CompanyTeam          string    `db:"company_team" json:"company_team"`
 	Role                 string    `db:"role" json:"role"`
 	PasswordHash         string    `db:"password_hash" json:"-"`
 	Password             string    `db:"-" json:"password"`

@@ -1,0 +1,2 @@
+sql("UPDATE users SET company_team = '' WHERE company_team IS NULL")
+change_column("users", "company_team", "string", {"null": false, "default": ""})
