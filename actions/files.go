@@ -100,9 +100,7 @@ func (a *MyApp) FilesCreate(c buffalo.Context) error {
 
 	// Check for optional associations
 	if hackathonID := c.Request().FormValue("hackathon_id"); hackathonID != "" {
-		if id, err := strconv.Atoi(hackathonID); err == nil {
-			fileRecord.HackathonID = &id
-		}
+		fileRecord.HackathonID = &hackathonID
 	}
 
 	if projectID := c.Request().FormValue("project_id"); projectID != "" {
@@ -123,7 +121,7 @@ func (a *MyApp) FilesCreate(c buffalo.Context) error {
 
 	c.Flash().Add("success", "File uploaded successfully")
 	if fileRecord.ProjectID != nil && fileRecord.HackathonID != nil {
-		return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", *fileRecord.HackathonID, *fileRecord.ProjectID)
+		return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", *fileRecord.HackathonID, *fileRecord.ProjectID)
 	}
 	return c.Redirect(http.StatusFound, "/files")
 }

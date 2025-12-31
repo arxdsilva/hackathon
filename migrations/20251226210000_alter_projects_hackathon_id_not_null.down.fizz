@@ -1,1 +1,1 @@
-change_column("projects", "hackathon_id", "integer", {"null": true})
+change_column("projects", "hackathon_id", "string", {"null": true, "size": 255})

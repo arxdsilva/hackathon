@@ -44,7 +44,7 @@ func (a *MyApp) ProjectsUpdateImage(c buffalo.Context) error {
 	currentUser := c.Value("current_user").(models.User)
 	if project.UserID == nil || *project.UserID != currentUser.ID {
 		c.Flash().Add("danger", "You can only edit your own projects.")
-		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 	}
 
 	// Handle image upload
@@ -54,21 +54,21 @@ func (a *MyApp) ProjectsUpdateImage(c buffalo.Context) error {
 		// Validate file size (max 5MB)
 		if imageHeader.Size > 5*1024*1024 {
 			c.Flash().Add("danger", "Image too large (max 5MB)")
-			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 		}
 
 		// Validate content type
 		contentType := imageHeader.Header.Get("Content-Type")
 		if contentType == "" || !strings.HasPrefix(contentType, "image/") {
 			c.Flash().Add("danger", "Invalid image file")
-			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 		}
 
 		// Read image data
 		imageData, err := io.ReadAll(uploadedImage)
 		if err != nil {
 			c.Flash().Add("danger", "Failed to read image")
-			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 		}
 
 		project.ImageData = imageData
@@ -81,7 +81,7 @@ func (a *MyApp) ProjectsUpdateImage(c buffalo.Context) error {
 
 		if verrs.HasAny() {
 			c.Flash().Add("danger", "Failed to update image")
-			return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+			return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 		}
 
 		c.Flash().Add("success", "Project image updated successfully!")
@@ -89,7 +89,7 @@ func (a *MyApp) ProjectsUpdateImage(c buffalo.Context) error {
 		c.Flash().Add("danger", "No image selected")
 	}
 
-	return c.Redirect(http.StatusFound, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	return c.Redirect(http.StatusFound, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 }
 
 // ProjectsIndex lists all projects for a hackathon
@@ -265,7 +265,7 @@ func (a *MyApp) ProjectsCreate(c buffalo.Context) error {
 	logAuditEvent(tx, c, &currentUser.ID, "create", "project", &project.ID, fmt.Sprintf("Project created: %s", project.Name))
 
 	c.Flash().Add("success", "Project created successfully!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 }
 
 // ProjectsEdit renders the form for editing a project
@@ -281,7 +281,7 @@ func (a *MyApp) ProjectsEdit(c buffalo.Context) error {
 	currentUser := c.Value("current_user").(models.User)
 	if project.UserID == nil || *project.UserID != currentUser.ID {
 		c.Flash().Add("danger", "You can only edit your own projects.")
-		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 	}
 
 	hackathon := &models.Hackathon{}
@@ -307,7 +307,7 @@ func (a *MyApp) ProjectsUpdate(c buffalo.Context) error {
 	currentUser := c.Value("current_user").(models.User)
 	if project.UserID == nil || *project.UserID != currentUser.ID {
 		c.Flash().Add("danger", "You can only edit your own projects.")
-		return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+		return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 	}
 
 	// Handle image upload
@@ -360,7 +360,7 @@ func (a *MyApp) ProjectsUpdate(c buffalo.Context) error {
 	logAuditEvent(tx, c, &currentUser.ID, "update", "project", &project.ID, fmt.Sprintf("Project updated: %s", project.Name))
 
 	c.Flash().Add("success", "Project updated successfully!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 }
 
 // ProjectsDestroy deletes a project from the DB
@@ -411,5 +411,5 @@ func (a *MyApp) ProjectsTogglePresenting(c buffalo.Context) error {
 	}
 
 	c.Flash().Add("success", "Project presenting status updated!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d/projects/%d", project.HackathonID, project.ID)
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%s/projects/%s", project.HackathonID, project.ID)
 }

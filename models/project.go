@@ -17,7 +17,7 @@ type Project struct {
 	ID                string     `json:"id" db:"id"`
 	CreatedAt         time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt         time.Time  `json:"updated_at" db:"updated_at"`
-	HackathonID       int        `json:"hackathon_id" db:"hackathon_id"`
+	HackathonID       string     `json:"hackathon_id" db:"hackathon_id"`
 	Hackathon         *Hackathon `json:"hackathon,omitempty" belongs_to:"hackathon" fk_id:"hackathon_id"`
 	UserID            *uuid.UUID `json:"user_id" db:"user_id"`
 	User              *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
@@ -52,7 +52,7 @@ func (p *Project) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.StringIsPresent{Field: p.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: p.Description, Name: "Description"},
-		&validators.IntIsPresent{Field: p.HackathonID, Name: "HackathonID"},
+		&validators.StringIsPresent{Field: p.HackathonID, Name: "HackathonID"},
 	), nil
 }
 
@@ -86,12 +86,12 @@ func (p *Project) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
-// generateUniqueProjectID generates a unique alphanumeric hash for project IDs
+// generateUniqueProjectID generates a unique 12-character hexadecimal string for project ID
 func generateUniqueProjectID() string {
-	bytes := make([]byte, 8) // 16 hex characters
+	bytes := make([]byte, 6) // 6 bytes = 12 hex characters
 	if _, err := rand.Read(bytes); err != nil {
 		// Fallback to timestamp-based ID if crypto/rand fails
-		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))
+		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))[:12]
 	}
 	return hex.EncodeToString(bytes)
 }

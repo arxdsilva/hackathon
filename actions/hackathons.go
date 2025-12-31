@@ -185,7 +185,7 @@ func (a *MyApp) HackathonsCreate(c buffalo.Context) error {
 	logAuditEvent(tx, c, &currentUser.ID, "create", "hackathon", &hackathon.ID, fmt.Sprintf("Hackathon created: %s", hackathon.Title))
 
 	c.Flash().Add("success", "Hackathon created successfully!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d", hackathon.ID)
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathon.ID)
 }
 
 // HackathonsEdit renders the form for editing a hackathon (owner-only)
@@ -244,7 +244,7 @@ func (a *MyApp) HackathonsUpdate(c buffalo.Context) error {
 	logAuditEvent(tx, c, &currentUser.ID, "update", "hackathon", &hackathon.ID, fmt.Sprintf("Hackathon updated: %s", hackathon.Title))
 
 	c.Flash().Add("success", "Hackathon updated successfully!")
-	return c.Redirect(http.StatusSeeOther, "/hackathons/%d", hackathon.ID)
+	return c.Redirect(http.StatusSeeOther, "/hackathons/%s", hackathon.ID)
 }
 
 // HackathonsDestroy deletes a hackathon from the DB (owner-only)

@@ -5,7 +5,7 @@ create_table("files") {
   t.Column("content_type", "string", {"size": 100})
   t.Column("size", "bigint", {})
   t.Column("user_id", "uuid", {})
-  t.Column("hackathon_id", "integer", {"null": true})
+  t.Column("hackathon_id", "string", {"null": true, "size": 255})
   t.Column("project_id", "string", {"null": true, "size": 255})
   t.Timestamps()
   t.ForeignKey("user_id", {"users": ["id"]}, {"on_delete": "CASCADE"})
