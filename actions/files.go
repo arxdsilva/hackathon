@@ -106,9 +106,7 @@ func (a *MyApp) FilesCreate(c buffalo.Context) error {
 	}
 
 	if projectID := c.Request().FormValue("project_id"); projectID != "" {
-		if id, err := strconv.Atoi(projectID); err == nil {
-			fileRecord.ProjectID = &id
-		}
+		fileRecord.ProjectID = &projectID
 	}
 
 	verrs, err := tx.ValidateAndCreate(fileRecord)

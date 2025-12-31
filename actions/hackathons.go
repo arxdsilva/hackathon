@@ -52,8 +52,8 @@ func (a *MyApp) HackathonsShow(c buffalo.Context) error {
 	}
 
 	// Count memberships for each project and check if current user is a member
-	memberCounts := make(map[int]int)
-	userMemberships := make(map[int]bool)
+	memberCounts := make(map[string]int)
+	userMemberships := make(map[string]bool)
 	currentUser := c.Value("current_user").(models.User)
 
 	for _, project := range *projects {

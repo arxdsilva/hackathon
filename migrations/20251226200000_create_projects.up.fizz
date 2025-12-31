@@ -1,5 +1,5 @@
 create_table("projects") {
-  t.Column("id", "integer", {"primary": true})
+  t.Column("id", "string", {"primary": true, "size": 255})
   t.Column("hackathon_id", "integer", {})
   t.Column("name", "string", {"size": 255})
   t.Column("description", "text", {})

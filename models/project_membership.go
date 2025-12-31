@@ -16,7 +16,7 @@ type ProjectMembership struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 
-	ProjectID int      `json:"project_id" db:"project_id"`
+	ProjectID string   `json:"project_id" db:"project_id"`
 	Project   *Project `json:"project,omitempty" belongs_to:"project"`
 
 	UserID uuid.UUID `json:"user_id" db:"user_id"`
@@ -41,7 +41,7 @@ func (m ProjectMemberships) String() string {
 // Validate runs on Validate* calls
 func (m *ProjectMembership) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
-		&validators.IntIsPresent{Field: m.ProjectID, Name: "ProjectID"},
+		&validators.StringIsPresent{Field: m.ProjectID, Name: "ProjectID"},
 		&validators.UUIDIsPresent{Field: m.UserID, Name: "UserID"},
 	), nil
 }

@@ -23,7 +23,7 @@ type File struct {
 	User        *User      `json:"user,omitempty" belongs_to:"user" fk_id:"user_id"`
 	HackathonID *int       `json:"hackathon_id" db:"hackathon_id"`
 	Hackathon   *Hackathon `json:"hackathon,omitempty" belongs_to:"hackathon" fk_id:"hackathon_id"`
-	ProjectID   *int       `json:"project_id" db:"project_id"`
+	ProjectID   *string    `json:"project_id" db:"project_id"`
 	Project     *Project   `json:"project,omitempty" belongs_to:"project" fk_id:"project_id"`
 }
 

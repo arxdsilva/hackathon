@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/arxdsilva/hackathon/models"
@@ -22,11 +21,7 @@ func (a *MyApp) ProjectMembershipsCreate(c buffalo.Context) error {
 	projectIDStr := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
-	// Convert projectID to int
-	projectID, err := strconv.Atoi(projectIDStr)
-	if err != nil {
-		return c.Error(http.StatusBadRequest, fmt.Errorf("invalid project ID: %w", err))
-	}
+	projectID := projectIDStr // Use string directly
 
 	// Check if already a member
 	isMember, err := repoManager.ProjectMembershipIsUserMember(projectID, currentUser.ID)
@@ -75,11 +70,7 @@ func (a *MyApp) ProjectMembershipsDestroy(c buffalo.Context) error {
 	projectIDStr := c.Param("project_id")
 	hackathonID := c.Param("hackathon_id")
 
-	// Convert projectID to int
-	projectID, err := strconv.Atoi(projectIDStr)
-	if err != nil {
-		return c.Error(http.StatusBadRequest, fmt.Errorf("invalid project ID: %w", err))
-	}
+	projectID := projectIDStr // Use string directly
 
 	// Check if user is the project owner
 	project, err := repoManager.ProjectFindByID(projectID)

@@ -107,7 +107,7 @@ func (a *MyApp) ProjectsIndex(c buffalo.Context) error {
 	}
 
 	// Count memberships for each project
-	memberCounts := make(map[int]int)
+	memberCounts := make(map[string]int)
 	for _, project := range *projects {
 		count, err := tx.Where("project_id = ?", project.ID).Count(&models.ProjectMembership{})
 		if err == nil {

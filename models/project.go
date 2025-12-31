@@ -1,6 +1,8 @@
 package models
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"time"
 
@@ -12,7 +14,7 @@ import (
 
 // Project represents a hackathon project submission
 type Project struct {
-	ID                int        `json:"id" db:"id"`
+	ID                string     `json:"id" db:"id"`
 	CreatedAt         time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt         time.Time  `json:"updated_at" db:"updated_at"`
 	HackathonID       int        `json:"hackathon_id" db:"hackathon_id"`
@@ -57,6 +59,12 @@ func (p *Project) Validate(tx *pop.Connection) (*validate.Errors, error) {
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 func (p *Project) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	verrs := validate.NewErrors()
+
+	// Generate unique ID if not set
+	if p.ID == "" {
+		p.ID = generateUniqueProjectID()
+	}
+
 	// Ensure a user is set on creation
 	if p.UserID == nil {
 		verrs.Add("UserID", "must be present")
@@ -76,4 +84,14 @@ func (p *Project) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 // ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.
 func (p *Project) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
+}
+
+// generateUniqueProjectID generates a unique alphanumeric hash for project IDs
+func generateUniqueProjectID() string {
+	bytes := make([]byte, 8) // 16 hex characters
+	if _, err := rand.Read(bytes); err != nil {
+		// Fallback to timestamp-based ID if crypto/rand fails
+		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))
+	}
+	return hex.EncodeToString(bytes)
 }
