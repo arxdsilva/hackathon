@@ -71,6 +71,10 @@ db-setup: ## Set up development database
 
 db-migrate: ## Run database migrations
 	@echo "🗃️ Running database migrations..."
+	@command -v soda >/dev/null 2>&1 || { \
+		echo "⬇️ Installing soda CLI..."; \
+		go install github.com/gobuffalo/pop/v6/soda@latest; \
+	}
 	soda migrate up
 
 db-reset: ## Reset database (drop and recreate)
@@ -78,8 +82,10 @@ db-reset: ## Reset database (drop and recreate)
 	soda reset
 
 db-seed: ## Seed database with initial data
-	@echo "🌱 Seeding database..."
-	buffalo task db:seed
+	@echo "🌱 Seeding database from seeds/seed.sql..."
+	psql "postgres://postgres:postgres@localhost:5432/hackathon_development?sslmode=disable" -f seeds/seed.sql
+
+db-seed-sql: db-seed ## Alias for SQL seeding
 
 db-docker-up: ## Start database with Docker Compose
 	@echo "🐳 Starting database with Docker..."
