@@ -142,6 +142,9 @@
                   <%= if (user.Name != "") { %>
                     <p class="card-text small text-muted"><%= user.Name %></p>
                   <% } %>
+                  <%= if (user.CompanyTeam != "") { %>
+                    <p class="card-text small text-primary"><i class="fas fa-building"></i> <%= user.CompanyTeam %></p>
+                  <% } %>
                 </div>
               </div>
             </div>
