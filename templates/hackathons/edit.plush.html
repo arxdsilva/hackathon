@@ -53,6 +53,7 @@
             <option value="upcoming" <%= if (hackathon.Status == "upcoming") { %>selected<% } %>>Upcoming</option>
             <option value="active" <%= if (hackathon.Status == "active") { %>selected<% } %>>Active</option>
             <option value="completed" <%= if (hackathon.Status == "completed") { %>selected<% } %>>Completed</option>
+            <option value="hidden" <%= if (hackathon.Status == "hidden") { %>selected<% } %>>Hidden</option>
           </select>
         </div>
         

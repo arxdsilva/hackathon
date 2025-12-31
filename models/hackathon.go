@@ -49,6 +49,20 @@ func (h *Hackathon) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		&validators.TimeIsPresent{Field: h.StartDate, Name: "StartDate"},
 		&validators.TimeIsPresent{Field: h.EndDate, Name: "EndDate"},
 		&validators.UUIDIsPresent{Field: h.OwnerID, Name: "OwnerID"},
+		&validators.FuncValidator{
+			Field:   h.Status,
+			Name:    "Status",
+			Message: "Status must be one of: upcoming, active, completed, hidden",
+			Fn: func() bool {
+				validStatuses := []string{"upcoming", "active", "completed", "hidden"}
+				for _, status := range validStatuses {
+					if h.Status == status {
+						return true
+					}
+				}
+				return false
+			},
+		},
 	), nil
 }
 

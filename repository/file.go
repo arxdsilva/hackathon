@@ -34,7 +34,7 @@ func (r *FileRepository) FindAll() (*models.Files, error) {
 // FindAllHackathons finds all hackathons (for file upload context)
 func (r *FileRepository) FindAllHackathons() (*models.Hackathons, error) {
 	hackathons := &models.Hackathons{}
-	err := r.conn.All(hackathons)
+	err := r.conn.Where("status != ?", "hidden").All(hackathons)
 	return hackathons, err
 }
 

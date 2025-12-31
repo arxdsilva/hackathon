@@ -18,7 +18,7 @@ func (a *MyApp) HackathonsIndex(c buffalo.Context) error {
 	hackathons := &models.Hackathons{}
 
 	q := tx.PaginateFromParams(c.Params())
-	if err := q.Order("start_date desc").All(hackathons); err != nil {
+	if err := q.Where("status != ?", "hidden").Order("start_date desc").All(hackathons); err != nil {
 		return err
 	}
 
