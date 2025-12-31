@@ -115,9 +115,23 @@ func (a *MyApp) ProjectsIndex(c buffalo.Context) error {
 		}
 	}
 
+	// Check if current user has already created a project
+	canCreateProject := false
+	if cu, ok := c.Value("current_user").(models.User); ok && cu.ID.String() != "" {
+		userHasProject := false
+		for _, project := range *projects {
+			if project.UserID != nil && *project.UserID == cu.ID {
+				userHasProject = true
+				break
+			}
+		}
+		canCreateProject = !userHasProject
+	}
+
 	c.Set("hackathon", hackathon)
 	c.Set("projects", projects)
 	c.Set("memberCounts", memberCounts)
+	c.Set("canCreateProject", canCreateProject)
 	return c.Render(http.StatusOK, r.HTML("projects/index.plush.html"))
 }
 

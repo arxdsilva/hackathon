@@ -6,7 +6,7 @@
       </a>
       <h1>Projects</h1>
     </div>
-    <%= if (current_user.ID.String() != "") { %>
+    <%= if (canCreateProject) { %>
       <a href="/hackathons/<%= hackathon.ID %>/projects/new" class="btn btn-primary">
         <i class="fas fa-plus"></i> Create Project
       </a>
@@ -16,7 +16,9 @@
   <%= if (len(projects) == 0) { %>
     <div class="alert alert-info">
       <i class="fas fa-info-circle"></i> No projects yet.
-      <a href="/hackathons/<%= hackathon.ID %>/projects/new">Create the first one!</a>
+      <%= if (canCreateProject) { %>
+        <a href="/hackathons/<%= hackathon.ID %>/projects/new">Create the first one!</a>
+      <% } %>
     </div>
   <% } else { %>
     <div class="row">
