@@ -1,11 +1,43 @@
 <div class="auth-wrapper">
-  <div class="sign-form">
-    <h1>Sign In</h1>
+  <div class="auth-card shadow-lg">
+    <div class="auth-left">
+      <div class="badge text-bg-light mb-3">Secure Access</div>
+      <h1 class="auth-title">Welcome back.</h1>
+      <p class="auth-subtitle">Log in to manage teams, hackathons, and submissions. Two clicks and you are in.</p>
+      <ul class="auth-highlights">
+        <li><i class="fas fa-shield-alt"></i> Password policy enforced</li>
+        <li><i class="fas fa-bolt"></i> Fast admin tools</li>
+        <li><i class="fas fa-users"></i> Team-friendly flows</li>
+      </ul>
+    </div>
 
-    <%= form_for(user, {action: signinPath()}) { %>
-      <%= f.InputTag("Email") %>
-      <%= f.InputTag("Password", {type: "password"}) %>
-      <button class="btn btn-success">Sign In!</button>
-    <% } %>
+    <div class="auth-right">
+      <div class="auth-form">
+        <div class="auth-form-header">
+          <div>
+            <p class="eyebrow">Sign In</p>
+            <h2>Access your workspace</h2>
+            <p class="muted">Use your company email and secure password.</p>
+          </div>
+          <div class="avatar-stack">
+            <span class="avatar-circle">H</span>
+            <span class="avatar-circle">T</span>
+            <span class="avatar-circle">X</span>
+          </div>
+        </div>
+
+        <%= form_for(user, {action: signinPath()}) { %>
+          <div class="mb-3">
+            <%= f.InputTag("Email", {class: "form-control form-control-lg", placeholder: "you@company.com"}) %>
+          </div>
+          <div class="mb-3">
+            <%= f.InputTag("Password", {type: "password", class: "form-control form-control-lg", placeholder: "••••••••"}) %>
+          </div>
+          <button class="btn btn-gradient w-100 py-2">Sign In</button>
+        <% } %>
+
+        <p class="small mt-3 text-center text-muted">Forgot your password? Ask your admin to trigger a reset.</p>
+      </div>
+    </div>
   </div>
 </div>
