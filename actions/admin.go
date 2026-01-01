@@ -465,6 +465,59 @@ func (a *MyApp) AdminPasswordsIndex(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.HTML("admin/passwords/index.plush.html", "admin/layout.plush.html"))
 }
 
+// AdminPasswordsSearch searches for users by email or name
+func (a *MyApp) AdminPasswordsSearch(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	query := c.Param("q")
+
+	if query == "" {
+		return c.Render(http.StatusOK, r.JSON(map[string]interface{}{
+			"users": []models.User{},
+		}))
+	}
+
+	// Search users by email or name (case insensitive)
+	users := &models.Users{}
+	err := tx.Where("email ILIKE ? OR name ILIKE ?", "%"+query+"%", "%"+query+"%").Limit(10).All(users)
+	if err != nil {
+		return c.Error(http.StatusInternalServerError, err)
+	}
+
+	return c.Render(http.StatusOK, r.JSON(map[string]interface{}{
+		"users": users,
+	}))
+}
+
+// AdminPasswordsForceReset forces a specific user to reset their password
+func (a *MyApp) AdminPasswordsForceReset(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	userID := c.Param("user_id")
+
+	if userID == "" {
+		return c.Error(http.StatusBadRequest, fmt.Errorf("user_id is required"))
+	}
+
+	user := &models.User{}
+	if err := tx.Find(user, userID); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Set force password reset flag
+	user.ForcePasswordReset = true
+	if err := tx.Update(user); err != nil {
+		return c.Error(http.StatusInternalServerError, err)
+	}
+
+	// Log the action
+	currentUser := c.Value("current_user").(models.User)
+	logAuditEvent(tx, c, &currentUser.ID, "force_password_reset", "user", &user.ID, fmt.Sprintf("Admin forced password reset for user %s (%s)", user.Name, user.Email))
+
+	return c.Render(http.StatusOK, r.JSON(map[string]interface{}{
+		"success": true,
+		"message": "User will be required to reset their password on next login",
+	}))
+}
+
 // AdminDomainsIndex lists all company allowed domains
 func (a *MyApp) AdminDomainsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)

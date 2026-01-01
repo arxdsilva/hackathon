@@ -14,13 +14,16 @@
         <!-- Reset by User Search -->
         <div class="card mb-4">
           <div class="card-header">
-            <h6 class="mb-0">Reset Password for Specific User <span class="badge bg-secondary">Coming Soon</span></h6>
+            <h6 class="mb-0">Reset Password for Specific User</h6>
           </div>
           <div class="card-body">
             <form class="row g-3">
               <div class="col-md-8">
                 <label for="userSearch" class="form-label">Search User</label>
-                <input type="text" class="form-control" id="userSearch" placeholder="Enter email or name">
+                <input type="text" class="form-control" id="userSearch" placeholder="Enter email or name" autocomplete="off">
+                <div id="searchResults" class="mt-2" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem;">
+                  <!-- Search results will be populated here -->
+                </div>
               </div>
               <div class="col-md-4 d-flex align-items-end">
                 <button type="button" class="btn btn-outline-primary me-2" id="searchBtn">
@@ -34,9 +37,9 @@
 
             <div id="userResults" class="mt-3" style="display: none;">
               <div class="alert alert-info">
-                <strong>Selected User:</strong> <span id="selectedUser">john.doe@company.com</span>
+                <strong>Selected User:</strong> <span id="selectedUserName">No user selected</span> (<span id="selectedUserEmail"></span>)
                 <br>
-                <small class="text-muted">A temporary password will be generated and emailed to the user.</small>
+                <small class="text-muted">Click "Force Reset Password" to require this user to reset their password on next login.</small>
               </div>
             </div>
           </div>
@@ -149,3 +152,173 @@
     </div>
   </div>
 </div>
+
+<script>
+let selectedUserId = null;
+let searchTimeout = null;
+
+// Search functionality
+document.getElementById('userSearch').addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    // Clear previous timeout
+    if (searchTimeout) {
+        clearTimeout(searchTimeout);
+    }
+    
+    if (query.length < 2) {
+        document.getElementById('searchResults').style.display = 'none';
+        return;
+    }
+    
+    // Debounce search
+    searchTimeout = setTimeout(() => {
+        performSearch(query);
+    }, 300);
+});
+
+document.getElementById('searchBtn').addEventListener('click', function() {
+    const query = document.getElementById('userSearch').value.trim();
+    if (query.length >= 2) {
+        performSearch(query);
+    }
+});
+
+function performSearch(query) {
+    fetch(`/admin/passwords/search?q=${encodeURIComponent(query)}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        displaySearchResults(data.users);
+    })
+    .catch(error => {
+        console.error('Search error:', error);
+        showAlert('Error searching users', 'danger');
+    });
+}
+
+function displaySearchResults(users) {
+    const resultsDiv = document.getElementById('searchResults');
+    
+    if (users.length === 0) {
+        resultsDiv.innerHTML = '<div class="p-2 text-muted">No users found</div>';
+        resultsDiv.style.display = 'block';
+        return;
+    }
+    
+    let html = '';
+    users.forEach(user => {
+        html += `
+            <div class="p-2 border-bottom user-result" data-user-id="${user.id}" data-user-name="${user.name}" data-user-email="${user.email}" style="cursor: pointer;">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <strong>${user.name}</strong><br>
+                        <small class="text-muted">${user.email}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-${user.role === 'owner' ? 'primary' : 'secondary'}">${user.role}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    resultsDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+    
+    // Add click handlers
+    document.querySelectorAll('.user-result').forEach(result => {
+        result.addEventListener('click', function() {
+            selectUser(this.dataset.userId, this.dataset.userName, this.dataset.userEmail);
+        });
+    });
+}
+
+function selectUser(userId, name, email) {
+    selectedUserId = userId;
+    document.getElementById('selectedUserName').textContent = name;
+    document.getElementById('selectedUserEmail').textContent = email;
+    document.getElementById('userResults').style.display = 'block';
+    document.getElementById('resetBtn').disabled = false;
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('userSearch').value = '';
+}
+
+// Force reset password
+document.getElementById('resetBtn').addEventListener('click', function() {
+    if (!selectedUserId) {
+        showAlert('Please select a user first', 'warning');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to force password reset for ${document.getElementById('selectedUserName').textContent}?`)) {
+        forcePasswordReset(selectedUserId);
+    }
+});
+
+function forcePasswordReset(userId) {
+    const formData = new FormData();
+    formData.append('user_id', userId);
+    
+    fetch('/admin/passwords/force-reset', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(data.message, 'success');
+            // Reset selection
+            selectedUserId = null;
+            document.getElementById('selectedUserName').textContent = 'No user selected';
+            document.getElementById('selectedUserEmail').textContent = '';
+            document.getElementById('userResults').style.display = 'none';
+            document.getElementById('resetBtn').disabled = true;
+        } else {
+            showAlert('Failed to force password reset', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Reset error:', error);
+        showAlert('Error forcing password reset', 'danger');
+    });
+}
+
+function showAlert(message, type) {
+    // Create alert element
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Close search results when clicking outside
+document.addEventListener('click', function(e) {
+    const searchResults = document.getElementById('searchResults');
+    const searchInput = document.getElementById('userSearch');
+    
+    if (!searchResults.contains(e.target) && e.target !== searchInput) {
+        searchResults.style.display = 'none';
+    }
+});
+</script>

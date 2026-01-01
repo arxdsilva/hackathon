@@ -141,6 +141,8 @@ func App() *buffalo.App {
 		admin.GET("/config", myApp.AdminConfigIndex)
 		admin.PUT("/config", myApp.AdminConfigUpdate).Name("adminConfigPath")
 		admin.GET("/passwords", myApp.AdminPasswordsIndex)
+		admin.GET("/passwords/search", myApp.AdminPasswordsSearch)
+		admin.POST("/passwords/force-reset", myApp.AdminPasswordsForceReset)
 		admin.GET("/domains", myApp.AdminDomainsIndex)
 		admin.POST("/domains", myApp.AdminDomainsCreate)
 		admin.PUT("/domains/{domain_id}", myApp.AdminDomainsUpdate)
