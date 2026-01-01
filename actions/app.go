@@ -143,6 +143,7 @@ func App() *buffalo.App {
 		admin.GET("/passwords", myApp.AdminPasswordsIndex)
 		admin.GET("/passwords/search", myApp.AdminPasswordsSearch)
 		admin.POST("/passwords/force-reset", myApp.AdminPasswordsForceReset)
+		admin.POST("/passwords/update-policy", myApp.AdminPasswordsUpdatePolicy)
 		admin.GET("/domains", myApp.AdminDomainsIndex)
 		admin.POST("/domains", myApp.AdminDomainsCreate)
 		admin.PUT("/domains/{domain_id}", myApp.AdminDomainsUpdate)

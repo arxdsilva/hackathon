@@ -88,7 +88,7 @@
             <h6 class="mb-0">Password Policy Settings</h6>
           </div>
           <div class="card-body">
-            <form id="passwordPolicyForm">
+            <form id="passwordPolicyForm" action="/admin/passwords/update-policy" method="POST">
               <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
               <div class="row">
                 <div class="col-md-6">
@@ -115,10 +115,6 @@
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="passwordRequireSpecialChars" name="password_require_special_chars" <%= if (config.PasswordRequireSpecialChars) { %>checked<% } %>>
                     <label class="form-check-label" for="passwordRequireSpecialChars">Require special characters</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="twoFactorRequired" name="two_factor_required" <%= if (config.TwoFactorRequired) { %>checked<% } %>>
-                    <label class="form-check-label" for="twoFactorRequired">Require two-factor authentication</label>
                   </div>
                 </div>
               </div>
@@ -333,23 +329,30 @@ document.getElementById('passwordPolicyForm').addEventListener('submit', functio
     const formData = new FormData(this);
     
     // Convert checkboxes to "true"/"false" strings
-    const checkboxes = ['password_require_uppercase', 'password_require_numbers', 'password_require_special_chars', 'two_factor_required'];
-    checkboxes.forEach(name => {
-        formData.set(name, document.getElementById(name.replace(/_/g, '')).checked ? 'true' : 'false');
+    const checkboxMappings = {
+        'password_require_uppercase': 'passwordRequireUppercase',
+        'password_require_numbers': 'passwordRequireNumbers',
+        'password_require_special_chars': 'passwordRequireSpecialChars'
+    };
+    
+    Object.keys(checkboxMappings).forEach(name => {
+        const elementId = checkboxMappings[name];
+        const element = document.getElementById(elementId);
+        if (element) {
+            formData.set(name, element.checked ? 'true' : 'false');
+        }
     });
     
-    fetch('/admin/config', {
+    fetch('/admin/passwords/update-policy', {
         method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
+        body: formData
     })
-    .then(response => {
-        if (response.ok) {
-            showAlert('Password policy updated successfully!', 'success');
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(data.message, 'success');
         } else {
-            throw new Error('Failed to update password policy');
+            showAlert('Error updating password policy', 'danger');
         }
     })
     .catch(error => {

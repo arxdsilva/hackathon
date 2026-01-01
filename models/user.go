@@ -112,7 +112,7 @@ func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 		policyValidators := []validate.Validator{
 			&validators.FuncValidator{
 				Name:    "Password",
-				Message: fmt.Sprintf("Password must be at least %d characters long", minLength),
+				Message: "Password does not meet minimum length requirements",
 				Fn: func() bool {
 					return len(u.Password) >= minLength
 				},

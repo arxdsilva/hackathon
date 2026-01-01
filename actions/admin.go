@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/arxdsilva/hackathon/models"
 
@@ -523,6 +524,47 @@ func (a *MyApp) AdminPasswordsForceReset(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(map[string]interface{}{
 		"success": true,
 		"message": "User will be required to reset their password on next login",
+	}))
+}
+
+// AdminPasswordsUpdatePolicy updates password policy settings
+func (a *MyApp) AdminPasswordsUpdatePolicy(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	// Find the canonical config (smallest ID)
+	existingConfig := &models.CompanyConfiguration{}
+	err := tx.First(existingConfig)
+	if err != nil {
+		return c.Error(http.StatusInternalServerError, fmt.Errorf("no company configuration found"))
+	}
+
+	// Parse the form parameters
+	minLengthStr := c.Param("password_min_length")
+	minLength := 8 // default
+	if minLengthStr != "" {
+		if parsed, err := strconv.Atoi(minLengthStr); err == nil && parsed >= 6 && parsed <= 32 {
+			minLength = parsed
+		}
+	}
+
+	// Update password policy fields
+	existingConfig.PasswordMinLength = minLength
+	existingConfig.PasswordRequireUppercase = c.Param("password_require_uppercase") == "true"
+	existingConfig.PasswordRequireNumbers = c.Param("password_require_numbers") == "true"
+	existingConfig.PasswordRequireSpecialChars = c.Param("password_require_special_chars") == "true"
+
+	// Save the changes
+	if err := tx.Update(existingConfig); err != nil {
+		return c.Error(http.StatusInternalServerError, err)
+	}
+
+	// Log the action
+	currentUser := c.Value("current_user").(models.User)
+	logAuditEvent(tx, c, &currentUser.ID, "update_password_policy", "company_configuration", &existingConfig.ID, "Password policy settings updated")
+
+	return c.Render(http.StatusOK, r.JSON(map[string]interface{}{
+		"success": true,
+		"message": "Password policy updated successfully",
 	}))
 }
 
