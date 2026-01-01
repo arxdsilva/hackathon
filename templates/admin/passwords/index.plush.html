@@ -85,45 +85,49 @@
         <!-- Password Policy -->
         <div class="card">
           <div class="card-header">
-            <h6 class="mb-0">Password Policy Settings <span class="badge bg-secondary">Coming Soon</span></h6>
+            <h6 class="mb-0">Password Policy Settings</h6>
           </div>
           <div class="card-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Minimum Password Length</label>
-                  <input type="number" class="form-control" value="8" min="6" max="32">
+            <form id="passwordPolicyForm">
+              <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="passwordMinLength" class="form-label">Minimum Password Length</label>
+                    <input type="number" class="form-control" id="passwordMinLength" name="password_min_length" value="<%= config.PasswordMinLength %>" min="6" max="32" required>
+                    <div class="form-text">Minimum: 6 characters, Maximum: 32 characters</div>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="passwordRequireUppercase" name="password_require_uppercase" <%= if (config.PasswordRequireUppercase) { %>checked<% } %>>
+                    <label class="form-check-label" for="passwordRequireUppercase">Require uppercase letters</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="passwordRequireNumbers" name="password_require_numbers" <%= if (config.PasswordRequireNumbers) { %>checked<% } %>>
+                    <label class="form-check-label" for="passwordRequireNumbers">Require numbers</label>
+                  </div>
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" checked>
-                  <label class="form-check-label">Require uppercase letters</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" checked>
-                  <label class="form-check-label">Require numbers</label>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="sessionTimeoutMinutes" class="form-label">Session Timeout (minutes)</label>
+                    <input type="number" class="form-control" id="sessionTimeoutMinutes" name="session_timeout_minutes" value="<%= config.SessionTimeoutMinutes %>" min="15" max="1440">
+                    <div class="form-text">How long before users are automatically logged out (15-1440 minutes)</div>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="passwordRequireSpecialChars" name="password_require_special_chars" <%= if (config.PasswordRequireSpecialChars) { %>checked<% } %>>
+                    <label class="form-check-label" for="passwordRequireSpecialChars">Require special characters</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="twoFactorRequired" name="two_factor_required" <%= if (config.TwoFactorRequired) { %>checked<% } %>>
+                    <label class="form-check-label" for="twoFactorRequired">Require two-factor authentication</label>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Password Expiration (days)</label>
-                  <input type="number" class="form-control" value="90" min="0" max="365">
-                  <div class="form-text">0 = never expires</div>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" checked>
-                  <label class="form-check-label">Require special characters</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox">
-                  <label class="form-check-label">Prevent password reuse</label>
-                </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save me-1"></i>Update Policy
+                </button>
               </div>
-            </div>
-            <div class="d-flex justify-content-end">
-              <button type="button" class="btn btn-primary">
-                <i class="fas fa-save me-1"></i>Update Policy
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
@@ -320,5 +324,37 @@ document.addEventListener('click', function(e) {
     if (!searchResults.contains(e.target) && e.target !== searchInput) {
         searchResults.style.display = 'none';
     }
+});
+
+// Password Policy Form Submission
+document.getElementById('passwordPolicyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Convert checkboxes to "true"/"false" strings
+    const checkboxes = ['password_require_uppercase', 'password_require_numbers', 'password_require_special_chars', 'two_factor_required'];
+    checkboxes.forEach(name => {
+        formData.set(name, document.getElementById(name.replace(/_/g, '')).checked ? 'true' : 'false');
+    });
+    
+    fetch('/admin/config', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            showAlert('Password policy updated successfully!', 'success');
+        } else {
+            throw new Error('Failed to update password policy');
+        }
+    })
+    .catch(error => {
+        console.error('Policy update error:', error);
+        showAlert('Error updating password policy', 'danger');
+    });
 });
 </script>

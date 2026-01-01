@@ -91,10 +91,95 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 // ValidateCreate checks password fields on create.
 func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	var err error
-	return validate.Validate(
+
+	// Get company configuration for password policy
+	config, configErr := GetDefaultConfig(tx)
+
+	// Basic validators
+	baseValidators := []validate.Validator{
 		&validators.StringIsPresent{Field: u.Password, Name: "Password"},
 		&validators.StringsMatch{Name: "Password", Field: u.Password, Field2: u.PasswordConfirmation, Message: "Password does not match confirmation"},
-	), err
+	}
+
+	// Add password policy validators if config is available
+	if configErr == nil {
+		// Minimum length check
+		minLength := config.PasswordMinLength
+		if minLength < 6 {
+			minLength = 6 // Enforce minimum of 6 as requested
+		}
+
+		policyValidators := []validate.Validator{
+			&validators.FuncValidator{
+				Name:    "Password",
+				Message: fmt.Sprintf("Password must be at least %d characters long", minLength),
+				Fn: func() bool {
+					return len(u.Password) >= minLength
+				},
+			},
+		}
+
+		// Character requirement checks
+		if config.PasswordRequireUppercase {
+			policyValidators = append(policyValidators, &validators.FuncValidator{
+				Name:    "Password",
+				Message: "Password must contain at least one uppercase letter",
+				Fn: func() bool {
+					for _, char := range u.Password {
+						if char >= 'A' && char <= 'Z' {
+							return true
+						}
+					}
+					return false
+				},
+			})
+		}
+
+		if config.PasswordRequireNumbers {
+			policyValidators = append(policyValidators, &validators.FuncValidator{
+				Name:    "Password",
+				Message: "Password must contain at least one number",
+				Fn: func() bool {
+					for _, char := range u.Password {
+						if char >= '0' && char <= '9' {
+							return true
+						}
+					}
+					return false
+				},
+			})
+		}
+
+		if config.PasswordRequireSpecialChars {
+			policyValidators = append(policyValidators, &validators.FuncValidator{
+				Name:    "Password",
+				Message: "Password must contain at least one special character",
+				Fn: func() bool {
+					specialChars := "!@#$%^&*()_+-=[]{}|;':\",./<>?"
+					for _, char := range u.Password {
+						if strings.ContainsRune(specialChars, char) {
+							return true
+						}
+					}
+					return false
+				},
+			})
+		}
+
+		// Combine all validators
+		allValidators := append(baseValidators, policyValidators...)
+		return validate.Validate(allValidators...), err
+	} else {
+		// Fallback to basic minimum length of 6
+		fallbackValidators := append(baseValidators, &validators.FuncValidator{
+			Name:    "Password",
+			Message: "Password must be at least 6 characters long",
+			Fn: func() bool {
+				return len(u.Password) >= 6
+			},
+		})
+		return validate.Validate(fallbackValidators...), err
+	}
 }
 
 // ValidateUpdate currently does no extra validation.

@@ -461,6 +461,14 @@ func (a *MyApp) AdminConfigUpdate(c buffalo.Context) error {
 
 // AdminPasswordsIndex manages password reset functionality
 func (a *MyApp) AdminPasswordsIndex(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	config, err := models.GetDefaultConfig(tx)
+	if err != nil {
+		return err
+	}
+
+	c.Set("config", config)
 	c.Set("pageTitle", "Password Reset Management")
 	return c.Render(http.StatusOK, r.HTML("admin/passwords/index.plush.html", "admin/layout.plush.html"))
 }

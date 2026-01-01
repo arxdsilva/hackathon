@@ -182,6 +182,22 @@ func (a *MyApp) ResetPasswordCreate(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/reset-password")
 	}
 
+	// Validate password against company policy
+	currentUser.Password = user.Password
+	currentUser.PasswordConfirmation = user.PasswordConfirmation
+	if verrs, err := currentUser.ValidateCreate(tx); err != nil || verrs.HasAny() {
+		if err != nil {
+			c.Flash().Add("danger", "Validation error")
+			return c.Redirect(http.StatusFound, "/reset-password")
+		}
+		for _, verr := range verrs.Errors {
+			for _, msg := range verr {
+				c.Flash().Add("danger", msg)
+			}
+		}
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
 	// Hash new password
 	ph, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
