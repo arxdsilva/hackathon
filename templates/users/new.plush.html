@@ -1,12 +1,45 @@
-<div class="row">
-  <div class="col-md-6 col-md-offset-3">
-    <h1>Create Account</h1>
+<div class="auth-wrapper">
+  <div class="auth-card shadow-lg">
+    <div class="auth-left">
+      <div class="badge text-bg-light mb-3">Join the Workspace</div>
+      <h1 class="auth-title">Create your account.</h1>
+      <p class="auth-subtitle">Secure access for hackathons, projects, and team collaboration.</p>
+      <ul class="auth-highlights">
+        <li><i class="fas fa-shield-alt"></i> Strong password policies enforced</li>
+        <li><i class="fas fa-users"></i> Built for teams and admins</li>
+        <li><i class="fas fa-rocket"></i> Ready for new hackathons</li>
+      </ul>
+    </div>
 
-    <%= form_for(user, {action: usersPath(), method: "POST"}) { %>
-      <%= f.InputTag("Email") %>
-      <%= f.InputTag("Password", {type: "password"}) %>
-      <%= f.InputTag("PasswordConfirmation", {type: "password", label: "Password Confirmation"}) %>
-      <button class="btn btn-primary">Create Account</button>
-    <% } %>
+    <div class="auth-right">
+      <div class="auth-form">
+        <div class="auth-form-header">
+          <div>
+            <p class="eyebrow">Create Account</p>
+            <h2>Get started quickly</h2>
+            <p class="muted">Use your company email and choose a strong password.</p>
+          </div>
+          <div class="avatar-stack">
+            <span class="avatar-circle">L</span>
+            <span class="avatar-circle">L</span>
+          </div>
+        </div>
+
+        <%= form_for(user, {action: usersPath(), method: "POST"}) { %>
+          <div class="mb-3">
+            <%= f.InputTag("Email", {class: "form-control form-control-lg", placeholder: "you@company.com"}) %>
+          </div>
+          <div class="mb-3">
+            <%= f.InputTag("Password", {type: "password", class: "form-control form-control-lg", placeholder: "••••••••"}) %>
+          </div>
+          <div class="mb-3">
+            <%= f.InputTag("PasswordConfirmation", {type: "password", class: "form-control form-control-lg", placeholder: "Match your password"}) %>
+          </div>
+          <button class="btn btn-gradient w-100 py-2">Create Account</button>
+        <% } %>
+
+        <p class="small mt-3 text-center text-muted">Already have an account? <a href="/signin">Sign in</a></p>
+      </div>
+    </div>
   </div>
 </div>
