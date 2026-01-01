@@ -189,6 +189,12 @@ func (a *MyApp) ResetPasswordCreate(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/reset-password")
 	}
 
+	// Check if new password is different from current password
+	if err := bcrypt.CompareHashAndPassword([]byte(currentUser.PasswordHash), []byte(user.Password)); err == nil {
+		c.Flash().Add("danger", "New password must be different from your current password")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
 	// Validate password against company policy
 	currentUser.Password = user.Password
 	currentUser.PasswordConfirmation = user.PasswordConfirmation
