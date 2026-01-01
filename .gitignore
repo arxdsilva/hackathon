@@ -33,3 +33,4 @@ generated/
 app
 main
 coverage*
+bin

@@ -1,133 +1,157 @@
-<div class="row mb-4">
-  <!-- Statistics Cards -->
-  <div class="col-md-3 col-sm-6 mb-3">
-    <div class="card admin-card text-center h-100">
-      <div class="card-body">
-        <div class="display-4 text-primary mb-2">
-          <i class="fas fa-users"></i>
-        </div>
-        <h3 class="h4 mb-1"><%= stats["users"] %></h3>
-        <small class="text-muted">Total Users</small>
-      </div>
+<!-- Statistics Section -->
+<div class="dashboard-stats">
+  <div class="stat-card">
+    <div class="stat-icon bg-primary">
+      <i class="fas fa-users"></i>
     </div>
+    <div class="stat-content">
+      <h3><%= stats["users"] %></h3>
+      <p>Total Users</p>
+    </div>
+    <a href="/admin/users" class="stat-link">View All →</a>
   </div>
-  <div class="col-md-3 col-sm-6 mb-3">
-    <div class="card admin-card text-center h-100">
-      <div class="card-body">
-        <div class="display-4 text-success mb-2">
-          <i class="fas fa-trophy"></i>
-        </div>
-        <h3 class="h4 mb-1"><%= stats["hackathons"] %></h3>
-        <small class="text-muted">Total Hackathons</small>
-      </div>
+
+  <div class="stat-card">
+    <div class="stat-icon bg-success">
+      <i class="fas fa-trophy"></i>
     </div>
+    <div class="stat-content">
+      <h3><%= stats["hackathons"] %></h3>
+      <p>Hackathons</p>
+    </div>
+    <a href="/admin/hackathons" class="stat-link">View All →</a>
   </div>
-  <div class="col-md-3 col-sm-6 mb-3">
-    <div class="card admin-card text-center h-100">
-      <div class="card-body">
-        <div class="display-4 text-info mb-2">
-          <i class="fas fa-project-diagram"></i>
-        </div>
-        <h3 class="h4 mb-1"><%= stats["projects"] %></h3>
-        <small class="text-muted">Total Projects</small>
-      </div>
+
+  <div class="stat-card">
+    <div class="stat-icon bg-info">
+      <i class="fas fa-project-diagram"></i>
     </div>
+    <div class="stat-content">
+      <h3><%= stats["projects"] %></h3>
+      <p>Total Projects</p>
+    </div>
+    <a href="/admin/projects" class="stat-link">View All →</a>
   </div>
-  <div class="col-md-3 col-sm-6 mb-3">
-    <div class="card admin-card text-center h-100">
-      <div class="card-body">
-        <div class="display-4 text-warning mb-2">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <h3 class="h4 mb-1"><%= stats["activeProjects"] %></h3>
-        <small class="text-muted">Active Projects</small>
-      </div>
+
+  <div class="stat-card">
+    <div class="stat-icon bg-warning">
+      <i class="fas fa-chart-line"></i>
     </div>
+    <div class="stat-content">
+      <h3><%= stats["activeProjects"] %></h3>
+      <p>Active Projects</p>
+    </div>
+    <a href="/admin/projects" class="stat-link">View All →</a>
   </div>
-  <div class="col-md-3 col-sm-6 mb-3">
-    <div class="card admin-card text-center h-100">
-      <div class="card-body">
-        <div class="display-4 text-danger mb-2">
-          <i class="fas fa-microphone"></i>
-        </div>
-        <h3 class="h4 mb-1"><%= stats["presentingProjects"] %></h3>
-        <small class="text-muted">Presenting Projects</small>
-      </div>
+
+  <div class="stat-card">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #f93e1d, #ff6b6b);">
+      <i class="fas fa-microphone"></i>
     </div>
+    <div class="stat-content">
+      <h3><%= stats["presentingProjects"] %></h3>
+      <p>Presenting</p>
+    </div>
+    <a href="/admin/projects" class="stat-link">View All →</a>
   </div>
 </div>
 
 <!-- Presenting Projects Section -->
 <%= if (len(presentingProjects) > 0) { %>
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="card admin-card border-success">
-      <div class="card-header bg-success text-white">
-        <h5 class="mb-0">
-          <i class="fas fa-microphone text-white me-2"></i>Presenting Projects
-          <span class="badge bg-light text-dark ms-2"><%= len(presentingProjects) %></span>
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <%= for (i, project) in presentingProjects { %>
-            <div class="col-lg-6 col-xl-4 mb-4">
-              <div class="card h-100 border-success">
-                <div class="card-header bg-success text-white">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-dark">#<%= i + 1 %></span>
-                    <i class="fas fa-microphone"></i>
-                  </div>
-                </div>
-                <%= if (project.ImageData != nil && len(project.ImageData) > 0) { %>
-                  <img src="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %> image" class="card-img-top" style="height: 150px; object-fit: cover;" />
-                <% } %>
-                <div class="card-body">
-                  <h6 class="card-title">
-                    <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>" class="text-decoration-none text-dark">
-                      <%= project.Name %>
-                    </a>
-                  </h6>
-                  <p class="card-text small text-muted mb-2"><%= project.Description %></p>
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted">
-                      <i class="fas fa-trophy me-1"></i>
-                      <%= if (project.Hackathon != nil) { %>
-                        <a href="/hackathons/<%= project.HackathonID %>" class="text-decoration-none"><%= project.Hackathon.Title %></a>
-                      <% } else { %>
-                        Unknown Hackathon
-                      <% } %>
-                    </small>
-                    <small class="text-success">
-                      <i class="fas fa-clock me-1"></i>
-                      <%= if (project.PresentationOrder != nil) { %>
-                        <%= project.PresentationOrder.Format("Jan 2, 15:04") %>
-                      <% } %>
-                    </small>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                      <i class="fas fa-user me-1"></i>
-                      <%= if (project.User != nil) { %>
-                        <%= if (project.User.Name != "") { project.User.Name } else { project.User.Email } %>
-                      <% } else { %>
-                        Unknown
-                      <% } %>
-                    </small>
-                    <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
-                      <%= project.Status %>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <% } %>
+<section class="admin-section">
+  <div class="section-header-admin">
+    <h2><i class="fas fa-microphone me-2"></i>Presenting Projects</h2>
+    <span class="badge bg-danger"><%= len(presentingProjects) %></span>
+  </div>
+  <div class="projects-grid">
+    <%= for (i, project) in presentingProjects { %>
+      <div class="project-card">
+        <%= if (project.ImageData != nil && len(project.ImageData) > 0) { %>
+          <div class="project-image">
+            <img src="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>/image" alt="<%= project.Name %>" />
+            <span class="project-badge">#<%= i + 1 %></span>
+          </div>
+        <% } else { %>
+          <div class="project-image bg-light d-flex align-items-center justify-content-center">
+            <i class="fas fa-image text-muted" style="font-size: 48px;"></i>
+            <span class="project-badge">#<%= i + 1 %></span>
+          </div>
+        <% } %>
+        <div class="project-body">
+          <h4><a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>"><%= project.Name %></a></h4>
+          <p><%= project.Description %></p>
+          <div class="project-meta">
+            <small>
+              <i class="fas fa-trophy me-1 text-warning"></i>
+              <%= if (project.Hackathon != nil) { %>
+                <a href="/hackathons/<%= project.HackathonID %>"><%= project.Hackathon.Title %></a>
+              <% } else { %>
+                Unknown Hackathon
+              <% } %>
+            </small>
+          </div>
         </div>
       </div>
-    </div>
+    <% } %>
   </div>
-</div>
+</section>
 <% } %>
+      </div>
+    <% } %>
+  </div>
+</section>
+<% } %>
+
+<!-- Admin Quick Actions -->
+<section class="admin-section">
+  <div class="section-header-admin">
+    <h2><i class="fas fa-bolt me-2"></i>Quick Actions</h2>
+  </div>
+  <div class="quick-actions-grid">
+    <a href="/admin/config" class="quick-action-card">
+      <div class="quick-action-icon bg-primary">
+        <i class="fas fa-cog"></i>
+      </div>
+      <h4>Settings</h4>
+      <p>Configure platform settings</p>
+    </a>
+    <a href="/admin/passwords" class="quick-action-card">
+      <div class="quick-action-icon bg-danger">
+        <i class="fas fa-key"></i>
+      </div>
+      <h4>Password Management</h4>
+      <p>Reset passwords & policies</p>
+    </a>
+    <a href="/admin/users" class="quick-action-card">
+      <div class="quick-action-icon bg-success">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <h4>Manage Users</h4>
+      <p>View and edit user accounts</p>
+    </a>
+    <a href="/admin/hackathons" class="quick-action-card">
+      <div class="quick-action-icon bg-info">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <h4>Hackathons</h4>
+      <p>Create and manage events</p>
+    </a>
+    <a href="/admin/projects" class="quick-action-card">
+      <div class="quick-action-icon bg-warning">
+        <i class="fas fa-project-diagram"></i>
+      </div>
+      <h4>Projects</h4>
+      <p>Review and approve submissions</p>
+    </a>
+    <a href="/admin/domains" class="quick-action-card">
+      <div class="quick-action-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+        <i class="fas fa-globe"></i>
+      </div>
+      <h4>Allowed Domains</h4>
+      <p>Configure email domains</p>
+    </a>
+  </div>
+</section>
 
 <div class="row">
   <!-- Recent Users -->
