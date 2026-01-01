@@ -94,7 +94,14 @@ func (a *MyApp) AuthCreate(c buffalo.Context) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(u.Password)); err != nil {
 		// Log failed login attempt
 		logAuditEvent(tx, c, nil, "login_failed", "user", nil, fmt.Sprintf("Failed login attempt for email: %s", u.Email))
-		c.Flash().Add("danger", "Invalid email or password")
+
+		// Find an admin to contact for password reset (order by creation date to get the first admin)
+		adminUser := &models.User{}
+		if err := tx.Where("role = ?", models.RoleOwner).Order("created_at ASC").First(adminUser); err == nil {
+			c.Flash().Add("danger", fmt.Sprintf("Invalid email or password. If you've forgotten your password, please contact the administrator at %s to reset it.", adminUser.Email))
+		} else {
+			c.Flash().Add("danger", "Invalid email or password")
+		}
 		return c.Redirect(http.StatusFound, "/signin")
 	}
 
