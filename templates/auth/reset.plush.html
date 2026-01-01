@@ -1,28 +1,56 @@
 <div class="auth-wrapper">
-  <div class="sign-form">
-    <h1>Reset Your Password</h1>
-    <%= if (resetRequired) { %>
-      <div class="alert alert-warning">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        Password reset is required before you can continue.
+  <div class="auth-card shadow-lg">
+    <div class="auth-left">
+      <div class="badge text-bg-light mb-3">Account Security</div>
+      <h1 class="auth-title">Secure your account.</h1>
+      <p class="auth-subtitle">Choose a strong password that meets our security requirements.</p>
+      <ul class="auth-highlights">
+        <li><i class="fas fa-lock"></i> Minimum 8 characters</li>
+        <li><i class="fas fa-shield-alt"></i> Uppercase & numbers</li>
+        <li><i class="fas fa-check-circle"></i> No reused passwords</li>
+      </ul>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-form">
+        <div class="auth-form-header">
+          <div>
+            <p class="eyebrow">Password Reset</p>
+            <h2>Create a new password</h2>
+            <p class="muted">Make it strong and unique for security.</p>
+          </div>
+          <div class="avatar-stack">
+            <span class="avatar-circle"><i class="fas fa-lock"></i></span>
+          </div>
+        </div>
+
+        <%= if (resetRequired) { %>
+          <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Password reset required</strong> — You must update your password before continuing.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% } %>
+
+        <%= form_for(user, {action: "/reset-password", method: "POST"}) { %>
+          <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+
+          <div class="mb-3">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" class="form-control form-control-lg" id="password" name="Password" placeholder="••••••••" required>
+            <small class="form-text text-muted">At least 8 characters with uppercase, numbers, and special characters.</small>
+          </div>
+
+          <div class="mb-3">
+            <label for="password_confirmation" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control form-control-lg" id="password_confirmation" name="PasswordConfirmation" placeholder="Match your password" required>
+          </div>
+
+          <button type="submit" class="btn btn-gradient w-100 py-2">Update Password</button>
+        <% } %>
+
+        <p class="small mt-3 text-center text-muted">Need help? <a href="/signin">Return to sign in</a></p>
       </div>
-    <% } %>
-    <p class="text-muted mb-4">Enter a new secure password below.</p>
-
-    <%= form_for(user, {action: "/reset-password", method: "POST"}) { %>
-      <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
-
-      <div class="mb-3">
-        <label for="password" class="form-label">New Password</label>
-        <input type="password" class="form-control" id="password" name="Password" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="password_confirmation" class="form-label">Confirm New Password</label>
-        <input type="password" class="form-control" id="password_confirmation" name="PasswordConfirmation" required>
-      </div>
-
-      <button type="submit" class="btn btn-success">Update Password</button>
-    <% } %>
+    </div>
   </div>
 </div>
