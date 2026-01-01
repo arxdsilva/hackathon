@@ -105,6 +105,7 @@ func App() *buffalo.App {
 		myApp.GET("/profile", myApp.ProfileShow)
 		myApp.GET("/profile/edit", myApp.ProfileEdit)
 		myApp.PUT("/profile", myApp.ProfileUpdate)
+		myApp.POST("/profile/change-password", myApp.ProfileChangePassword)
 		myApp.GET("/users/new", myApp.UsersNew)
 		myApp.POST("/users", myApp.UsersCreate)
 		myApp.GET("/users/{user_id}/edit", myApp.RequireRoleOwner(myApp.UsersEdit)).Name("userEditPath")

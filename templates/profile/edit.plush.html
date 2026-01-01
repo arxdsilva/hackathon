@@ -24,4 +24,44 @@
       <% } %>
     </div>
   </div>
+
+  <div class="col-md-6">
+    <div class="panel">
+      <h5 class="mb-3">Change Password</h5>
+      <p class="text-muted mb-3">Update your password to keep your account secure.</p>
+
+      <%= if (passwordErrors) { %>
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <%= for (key, messages) in passwordErrors { %>
+            <%= for (msg) in messages { %>
+              <p class="mb-1"><strong><%= key %>:</strong> <%= msg %></p>
+            <% } %>
+          <% } %>
+        </div>
+      <% } %>
+
+      <form action="/profile/change-password" method="POST">
+        <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+
+        <div class="mb-3">
+          <label for="current_password" class="form-label">Current Password</label>
+          <input type="password" class="form-control" id="current_password" name="CurrentPassword" placeholder="Enter your current password" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="new_password" class="form-label">New Password</label>
+          <input type="password" class="form-control" id="new_password" name="Password" placeholder="Enter new password" required>
+          <small class="form-text text-muted">At least 8 characters with uppercase, numbers, and special characters.</small>
+        </div>
+
+        <div class="mb-3">
+          <label for="new_password_confirm" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="new_password_confirm" name="PasswordConfirmation" placeholder="Confirm new password" required>
+        </div>
+
+        <button class="btn btn-warning" type="submit">Update Password</button>
+      </form>
+    </div>
+  </div>
 </div>
