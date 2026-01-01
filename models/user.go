@@ -32,6 +32,7 @@ type User struct {
 	PasswordHash         string    `db:"password_hash" json:"-"`
 	Password             string    `db:"-" json:"password"`
 	PasswordConfirmation string    `db:"-" json:"password_confirmation"`
+	ForcePasswordReset   bool      `db:"force_password_reset" json:"force_password_reset"`
 }
 
 // IsOwner returns true if the user is an owner.

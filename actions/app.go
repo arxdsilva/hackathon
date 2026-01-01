@@ -78,6 +78,7 @@ func App() *buffalo.App {
 
 		// Load the current user into context and protect routes.
 		myApp.Use(myApp.SetCurrentUser)
+		myApp.Use(myApp.RequirePasswordReset)
 		myApp.Use(myApp.Authorize)
 
 		myApp.GET("/", myApp.HomeHandler)
@@ -117,9 +118,11 @@ func App() *buffalo.App {
 		myApp.GET("/signin", myApp.AuthNew)
 		myApp.POST("/signin", myApp.AuthCreate)
 		myApp.DELETE("/signout", myApp.AuthDestroy)
+		myApp.GET("/reset-password", myApp.ResetPasswordNew)
+		myApp.POST("/reset-password", myApp.ResetPasswordCreate)
 
 		// Allow unauthenticated access to Home, About, and Auth endpoints
-		myApp.Middleware.Skip(myApp.Authorize, myApp.HomeHandler, myApp.AboutHandler, myApp.UsersNew, myApp.UsersCreate, myApp.AuthNew, myApp.AuthCreate)
+		myApp.Middleware.Skip(myApp.Authorize, myApp.HomeHandler, myApp.AboutHandler, myApp.UsersNew, myApp.UsersCreate, myApp.AuthNew, myApp.AuthCreate, myApp.ResetPasswordNew, myApp.ResetPasswordCreate)
 
 		// Admin routes
 		admin := myApp.Group("/admin")

@@ -47,6 +47,26 @@ func (a *MyApp) Authorize(next buffalo.Handler) buffalo.Handler {
 	}
 }
 
+// RequirePasswordReset ensures users who need to reset their password can't access other pages.
+func (a *MyApp) RequirePasswordReset(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		// Check if user needs to reset password
+		if currentUser, ok := c.Value("current_user").(models.User); ok {
+			if currentUser.ForcePasswordReset {
+				// Allow access to password reset page (handle trailing slash)
+				if strings.HasPrefix(c.Request().URL.Path, "/reset-password") {
+					return next(c)
+				}
+				// Redirect to reset password page for all other pages
+				return c.Redirect(http.StatusFound, "/reset-password?required=true")
+			}
+		}
+
+		// User doesn't need to reset password, allow normal access
+		return next(c)
+	}
+}
+
 // AuthNew renders the sign-in form.
 func (a *MyApp) AuthNew(c buffalo.Context) error {
 	c.Set("user", models.User{})
@@ -78,6 +98,14 @@ func (a *MyApp) AuthCreate(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/signin")
 	}
 
+	// Check if user needs to reset password
+	if dbUser.ForcePasswordReset {
+		// Clear session and set user for password reset flow
+		c.Session().Clear()
+		c.Session().Set(sessionCurrentUserID, dbUser.ID.String())
+		return c.Redirect(http.StatusFound, "/reset-password?required=true")
+	}
+
 	// Log successful login
 	logAuditEvent(tx, c, &dbUser.ID, "login", "user", &dbUser.ID, fmt.Sprintf("User logged in: %s (%s)", dbUser.Name, dbUser.Email))
 
@@ -96,5 +124,83 @@ func (a *MyApp) AuthDestroy(c buffalo.Context) error {
 
 	c.Session().Clear()
 	c.Flash().Add("success", "Signed out")
+	return c.Redirect(http.StatusFound, "/")
+}
+
+// ResetPasswordNew renders the forced password reset form.
+func (a *MyApp) ResetPasswordNew(c buffalo.Context) error {
+	// Check if user is logged in and needs password reset
+	if currentUser, ok := c.Value("current_user").(models.User); ok {
+		if !currentUser.ForcePasswordReset {
+			// User doesn't need to reset password, redirect to home
+			return c.Redirect(http.StatusFound, "/")
+		}
+		c.Set("user", currentUser)
+		// Check if this is a required reset
+		if c.Param("required") == "true" {
+			c.Set("resetRequired", true)
+		}
+		return c.Render(http.StatusOK, r.HTML("auth/reset.plush.html"))
+	}
+
+	// Not logged in, redirect to signin
+	c.Flash().Add("danger", "You must be signed in to reset your password")
+	return c.Redirect(http.StatusFound, "/signin")
+}
+
+// ResetPasswordCreate handles forced password reset.
+func (a *MyApp) ResetPasswordCreate(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	// Get current user
+	currentUser, ok := c.Value("current_user").(models.User)
+	if !ok {
+		c.Flash().Add("danger", "You must be signed in to reset your password")
+		return c.Redirect(http.StatusFound, "/signin")
+	}
+
+	if !currentUser.ForcePasswordReset {
+		// User doesn't need to reset password, redirect to home
+		return c.Redirect(http.StatusFound, "/")
+	}
+
+	// Bind form data
+	user := &models.User{}
+	if err := c.Bind(user); err != nil {
+		c.Flash().Add("danger", "Invalid request")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
+	// Validate passwords
+	if user.Password == "" {
+		c.Flash().Add("danger", "Password is required")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
+	if user.Password != user.PasswordConfirmation {
+		c.Flash().Add("danger", "Password confirmation does not match")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
+	// Hash new password
+	ph, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.Flash().Add("danger", "Failed to process password")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
+	// Update user password and clear force reset flag
+	currentUser.PasswordHash = string(ph)
+	currentUser.ForcePasswordReset = false
+
+	if err := tx.Update(&currentUser); err != nil {
+		c.Flash().Add("danger", "Failed to update password")
+		return c.Redirect(http.StatusFound, "/reset-password")
+	}
+
+	// Log password reset
+	logAuditEvent(tx, c, &currentUser.ID, "password_reset", "user", &currentUser.ID, fmt.Sprintf("User reset password: %s (%s)", currentUser.Name, currentUser.Email))
+
+	c.Flash().Add("success", "Password updated successfully!")
 	return c.Redirect(http.StatusFound, "/")
 }

@@ -1,0 +1,28 @@
+<div class="auth-wrapper">
+  <div class="sign-form">
+    <h1>Reset Your Password</h1>
+    <%= if (resetRequired) { %>
+      <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Password reset is required before you can continue.
+      </div>
+    <% } %>
+    <p class="text-muted mb-4">Enter a new secure password below.</p>
+
+    <%= form_for(user, {action: "/reset-password", method: "POST"}) { %>
+      <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>" />
+
+      <div class="mb-3">
+        <label for="password" class="form-label">New Password</label>
+        <input type="password" class="form-control" id="password" name="Password" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password_confirmation" class="form-label">Confirm New Password</label>
+        <input type="password" class="form-control" id="password_confirmation" name="PasswordConfirmation" required>
+      </div>
+
+      <button type="submit" class="btn btn-success">Update Password</button>
+    <% } %>
+  </div>
+</div>

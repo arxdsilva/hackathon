@@ -205,6 +205,9 @@ func (a *MyApp) AdminUsersUpdate(c buffalo.Context) error {
 		return err
 	}
 
+	// Handle checkbox for force password reset (unchecked checkboxes don't send values)
+	user.ForcePasswordReset = c.Param("ForcePasswordReset") == "true"
+
 	// Validate role
 	if user.Role != models.RoleOwner && user.Role != models.RoleHacker {
 		c.Flash().Add("danger", "Invalid role specified")
