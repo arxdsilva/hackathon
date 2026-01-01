@@ -1,87 +1,151 @@
 <!-- Styles are now loaded globally via application.css -->
 
-<div class="hero">
-  <div class="row">
-    <div class="col-md-8">
-      <h1>Welcome to Internal Hackathon Hub</h1>
-      <p class="lead">Your company's dedicated platform for organizing and participating in internal hackathons. From ideation to execution, manage every aspect of your innovation events with ease.</p>
-      <div class="cta-group">
-        <a class="btn btn-primary btn-lg" href="/users/new" role="button">Get Started</a>
-        <a class="btn btn-outline-light btn-lg" href="/signin" role="button">Sign In</a>
+<!-- Hero Section -->
+<section class="home-hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="fas fa-rocket me-2"></i>Internal Innovation Platform
+    </div>
+    <h1 class="hero-title">Organize hackathons.<br>Drive innovation.</h1>
+    <p class="hero-subtitle">Your company's dedicated platform for connecting teams, organizing internal hackathons, and showcasing breakthrough projects.</p>
+    
+    <div class="hero-cta">
+      <a class="btn btn-gradient btn-lg" href="/users/new" role="button">
+        <i class="fas fa-user-plus me-2"></i>Get Started
+      </a>
+      <a class="btn btn-outline-secondary btn-lg" href="/signin" role="button">
+        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+      </a>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="metric-item">
+        <i class="fas fa-lock"></i>
+        <span>Secure & Private</span>
       </div>
-      <div class="metrics">
-        <span class="metric">Company-focused platform</span>
-        <span class="metric">Internal collaboration</span>
-        <span class="metric">Secure and scalable</span>
+      <div class="metric-item">
+        <i class="fas fa-users"></i>
+        <span>Team Collaboration</span>
+      </div>
+      <div class="metric-item">
+        <i class="fas fa-zap"></i>
+        <span>Real-Time Updates</span>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="panel" style="margin-top: 10px;">
-        <h3>Quick Start Guide</h3>
-        <ol>
-          <li>Create your company account</li>
-          <li>Join or create an internal hackathon</li>
-          <li>Form cross-team groups and submit projects</li>
-          <li>Track progress and showcase results</li>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="quick-start">
+        <h4><i class="fas fa-star me-2"></i>Quick Start Guide</h4>
+        <ol class="quick-start-list">
+          <li><strong>Create Account</strong> — Set up your profile</li>
+          <li><strong>Join Hackathon</strong> — Find and join events</li>
+          <li><strong>Form Teams</strong> — Collaborate across departments</li>
+          <li><strong>Submit Projects</strong> — Showcase your ideas</li>
         </ol>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="features-section">
-  <div class="row">
-    <div class="col-md-12 text-center">
-      <h2>Why Choose Our Internal Hackathon Platform?</h2>
-      <p>Discover the features that make internal innovation events seamless and productive.</p>
-    </div>
+<!-- Features Section -->
+<section class="features-section">
+  <div class="section-header">
+    <h2>Why Teams Love Our Platform</h2>
+    <p>Everything you need to run engaging and productive hackathons</p>
   </div>
-  <div class="grid row">
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Internal Event Management</h3>
-        <p>Create and manage company hackathons with detailed schedules, rules, and timelines. Keep your teams informed and engaged.</p>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Cross-Team Collaboration</h3>
-        <p>Easy team registration and management across departments. Employees can join teams, invite colleagues, and collaborate effectively.</p>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Project Innovation</h3>
-        <p>Submit innovative projects with descriptions, links, and media. Internal judges can review and score submissions in real-time.</p>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Company Security</h3>
-        <p>Secure login and registration system with company authentication. Protect internal data and ensure fair participation.</p>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Real-Time Updates</h3>
-        <p>Get live notifications on schedule changes, team updates, and results. Stay connected throughout your internal events.</p>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-6" style="margin-bottom: 20px;">
-      <div class="panel">
-        <h3>Admin Panel</h3>
-        <p>Comprehensive tools for organizers to monitor progress, manage users, and oversee the entire hackathon process.</p>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="about-section">
-  <div class="row">
-    <div class="col-md-12 text-center">
-      <h2>About Our Internal Hackathon Platform</h2>
-      <p>Our platform is built with modern web technologies to provide a robust, scalable solution for internal innovation events. Whether you're a team member, department lead, or company organizer, our platform streamlines the internal hackathon experience.</p>
-      <p>Join your colleagues in driving company innovation and start building the future together!</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon bg-primary">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <h3>Event Management</h3>
+      <p>Create, schedule, and manage hackathons with detailed timelines, rules, and real-time status tracking.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon bg-success">
+        <i class="fas fa-users-cog"></i>
+      </div>
+      <h3>Team Formation</h3>
+      <p>Enable cross-department collaboration with seamless team registration and invitation systems.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon bg-info">
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <h3>Project Showcase</h3>
+      <p>Submit projects with descriptions, links, and media. Get real-time feedback from judges.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon bg-warning">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <h3>Enterprise Security</h3>
+      <p>Company-level authentication, encrypted data, and access controls keep your innovation secure.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon bg-danger">
+        <i class="fas fa-bell"></i>
+      </div>
+      <h3>Live Notifications</h3>
+      <p>Stay connected with instant updates on schedule changes, team invitations, and results.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <h3>Admin Dashboard</h3>
+      <p>Comprehensive analytics and controls for organizers to oversee the entire hackathon process.</p>
     </div>
   </div>
-</div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>Simple steps to launch your first internal hackathon</p>
+  </div>
+
+  <div class="steps-container">
+    <div class="step">
+      <div class="step-number">1</div>
+      <h4>Register</h4>
+      <p>Create your account with your company email</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <h4>Explore</h4>
+      <p>Browse active hackathons</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <h4>Collaborate</h4>
+      <p>Join teams and build solutions</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <h4>Showcase</h4>
+      <p>Present and celebrate wins</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2>Ready to innovate?</h2>
+    <p>Join your team and start building the future together</p>
+    <a class="btn btn-gradient btn-lg" href="/users/new">Get Started Now</a>
+  </div>
+</section>
