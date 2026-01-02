@@ -34,7 +34,7 @@
               <h5 class="card-title">
                 <a href="/hackathons/<%= hackathon.ID %>/projects/<%= project.ID %>"><%= project.Name %></a>
               </h5>
-              <p class="card-text"><%= project.Description %></p>
+              <div class="card-text markdown-body" data-markdown-source><%= project.Description %></div>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="badge bg-<%= if (project.Status == "completed") { %>success<% } else if (project.Status == "suspended") { %>danger<% } else { %>info<% } %>">
                   <%= project.Status %>

@@ -12,7 +12,7 @@
         <h3 class="card-title">
           <a href="/hackathons/<%= project.HackathonID %>/projects/<%= project.ID %>"><%= project.Name %></a>
         </h3>
-        <p class="card-text"><%= project.Description %></p>
+        <div class="card-text markdown-body" data-markdown-source><%= project.Description %></div>
         <div class="row">
           <div class="col-md-6">
             <small class="text-muted">

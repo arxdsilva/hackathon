@@ -13,6 +13,9 @@ $(() => {
 
 	const attachMarkdownEditors = () => {
 		document.querySelectorAll("[data-markdown-editor]").forEach((textarea) => {
+			const required = textarea.dataset.markdownRequired === "true";
+			const requiredMessage = textarea.dataset.markdownRequiredMessage || "Please fill out this field.";
+
 			const editor = new EasyMDE({
 				element: textarea,
 				spellChecker: false,
@@ -39,8 +42,16 @@ $(() => {
 			});
 
 			if (textarea.form) {
-				textarea.form.addEventListener("submit", () => {
-					textarea.value = editor.value();
+				textarea.form.addEventListener("submit", (event) => {
+					const value = editor.value().trim();
+					textarea.value = value;
+
+					if (required && value === "") {
+						event.preventDefault();
+						event.stopImmediatePropagation();
+						window.alert(requiredMessage);
+						editor.codemirror.focus();
+					}
 				});
 			}
 		});
