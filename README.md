@@ -3,65 +3,126 @@
 [![CI](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/arxdsilva/hackathon/actions/workflows/unit-tests.yml)
 [![codecov](https://codecov.io/gh/arxdsilva/hackathon/branch/main/graph/badge.svg)](https://codecov.io/gh/arxdsilva/hackathon)
 
-This is a comprehensive web application built with Buffalo for managing hackathons. It provides a complete solution for creating, organizing, and running hackathon events with advanced features including audit logging, secure admin controls, and responsive design. The platform supports user registration, project submissions, team formation, file management, and detailed scheduling, all wrapped in a modern dark theme interface.
+A production-ready platform for running internal company hackathons. Built with Go and Buffalo framework for high performance and reliability.
+
+## Why This Platform?
+
+**🚀 Launch Internal Hackathons in Minutes**
+Create and manage hackathon events for your organization with a single deployment. No complex configuration required - just set up, invite employees, and start innovating.
+
+**👥 Built for Company Teams**
+Seamless team formation across departments with automatic membership tracking. Employees can create projects, join teams, and collaborate with built-in presentation management.
+
+**🔒 Enterprise-Grade Security**
+Complete audit logging tracks every action. Role-based access control, CSRF protection, and bcrypt password hashing with per-user salts keep your internal data secure.
+
+**📊 Powerful Admin Dashboard**
+Monitor everything from a central dashboard. Manage employees, track projects, view audit logs, and configure platform settings - all from one place.
+
+**🎯 Self-Hosted & Open Source**
+Keep your hackathon data within your organization. Deploy on your own infrastructure with full control over your intellectual property and project submissions.
+
+**💻 Developer Friendly**
+Clean repository pattern, comprehensive Makefile with 25+ commands, hot reload for development, and extensive documentation make customization straightforward.
+
+## Table of Contents
+
+- [Features](#features)
+  - [User Management & Authentication](#user-management--authentication)
+  - [Hackathon Management](#hackathon-management)
+  - [Project & Team Management](#project--team-management)
+  - [File Management](#file-management)
+  - [Admin Dashboard](#admin-dashboard)
+  - [Security & Audit](#security--audit)
+  - [User Interface & Experience](#user-interface--experience)
+  - [Technical Features](#technical-features)
+- [Screenshots](#screenshots)
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Initial Setup](#initial-setup)
+  - [Development](#development)
+  - [Makefile Commands](#makefile-commands)
+- [Docker Deployment](#docker-deployment)
+- [Project Structure](#project-structure)
+- [Testing](#testing)
+- [CI/CD](#cicd)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-- User registration and authentication
-- Hackathon creation and management
-- Project submissions and team formation
-- File upload and management
-- Schedule management
-- Admin dashboard with comprehensive user management
-- Dark theme UI with sticky navigation
-- Docker containerization
-- **Comprehensive audit logging** - All user actions are logged with timestamps, IP addresses, and user agents
-- **Owner account protection** - Prevents deletion of owner/admin accounts for security
-- **Responsive layout** - CSS Grid-based admin panels with sticky sidebar navigation
-- **Custom branding** - Professional favicon and visual identity
-- **Team member display** - Project pages show all team members with their roles and join dates
-- **Presentation management** - Projects can opt-in to presentations with toggle functionality and admin oversight
-- **Admin presentations dashboard** - Comprehensive view of all presenting projects across hackathons with presentation order tracking
+### User Management & Authentication
+- **User Registration** - Create accounts with email validation and password policy enforcement
+- **Secure Authentication** - bcrypt password hashing with per-user salts and session management
+- **User Profiles** - Personal profiles with name, email, company/team, and role information
+- **Profile Editing** - Users can update their personal information and change passwords
+- **Password Reset** - Forced password reset functionality for new accounts
+- **Role-Based Access** - Two-tier system with Owner (admin) and Hacker (participant) roles
 
-## Security Features
+### Hackathon Management
+- **Hackathon Creation** - Owners can create hackathons with title, description, dates, and status
+- **Schedule Management** - Add rich-text schedules with HTML formatting support (nullable field support)
+- **Status Tracking** - Four status types: upcoming, active, completed, and hidden
+- **Hackathon Listing** - Browse all hackathons with filtering and pagination
+- **Detailed Views** - Individual hackathon pages with statistics, timeline, and project listings
+- **Owner Controls** - Edit and delete hackathons (owner-only)
 
-- **Audit Logging**: Complete tracking of all user actions with detailed logs including timestamps, IP addresses, and user agents
-- **Owner Protection**: Owner/admin accounts cannot be deleted, preventing accidental lockouts
-- **CSRF Protection**: Built-in Cross-Site Request Forgery protection
-- **Session Management**: Secure session handling with proper authentication
+### Project & Team Management
+- **Project Creation** - Users can create one project per hackathon with name, description, and links
+- **Project Images** - Upload and manage project images stored in database
+- **Team Formation** - Project membership system allowing users to join teams
+- **Join/Leave Projects** - Users can join projects and owners can manage memberships
+- **Unique Constraints** - Prevents users from creating multiple projects per hackathon
+- **Team Member Display** - Shows all team members with roles (owner/member) and join timestamps
+- **Presentation Opt-In** - Projects can toggle presentation status with order tracking
 
-## New Features (December 28, 2025)
+### File Management
+- **File Uploads** - Upload files associated with hackathons and projects
+- **Database Storage** - Files stored as binary data in PostgreSQL with metadata
+- **File Download** - Secure file retrieval with proper content-type headers
+- **File Management** - View, list, and delete uploaded files
+- **Access Control** - File operations restricted to authenticated users
 
-### Team Member Display
-Project pages now display comprehensive team information including:
-- **Team member list** with names, emails, and roles (owner/member)
-- **Join timestamps** showing when each member joined the project
-- **Visual indicators** distinguishing project owners from regular members
-- **Responsive design** that works well on all screen sizes
+### Admin Dashboard
+- **Comprehensive Overview** - Statistics on users, hackathons, projects, and audit events
+- **User Management** - View, create, edit, and delete user accounts
+- **Role Assignment** - Promote/demote users between owner and hacker roles
+- **Account Protection** - Prevents deletion of owner accounts to maintain system access
+- **Force Password Reset** - Require users to change passwords on next login
+- **Hackathon Overview** - Admin view of all hackathons across the platform
+- **Project Monitoring** - View all projects with filtering and search
+- **Audit Logs** - Complete activity log with user actions, timestamps, and IP addresses
+- **Presentations Dashboard** - Track all projects opting to present with order management
+- **System Configuration** - Password policies and platform settings management
 
-### Presentation Management System
-A complete presentation workflow for hackathon projects featuring:
-- **Presentation toggle** - Project owners can opt their projects in/out of presentations
-- **Presentation status tracking** - Clear visual indicators showing presentation eligibility
-- **Audit logging** - All presentation status changes are logged for transparency
-- **Presentation order** - Automatic timestamp-based ordering for presentation scheduling
+### Security & Audit
+- **Comprehensive Audit Logging** - All user actions logged with timestamps, IP addresses, and user agents
+- **Password Policies** - Configurable minimum length, uppercase, numbers, and special character requirements
+- **CSRF Protection** - Built-in Cross-Site Request Forgery protection on all forms
+- **Session Security** - Secure session handling with proper authentication checks
+- **Owner Protection** - Prevents accidental lockouts by protecting admin accounts
+- **Input Validation** - Server-side validation for all forms and data entry
+- **SQL Injection Protection** - Parameterized queries via Pop ORM
 
-### Admin Presentations Dashboard
-Enhanced admin panel with dedicated presentations oversight:
-- **Presenting projects statistics** - Count of projects opting to present across all hackathons
-- **Comprehensive project listing** - All presenting projects with detailed information
-- **Presentation order display** - Projects ordered by when they opted to present
-- **Cross-hackathon visibility** - Admin can see presentations from all hackathons they manage
-- **Project details** - Names, descriptions, repository links, and team information
-- **Visual project cards** - Clean card-based layout with project images and metadata
+### User Interface & Experience
+- **Responsive Design** - Mobile-friendly layout that works on all screen sizes
+- **Modern UI** - Professional interface with sticky navigation and clean styling
+- **Bootstrap 5** - Clean, consistent styling with Bootstrap components
+- **Font Awesome Icons** - Rich iconography throughout the interface
+- **Flash Messages** - User feedback for all actions (success, error, info)
+- **Pagination** - Efficient browsing of large datasets
+- **Custom Branding** - Professional favicon with "H" logo and custom styling
+- **Inline Forms** - Seamless inline editing and interactions
 
-### Hackathon Presentation Display
-Hackathon overview pages now feature:
-- **Presenting projects section** - Dedicated area showing all projects that will present
-- **Presentation order** - Projects displayed in the order they opted to present
-- **Project thumbnails** - Visual representation with project images
-- **Team member counts** - Quick overview of team sizes
-- **Direct links** - Easy navigation to individual project pages
+### Technical Features
+- **Buffalo Framework** - Built on Go Buffalo for high performance
+- **PostgreSQL Database** - Robust relational database with UUID support
+- **Pop ORM** - Database migrations and model management
+- **Docker Support** - Full containerization with docker-compose
+- **Asset Pipeline** - Webpack for CSS/JS bundling and optimization
+- **RESTful API** - Clean URL structure and HTTP methods
+- **Repository Pattern** - Clean architecture with repository interfaces
+- **Comprehensive Makefile** - Developer-friendly commands for all operations
 
 ## Screenshots
 
