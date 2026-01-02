@@ -19,9 +19,11 @@
             <i class="fas fa-calendar"></i> <%= hackathon.StartDate.Format("Jan 2, 2006") %> – <%= hackathon.EndDate.Format("Jan 2, 2006") %>
           </small>
         </div>
-        <div class="schedule-content">
-          <%= raw(hackathon.Schedule) %>
-        </div>
+        <%= if (hackathon.Schedule.Valid && hackathon.Schedule.String != "") { %>
+          <div class="schedule-content">
+            <%= raw(hackathon.Schedule.String) %>
+          </div>
+        <% } %>
       </div>
     </div>
   <% } %>

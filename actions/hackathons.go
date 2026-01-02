@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/arxdsilva/hackathon/models"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 )
 
@@ -151,7 +153,12 @@ func (a *MyApp) HackathonsCreate(c buffalo.Context) error {
 	hackathon.Title = c.Params().Get("Title")
 	hackathon.Description = c.Params().Get("Description")
 	hackathon.Status = c.Params().Get("Status")
-	hackathon.Schedule = c.Params().Get("Schedule")
+	schedule := strings.TrimSpace(c.Params().Get("Schedule"))
+	if schedule == "" {
+		hackathon.Schedule = nulls.String{}
+	} else {
+		hackathon.Schedule = nulls.NewString(schedule)
+	}
 
 	// Parse dates
 	if startStr := c.Params().Get("StartDate"); startStr != "" {
@@ -214,7 +221,12 @@ func (a *MyApp) HackathonsUpdate(c buffalo.Context) error {
 	hackathon.Title = c.Params().Get("Title")
 	hackathon.Description = c.Params().Get("Description")
 	hackathon.Status = c.Params().Get("Status")
-	hackathon.Schedule = c.Params().Get("Schedule")
+	schedule := strings.TrimSpace(c.Params().Get("Schedule"))
+	if schedule == "" {
+		hackathon.Schedule = nulls.String{}
+	} else {
+		hackathon.Schedule = nulls.NewString(schedule)
+	}
 
 	// Parse dates
 	if startStr := c.Params().Get("StartDate"); startStr != "" {

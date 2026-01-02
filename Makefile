@@ -83,6 +83,10 @@ db-reset: ## Reset database (drop and recreate)
 
 db-seed: ## Seed database with initial data
 	@echo "🌱 Seeding database from seeds/seed.sql..."
+	@command -v psql >/dev/null 2>&1 || { \
+		echo "❌ psql not found. Install via 'brew install libpq' and add \"/opt/homebrew/opt/libpq/bin\" to PATH, or install postgres@16."; \
+		exit 127; \
+	}
 	psql "postgres://postgres:postgres@localhost:5432/hackathon_development?sslmode=disable" -f seeds/seed.sql
 
 db-seed-sql: db-seed ## Alias for SQL seeding

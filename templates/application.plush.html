@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <title>Buffalo - Hackathon</title>
+    <title>Hackathon Platform</title>
     <%= stylesheetTag("application.css") %>
     <meta name="csrf-param" content="authenticity_token" />
     <meta name="csrf-token" content="<%= authenticity_token %>" />
@@ -79,8 +79,12 @@
     <footer class="site-footer">
       <div class="container">
         <div class="row align-items-center" style="padding: 18px 0;">
-          <div class="col-md-6">
-            <span class="text-muted">© 2025 Hackathon Service · Built with Buffalo</span>
+          <div class="col-md-6 text-md-start text-center mb-2 mb-md-0" style="white-space: nowrap;">
+            <span class="text-muted" style="white-space: nowrap;">
+              © 2025 Hackathon Service · Built by
+              <a class="text-muted text-decoration-none d-inline" href="https://linkedin.com/in/arxdsilva" target="_blank">arxdsilva</a>
+              with Go, Buffalo and PostgreSQL
+            </span>
           </div>
           <div class="col-md-6">
             <ul class="nav justify-content-md-end justify-content-start">

@@ -127,13 +127,13 @@
             </div>
           </div>
 
-          <%= if (hackathon.Schedule != "") { %>
+          <%= if (hackathon.Schedule.Valid && hackathon.Schedule.String != "") { %>
             <div class="mt-4">
               <h6 class="text-muted mb-3">
                 <i class="fas fa-list-check text-info me-1"></i>Event Schedule
               </h6>
               <div class="schedule-content border-start border-info border-3 ps-3 bg-light p-3 rounded">
-                <%= raw(hackathon.Schedule) %>
+                <%= raw(hackathon.Schedule.String) %>
               </div>
             </div>
           <% } %>

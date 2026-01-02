@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
@@ -12,16 +13,16 @@ import (
 
 // Hackathon represents a hackathon event
 type Hackathon struct {
-	ID          string    `json:"id" db:"id"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
-	Title       string    `json:"title" db:"title"`
-	Description string    `json:"description" db:"description"`
-	StartDate   time.Time `json:"start_date" db:"start_date"`
-	EndDate     time.Time `json:"end_date" db:"end_date"`
-	Status      string    `json:"status" db:"status"`
-	OwnerID     uuid.UUID `json:"owner_id" db:"owner_id"`
-	Schedule    string    `json:"schedule" db:"schedule"`
+	ID          string       `json:"id" db:"id"`
+	CreatedAt   time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at" db:"updated_at"`
+	Title       string       `json:"title" db:"title"`
+	Description string       `json:"description" db:"description"`
+	StartDate   time.Time    `json:"start_date" db:"start_date"`
+	EndDate     time.Time    `json:"end_date" db:"end_date"`
+	Status      string       `json:"status" db:"status"`
+	OwnerID     uuid.UUID    `json:"owner_id" db:"owner_id"`
+	Schedule    nulls.String `json:"schedule" db:"schedule"`
 }
 
 // String is not required by pop and may be deleted
