@@ -67,16 +67,21 @@ Hackathon overview pages now feature:
 
 Here are some screenshots of the hackathon management platform:
 
-### Logged Homepage
-![Logged Homepage](docs/screenshots/logged_homepage.png)
+### Home Page
+![Home Page](docs/screenshots/home_page.png)
+*Landing page with authentication options and platform overview*
 
-### Hackathon Overview
-![Hackathon Overview](docs/screenshots/hackathon_overview.png)
+### Hackathons Listing
+![Hackathons Page](docs/screenshots/hackathons_page.png)
+*Browse all available hackathons with status indicators and filtering*
 
-### Admin Panel
-![Admin Panel](docs/screenshots/admin_panel.png)
+### Hackathon Details
+![Hackathon Page](docs/screenshots/hackathon_page.png)
+*Individual hackathon view with projects, schedule, and team information*
 
-*Note: The above screenshots show the platform before the latest feature additions (team member display, presentation management, and enhanced admin dashboard). The current version includes these new features as documented above.*
+### Admin Dashboard
+![Admin Dashboard](docs/screenshots/admin_dashboard.png)
+*Comprehensive admin panel with user management, audit logs, and system configuration*
 
 ## Quick Start
 
