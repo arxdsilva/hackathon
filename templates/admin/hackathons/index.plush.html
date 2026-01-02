@@ -64,7 +64,7 @@
                         <%= hackathon.Title %>
                       </a>
                     </h5>
-                    <p class="card-text text-muted small mb-3"><%= hackathon.Description %></p>
+                    <div class="card-text text-muted small mb-3 markdown-body" data-markdown-source><%= hackathon.Description %></div>
                   </div>
                   <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else if (hackathon.Status == "cancelled") { %>danger<% } else { %>warning<% } %>">
                     <i class="fas fa-<%= if (hackathon.Status == "active") { %>play<% } else if (hackathon.Status == "completed") { %>check<% } else if (hackathon.Status == "cancelled") { %>ban<% } else { %>clock<% } %> me-1"></i>

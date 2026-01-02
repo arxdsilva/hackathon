@@ -37,7 +37,7 @@
             <%= for (hackathon) in ownedHackathons { %>
               <div class="mb-3 p-3 border rounded">
                 <h5><a href="/hackathons/<%= hackathon.ID %>"><%= hackathon.Title %></a></h5>
-                <p class="small text-muted"><%= hackathon.Description %></p>
+                <div class="small text-muted markdown-body" data-markdown-source><%= hackathon.Description %></div>
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="badge bg-<%= if (hackathon.Status == "active") { %>success<% } else if (hackathon.Status == "completed") { %>info<% } else { %>warning<% } %>">
                     <%= hackathon.Status %>

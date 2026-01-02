@@ -26,7 +26,7 @@
         
         <div class="mb-3">
           <label for="description" class="form-label">Description *</label>
-          <textarea class="form-control" id="description" name="Description" rows="5" required><%= hackathon.Description %></textarea>
+          <textarea class="form-control" id="description" name="Description" rows="5" required data-markdown-editor><%= hackathon.Description %></textarea>
         </div>
         
         <div class="row">
@@ -58,9 +58,9 @@
         
         <div class="mb-3">
           <label for="schedule" class="form-label">Schedule</label>
-          <textarea class="form-control" id="schedule" name="Schedule" rows="10" placeholder="Enter the schedule for this hackathon. You can use HTML for formatting."><%= if (hackathon.Schedule.Valid) { %><%= hackathon.Schedule.String %><% } %></textarea>
+          <textarea class="form-control" id="schedule" name="Schedule" rows="10" placeholder="Add the schedule using Markdown (headings, lists, bold, etc.)" data-markdown-editor><%= if (hackathon.Schedule.Valid) { %><%= hackathon.Schedule.String %><% } %></textarea>
           <small class="form-text text-muted">
-            Add the schedule details for your hackathon. You can use HTML tags for formatting (e.g., &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;strong&gt;).
+            Add the schedule details for your hackathon using Markdown for quick formatting.
           </small>
         </div>
         

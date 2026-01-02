@@ -16,6 +16,56 @@ body {
 	flex-direction: column;
 }
 
+.markdown-body {
+	line-height: 1.6;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.markdown-body p {
+	margin-bottom: 0.8rem;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+	padding-left: 1.25rem;
+}
+
+.markdown-body blockquote {
+	border-left: 4px solid #0d6efd;
+	padding-left: 0.75rem;
+	color: #6c757d;
+	margin: 0.5rem 0 0.8rem;
+}
+
+.markdown-body code {
+	background: #f1f3f5;
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+}
+
+.markdown-body pre {
+	background: #0f172a;
+	color: #e2e8f0;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	overflow: auto;
+}
+
+.markdown-body img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 6px;
+}
+
 /* Main content grows to push footer down */
 .site-main { flex: 1 0 auto; }
 
