@@ -17,9 +17,3 @@ func (a *MyApp) HomeHandler(c buffalo.Context) error {
 	}
 	return c.Render(http.StatusOK, r.HTML("home/index.plush.html"))
 }
-
-// RoutesHandler renders a list of defined routes.
-func (a *MyApp) RoutesHandler(c buffalo.Context) error {
-	c.Set("routes", a.Routes())
-	return c.Render(http.StatusOK, r.HTML("routes/index.plush.html"))
-}
