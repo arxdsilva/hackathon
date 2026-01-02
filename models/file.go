@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"time"
 
@@ -44,16 +42,6 @@ func (f Files) String() string {
 	return string(jf)
 }
 
-// generateUniqueFileID generates a unique 12-character hexadecimal string for file ID
-func generateUniqueFileID() string {
-	bytes := make([]byte, 6) // 6 bytes = 12 hex characters
-	if _, err := rand.Read(bytes); err != nil {
-		// Fallback to timestamp-based ID if crypto/rand fails
-		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))[:12]
-	}
-	return hex.EncodeToString(bytes)
-}
-
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
 func (f *File) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
@@ -66,7 +54,7 @@ func (f *File) Validate(tx *pop.Connection) (*validate.Errors, error) {
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 func (f *File) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	if f.ID == "" {
-		f.ID = generateUniqueFileID()
+		f.ID = generateUniqueID()
 	}
 	return validate.NewErrors(), nil
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/pop/v6"
@@ -62,7 +63,7 @@ func (p *Project) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 
 	// Generate unique ID if not set
 	if p.ID == "" {
-		p.ID = generateUniqueProjectID()
+		p.ID = generateUniqueID()
 	}
 
 	// Ensure a user is set on creation
@@ -86,12 +87,12 @@ func (p *Project) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
-// generateUniqueProjectID generates a unique 12-character hexadecimal string for project ID
-func generateUniqueProjectID() string {
+// generateUniqueID generates a unique 12-character hexadecimal string
+func generateUniqueID() string {
 	bytes := make([]byte, 6) // 6 bytes = 12 hex characters
 	if _, err := rand.Read(bytes); err != nil {
 		// Fallback to timestamp-based ID if crypto/rand fails
-		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))[:12]
+		return strings.ToUpper(hex.EncodeToString([]byte(time.Now().Format("20060102150405")))[:12])
 	}
-	return hex.EncodeToString(bytes)
+	return strings.ToUpper(hex.EncodeToString(bytes))
 }

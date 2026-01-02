@@ -1,8 +1,6 @@
 package models
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"time"
 
@@ -66,20 +64,10 @@ func (h *Hackathon) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	), nil
 }
 
-// generateUniqueHackathonID generates a unique 12-character hexadecimal string for hackathon ID
-func generateUniqueHackathonID() string {
-	bytes := make([]byte, 6) // 6 bytes = 12 hex characters
-	if _, err := rand.Read(bytes); err != nil {
-		// Fallback to timestamp-based ID if crypto/rand fails
-		return hex.EncodeToString([]byte(time.Now().Format("20060102150405")))[:12]
-	}
-	return hex.EncodeToString(bytes)
-}
-
 // ValidateCreate gets run every time you call "pop.ValidateAndCreate" method.
 func (h *Hackathon) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	if h.ID == "" {
-		h.ID = generateUniqueHackathonID()
+		h.ID = generateUniqueID()
 	}
 	return validate.NewErrors(), nil
 }
